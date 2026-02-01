@@ -1,0 +1,92 @@
+.theme-switcher {
+    display: flex;
+    align-items: center;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 32px;
+    cursor: pointer;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--color-primary);
+    border-radius: 34px;
+    transition: 0.4s;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.slider:before {
+    content: "";
+    position: absolute;
+    height: 26px;
+    width: 26px;
+    left: 3px;
+    bottom: 3px;
+    background: #fff;
+    border-radius: 50%;
+    transition: 0.4s;
+    z-index: 2;
+}
+
+.sun, .moon {
+    color: #fff;
+    z-index: 1;
+}
+
+.sun {
+    margin-left: 6px;
+}
+
+.moon {
+    margin-right: 6px;
+}
+
+input:checked + .slider {
+    background: #2c3e50;
+}
+
+input:checked + .slider:before {
+    transform: translateX(28px);
+}
+
+/* Анимация иконок */
+.slider .sun {
+    opacity: 0;
+    transform: rotate(0deg);
+    transition: 0.4s;
+}
+
+.slider .moon {
+    opacity: 1;
+    transform: rotate(90deg);
+    transition: 0.4s;
+}
+
+input:checked + .slider .sun {
+    opacity: 1;
+    transform: rotate(-90deg);
+}
+
+input:checked + .slider .moon {
+    opacity: 0;
+    transform: rotate(0deg);
+}
+
+/* Стили для тёмной темы */

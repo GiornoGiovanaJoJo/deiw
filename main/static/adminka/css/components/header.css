@@ -1,0 +1,69 @@
+header.admin-header {
+    background-color: var(--color-surface);
+    color: #fff;
+    padding: 2.5rem 2rem;
+    border-radius: 0 0 15px 15px;
+    box-shadow: 0 4px 12px var(--color-shadow);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    z-index: 1001;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+  header.admin-header h1 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 1.5rem;
+  }
+
+
+.register-button {
+    background: var(--color-primary);
+    color: white;
+}
+
+.register-button:hover {
+  background: var(--color-secondary);
+}
+
+.login-button, .register-button, .sidebarToggle {
+    padding: var(--button-padding);
+    border-radius: var(--button-radius);
+    font-weight: var(--button-font-weight);
+    text-decoration: none;
+    transition: all 0.2s;
+    border: none;
+}
+
+.sidebarToggle {
+  background: var(--color-primary);
+  color: white;
+  padding: 10px 12px;
+}
+
+.sidebarToggle:hover {
+  background: var(--color-secondary);
+}
+
+
+  header.admin-header a.logout-link:hover {
+    background-color: var(--color-secondary);
+    border-color: #fff;
+  }
+
+  /* Кнопка-тогглер меню */
+
+
+  button#sidebarToggle:focus {
+    outline: none;
+  }

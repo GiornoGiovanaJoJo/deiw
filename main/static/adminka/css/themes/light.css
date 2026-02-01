@@ -1,0 +1,345 @@
+:root {
+  /* Основные цвета */
+  --color-primary: #6c63ff;      /* Фирменный фиолетовый (кнопки) */
+  --color-secondary: #5147e9;    /* Дополнительный акцент */
+  --color-accent: #ffcc00;       /* Жёлтый для выделения */
+
+  /* Базовые цвета */
+  --color-background: #f5f7fa;   /* Общий фон сайта */
+  --color-surface: #ffffff;      /* Цвет карточек (фон блоков) */
+  --color-surface-alt: #f0f1f6;  /* Альтернативный фон секций */
+  --color-border: #e0e0e0;       /* Цвет рамок и разделителей */
+  --color-border-strong: #bdbdbd;/* Более тёмная рамка */
+  --color-shadow: rgba(0, 0, 0, 0.1); /* Мягкая тень */
+  --color-shadow-strong: rgba(0, 0, 0, 0.18);
+
+  /* Градиенты */
+  --gradient-primary: linear-gradient(135deg, #6c63ff 0%, #5147e9 100%);
+  --gradient-accent: linear-gradient(90deg, #ffcc00 0%, #ffe066 100%);
+
+  /* Текст */
+  --color-text-primary: #222222;
+  --color-text-secondary: #555555;
+  --color-text-muted: #999999;
+  --color-text-inverse: #fff;
+
+  /* Специальные */
+  --color-success: #28a745;
+  --color-warning: #ffc107;
+  --color-danger: #dc3545;
+  --color-info: #17a2b8;
+
+  /* Кнопки */
+  --button-radius: 8px;
+  --button-padding: 0.2rem 0.5rem;
+  --button-font-weight: 600;
+  --button-transition: all 0.3s ease;
+  --button-shadow: 0 2px 8px var(--color-shadow);
+
+  /* Карточки */
+  --card-radius: 15px;
+  --card-padding: 1.5rem;
+  --card-shadow: 0 4px 12px var(--color-shadow);
+  --card-hover-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+
+  /* Анимации */
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
+
+  /* Размеры */
+  --container-max-width: 1200px;
+  --container-padding: 0 20px;
+  --header-height: 70px;
+  --footer-height: auto;
+
+  /* Отступы */
+  --spacing-xxs: 0.125rem;
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-xxl: 3rem;
+  --section-padding: 100px;
+
+  /* Типографика */
+  --font-family-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.875rem;
+  --font-size-4xl: 2.25rem;
+  --font-size-hero: 3.5rem;
+
+  /* Z-index */
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+
+  /* Responsive breakpoints */
+  --breakpoint-xs: 480px;
+  --breakpoint-sm: 768px;
+  --breakpoint-md: 992px;
+  --breakpoint-lg: 1200px;
+  --breakpoint-xl: 1400px;
+}
+
+/* По умолчанию показываем светлый логотип, тёмный скрыт */
+.logo-dark { display: none; }
+.logo-light { display: block; }
+
+/* В тёмной теме — наоборот */
+[data-theme="dark"] .logo-light { display: none; }
+[data-theme="dark"] .logo-dark  { display: block; }
+
+/* Базовые стили */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  color: #fff;
+  border-radius: var(--button-radius);
+  padding: 0.4rem 1rem;
+  font-weight: var(--button-font-weight);
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-wrap-mode: nowrap;
+  height: 40px;
+}
+.btn-primary:hover {
+  background-color: var(--color-secondary);
+}
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-base);
+  line-height: 1.6;
+  color: var(--color-text-primary);
+  background-color: var(--color-background);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Контейнер */
+.container {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 var(--spacing-md);
+  }
+}
+
+/* Карточки */
+.card {
+  background-color: var(--color-surface);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
+  padding: var(--card-padding);
+  transition: var(--transition-normal);
+  border: 1px solid var(--color-border);
+}
+
+.card:hover {
+  box-shadow: var(--card-hover-shadow);
+  transform: translateY(-2px);
+}
+
+/* Кнопки */
+.button-primary {
+  background-color: var(--color-primary);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--button-radius);
+  padding: var(--button-padding);
+  font-weight: var(--button-font-weight);
+  font-size: var(--font-size-base);
+  cursor: pointer;
+  transition: var(--button-transition);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  min-height: 44px;
+}
+
+.button-primary:hover {
+  background-color: var(--color-secondary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(108, 99, 255, 0.3);
+}
+
+.button-primary:active {
+  transform: translateY(0);
+}
+
+.button-secondary {
+  background-color: transparent;
+  color: var(--color-primary);
+  border: 2px solid var(--color-primary);
+  border-radius: var(--button-radius);
+  padding: calc(var(--button-padding) - 2px);
+  font-weight: var(--button-font-weight);
+  font-size: var(--font-size-base);
+  cursor: pointer;
+  transition: var(--button-transition);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  min-height: 44px;
+}
+
+.button-secondary:hover {
+  background-color: var(--color-primary);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+/* Типографика */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: var(--spacing-md);
+  color: var(--color-text-primary);
+}
+
+h1 { font-size: var(--font-size-4xl); }
+h2 { font-size: var(--font-size-3xl); }
+h3 { font-size: var(--font-size-2xl); }
+h4 { font-size: var(--font-size-xl); }
+h5 { font-size: var(--font-size-lg); }
+h6 { font-size: var(--font-size-base); }
+
+p {
+  margin-bottom: var(--spacing-md);
+  color: var(--color-text-secondary);
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: var(--transition-fast);
+}
+
+
+/* Утилиты */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+.mb-0 { margin-bottom: 0; }
+.mb-1 { margin-bottom: var(--spacing-xs); }
+.mb-2 { margin-bottom: var(--spacing-sm); }
+.mb-3 { margin-bottom: var(--spacing-md); }
+.mb-4 { margin-bottom: var(--spacing-lg); }
+.mb-5 { margin-bottom: var(--spacing-xl); }
+
+.mt-0 { margin-top: 0; }
+.mt-1 { margin-top: var(--spacing-xs); }
+.mt-2 { margin-top: var(--spacing-sm); }
+.mt-3 { margin-top: var(--spacing-md); }
+.mt-4 { margin-top: var(--spacing-lg); }
+.mt-5 { margin-top: var(--spacing-xl); }
+
+/* Сетка */
+.grid {
+  display: grid;
+  gap: var(--spacing-lg);
+}
+
+.grid-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+@media (max-width: 768px) {
+  .grid-2,
+  .grid-3,
+  .grid-4 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Статусы */
+.status-completed {
+  color: var(--color-success);
+  background-color: rgba(40, 167, 69, 0.1);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: 4px;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.status-in_progress {
+  color: var(--color-warning);
+  background-color: rgba(255, 193, 7, 0.1);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: 4px;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.status-planned {
+  color: var(--color-info);
+  background-color: rgba(23, 162, 184, 0.1);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: 4px;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+/* Загрузка */
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Скрытие элементов */
+.hidden {
+  display: none !important;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

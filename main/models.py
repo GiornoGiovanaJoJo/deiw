@@ -360,3 +360,86 @@ class ElementSettings(models.Model):
             styles.append(self.custom_css)
         
         return ' '.join(styles)
+
+
+# ========== МОДЕЛИ ДЛЯ АДМИНКИ /adminka ==========
+
+class Category(models.Model):
+    """Категории проектов"""
+    name = models.CharField('Название (RU)', max_length=100, blank=True)
+    name_en = models.CharField('Название (EN)', max_length=100, blank=True)
+    name_de = models.CharField('Название (DE)', max_length=100, blank=True)
+    created_at = models.DateTimeField('Дата создания', auto_now_add=True)
+    
+    class Meta:
+        verbose_name = 'Категория'
+        verbose_name_plural = 'Категории'
+        db_table = 'categories'
+    
+    def __str__(self):
+        return self.name_de or self.name_en or self.name or f'Категория #{self.pk}'
+
+
+class AdminProject(models.Model):
+    """Проекты для админки"""
+    STATUS_CHOICES = [
+        ('planned', 'Запланирован'),
+        ('in_progress', 'В работе'),
+        ('completed', 'Завершен'),
+    ]
+    
+    project_code = models.CharField('Код проекта', max_length=50, unique=True)
+    name = models.CharField('Название', max_length=255)
+    description = models.TextField('Описание', blank=True)
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Категория')
+    status = models.CharField('Статус', max_length=20, choices=STATUS_CHOICES, default='planned')
+    year = models.IntegerField('Год', null=True, blank=True)
+    type = models.CharField('Тип', max_length=100, blank=True)
+    size = models.CharField('Размер', max_length=100, blank=True)
+    color = models.CharField('Цвет', max_length=50, blank=True)
+    end_date = models.DateField('Дата окончания', null=True, blank=True)
+    created_at = models.DateTimeField('Дата создания', auto_now_add=True)
+    updated_at = models.DateTimeField('Дата обновления', auto_now=True)
+    
+    class Meta:
+        verbose_name = 'Проект (админка)'
+        verbose_name_plural = 'Проекты (админка)'
+        db_table = 'projects'
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f'{self.project_code} - {self.name}'
+
+
+class ContactRequest(models.Model):
+    """Заявки в поддержку"""
+    REASON_CHOICES = [
+        ('project', 'Проект'),
+        ('consult', 'Консультация'),
+        ('other', 'Другое'),
+    ]
+    
+    STATUS_CHOICES = [
+        ('new', 'Новая'),
+        ('in_progress', 'В процессе'),
+        ('closed', 'Закрыта'),
+    ]
+    
+    name = models.CharField('Имя', max_length=100)
+    phone = models.CharField('Телефон', max_length=20)
+    email = models.EmailField('Email', max_length=100)
+    reason = models.CharField('Причина обращения', max_length=20, choices=REASON_CHOICES)
+    message = models.TextField('Сообщение', blank=True)
+    created_at = models.DateTimeField('Дата создания', auto_now_add=True)
+    status = models.CharField('Статус', max_length=20, choices=STATUS_CHOICES, default='new')
+    message_admin = models.TextField('Ответ администратора', blank=True)
+    admin_id = models.IntegerField('ID администратора', null=True, blank=True)
+    
+    class Meta:
+        verbose_name = 'Заявка в поддержку'
+        verbose_name_plural = 'Заявки в поддержку'
+        db_table = 'contact_requests'
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f'{self.name} - {self.email} ({self.get_status_display()})'

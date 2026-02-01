@@ -1,0 +1,9 @@
+{% load static %}
+<nav id="adminSidebar" class="admin-sidebar">
+  <ul>
+    <li><a href="{% url 'main:adminka_dashboard' %}" class="{% if request.resolver_match.url_name == 'adminka_dashboard' %}active{% endif %}" data-i18n="sidebar.dashboard">Панель управления</a></li>
+    <li><a href="{% url 'main:adminka_projects' %}" class="{% if 'project' in request.resolver_match.url_name %}active{% endif %}" data-i18n="sidebar.projects">Проекты</a></li>
+    <li><a href="{% url 'main:adminka_categories' %}" class="{% if 'categor' in request.resolver_match.url_name %}active{% endif %}" data-i18n="sidebar.categories">Категории</a></li>
+    <li><a href="{% url 'main:adminka_support' %}" class="{% if 'support' in request.resolver_match.url_name %}active{% endif %}" data-i18n="sidebar.support">Поддержка</a></li>
+  </ul>
+</nav>

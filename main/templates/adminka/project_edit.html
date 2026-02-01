@@ -1,0 +1,111 @@
+{% extends 'adminka/base.html' %}
+{% load static %}
+
+{% block title %}Редактировать проект - Empire Premium{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'adminka/css/pages/project-edit.css' %}" />
+{% endblock %}
+
+{% block content %}
+<main class="dashboard">
+    <div class="page-actions" data-aos="fade-up">
+        <h1 data-i18n="projects.edit.title">Редактировать проект</h1>
+        <a href="{% url 'main:adminka_projects' %}" class="btn-secondary">
+            <span><i class="fa-solid fa-arrow-left"></i></span>
+            <span data-i18n="projects.back">Назад к списку</span>
+        </a>
+    </div>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="form-message {% if message.tags %}{{ message.tags }}{% endif %}" style="margin-bottom: 1rem;">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <div class="card" data-aos="fade-up" data-aos-delay="200">
+        <form method="POST" class="project-form">
+            {% csrf_token %}
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="project_code">Код проекта *</label>
+                    <input type="text" id="project_code" name="project_code" required value="{{ project.project_code }}">
+                </div>
+                
+                <div class="form-group">
+                    <label for="name">Название проекта *</label>
+                    <input type="text" id="name" name="name" required value="{{ project.name }}">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Описание</label>
+                <textarea id="description" name="description" rows="4">{{ project.description }}</textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="category">Категория</label>
+                    <select id="category" name="category">
+                        <option value="">Выберите категорию</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat.id }}" {% if project.category_id == cat.id %}selected{% endif %}>{{ cat.name_de }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="status">Статус *</label>
+                    <select id="status" name="status" required>
+                        <option value="planned" {% if project.status == 'planned' %}selected{% endif %}>Запланирован</option>
+                        <option value="in_progress" {% if project.status == 'in_progress' %}selected{% endif %}>В работе</option>
+                        <option value="completed" {% if project.status == 'completed' %}selected{% endif %}>Завершен</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="year">Год</label>
+                    <input type="number" id="year" name="year" value="{{ project.year|default:'' }}" min="2000" max="2100">
+                </div>
+
+                <div class="form-group">
+                    <label for="type">Тип</label>
+                    <input type="text" id="type" name="type" value="{{ project.type }}">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="size">Размер</label>
+                    <input type="text" id="size" name="size" value="{{ project.size }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="color">Цвет</label>
+                    <input type="color" id="color" name="color" value="{{ project.color|default:'#D4AF37' }}">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="end_date">Дата окончания</label>
+                <input type="date" id="end_date" name="end_date" value="{{ project.end_date|date:'Y-m-d' }}">
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">
+                    <span><i class="fa-solid fa-save"></i></span>
+                    <span>Сохранить изменения</span>
+                </button>
+                <a href="{% url 'main:adminka_projects' %}" class="btn-secondary">
+                    <span>Отмена</span>
+                </a>
+            </div>
+        </form>
+    </div>
+</main>
+{% endblock %}

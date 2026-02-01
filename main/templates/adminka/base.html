@@ -1,0 +1,43 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Empire Premium - Админка{% endblock %}</title>
+    
+    <!-- Font Awesome -->
+    <link href="https://use.fontawesome.com/releases/v6.5.1/css/all.css" rel="stylesheet">
+    
+    <!-- AOS Animation -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'adminka/css/themes/light.css' %}" />
+    <link rel="stylesheet" href="{% static 'adminka/css/themes/dark.css' %}" />
+    <link rel="stylesheet" href="{% static 'adminka/css/components/header.css' %}" />
+    <link rel="stylesheet" href="{% static 'adminka/css/components/sidebar.css' %}" />
+    <link rel="stylesheet" href="{% static 'adminka/css/components/theme-switcher.css' %}" />
+    <link rel="stylesheet" href="{% static 'adminka/css/components/language-switcher.css' %}" />
+    <link rel="stylesheet" href="{% static 'adminka/css/forms.css' %}" />
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    {% if user.is_authenticated and user.is_staff %}
+        {% include 'adminka/components/header.html' %}
+        {% include 'adminka/components/sidebar.html' %}
+    {% endif %}
+    
+    {% block content %}{% endblock %}
+    
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script src="{% static 'adminka/js/admin.js' %}"></script>
+    <script src="{% static 'adminka/js/components/sidebar.js' %}"></script>
+    <script src="{% static 'adminka/js/components/theme-switcher.js' %}"></script>
+    <script src="{% static 'adminka/js/components/language-switcher.js' %}"></script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

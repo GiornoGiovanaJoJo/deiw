@@ -1,0 +1,220 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    background: var(--color-background);
+}
+
+/* Логотип */
+
+  /* волна  */
+  .logo {
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    width: 185px;
+}
+.logo:hover {
+    text-decoration: none;
+}
+.logo-text {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+}
+
+.logo-premium {
+    font-size: 1.5rem;
+    font-weight: 300;
+    color: var(--color-primary);
+    display: inline-flex;
+    align-items: center; /* Выравнивание по центру */
+    height: 2.1rem; /* Фиксированная высота, равная максимальному размеру шрифта */
+}
+
+.wave-letter {
+    display: inline-block;
+    font-size: 1.5rem;
+    transition: font-size 0.35s cubic-bezier(.4,2,.6,1);
+    will-change: font-size;
+    line-height: 1;
+    transform-origin: center; /* Центр трансформации */
+}
+
+/* Анимация волны с сохранением позиции */
+@keyframes fontWave {
+    0%, 100% { 
+        font-size: 1.5rem;
+        transform: translateY(0);
+    }
+    50% { 
+        font-size: 2.1rem;
+        transform: translateY(calc((1.5rem - 2.1rem) / 2)); /* Компенсация смещения */
+    }
+}
+
+/* Задержки для каждой буквы */
+.logo-premium .wave-letter:nth-child(1) { animation-delay: 0.00s; }
+.logo-premium .wave-letter:nth-child(2) { animation-delay: 0.07s; }
+.logo-premium .wave-letter:nth-child(3) { animation-delay: 0.14s; }
+.logo-premium .wave-letter:nth-child(4) { animation-delay: 0.21s; }
+.logo-premium .wave-letter:nth-child(5) { animation-delay: 0.28s; }
+.logo-premium .wave-letter:nth-child(6) { animation-delay: 0.35s; }
+.logo-premium .wave-letter:nth-child(7) { animation-delay: 0.42s; }
+
+.wave-letter.animate {
+    animation: fontWave 0.7s cubic-bezier(.4,2,.6,1) 1;
+}
+/* волна закончилась */
+  
+
+.auth-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: var(--color-background);
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 480px;
+    background: var(--color-surface);
+    border-radius: 16px;
+    padding: 2.5rem;
+    box-shadow: 0 4px 24px var(--color-shadow);
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.auth-logo {
+    display: inline-block;
+    text-decoration: none;
+    margin-bottom: 1.5rem;
+}
+
+.logo-main {
+    color: var(--color-text-primary);
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+
+
+.auth-title {
+    font-size: 1.75rem;
+    color: var(--color-text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.auth-subtitle {
+    color: var(--color-text-secondary);
+    font-size: 1rem;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    color: var(--color-text-primary);
+    font-weight: 500;
+}
+
+.password-input {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: var(--color-text-muted);
+}
+
+.toggle-password:hover {
+    color: var(--color-text-primary);
+}
+
+.checkbox-group {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 2px solid var(--color-border);
+    cursor: pointer;
+}
+
+.forgot-password {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
+}
+
+
+.auth-links {
+    text-align: center;
+    margin-top: 1.5rem;
+    color: var(--color-text-secondary);
+}
+
+.auth-links a {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: 500;
+    margin-left: 0.5rem;
+}
+
+.auth-links a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+    .auth-card {
+        padding: 1.5rem;
+    }
+
+    .auth-title {
+        font-size: 1.5rem;
+    }
+
+    .checkbox-group {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+}

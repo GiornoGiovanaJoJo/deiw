@@ -1,0 +1,107 @@
+
+
+
+  
+  .admin-sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .admin-sidebar li {
+    margin-bottom: 1rem;
+  }
+  
+  .admin-sidebar li:last-child {
+    margin-bottom: 0;
+  }
+  
+  .admin-sidebar a {
+    display: block;
+    padding: 0.6rem 1rem;
+    border-radius: 10px;
+    color: var(--color-text-primary);
+    text-decoration: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-weight: 500;
+  }
+  
+  .admin-sidebar a:hover {
+    background-color: var(--color-primary);
+    color: #fff;
+  }
+  
+  .admin-sidebar a.active {
+    color: var(--color-primary);
+    font-weight: 700;
+    background-color: rgba(108, 99, 255, 0.15);
+  }
+
+/* Сайдбар - базовый стиль для десктопа */
+.admin-sidebar {
+    position: fixed;
+    top: 115px;
+    left: 20px;
+    width: 220px;
+    bottom: 20px;
+    background-color: var(--color-surface);
+    border-radius: 15px;
+    box-shadow: 0 4px 12px var(--color-shadow);
+    padding: 1rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow-y: auto;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    z-index: 1000;
+    transform: translateX(-115%);
+  }
+
+  /* Когда сайдбар открыт */
+  .admin-sidebar.open {
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  /* Когда сайдбар закрыт на десктопе */
+  body.sidebar-closed main.dashboard {
+    margin-left: 0px; /* убираем отступ под сайдбар */
+  }
+  
+  /* Кнопка переключения сайдбара */
+ 
+/* Мобильная адаптация */
+@media (max-width: 767px) {
+    /* Сайдбар скрыт по умолчанию */
+    .admin-sidebar {
+      position: fixed;
+      top: 92px;
+      left: 0;
+      width: 250px;
+      height: calc(100% - 60px);
+      border-radius: 0 0 15px 0;
+      box-shadow: 2px 0 12px var(--color-shadow);
+      transform: translateX(-100%);
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      z-index: 1100;
+    }
+  
+    /* Когда сайдбар открыт */
+    .admin-sidebar.open {
+      transform: translateX(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+  
+    /* Кнопка переключения видна */
+    #sidebarToggle {
+      display: flex;
+    }
+  
+    /* Чтобы основной контент не перекрывался сайдбаром */
+    main.dashboard {
+      margin-left: 20px !important;
+      padding: 1rem;
+    }
+  }

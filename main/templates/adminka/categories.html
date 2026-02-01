@@ -1,0 +1,123 @@
+{% extends 'adminka/base.html' %}
+{% load static %}
+
+{% block title %}Категории - Empire Premium{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'adminka/css/pages/categories.css' %}" />
+{% endblock %}
+
+{% block content %}
+<main class="dashboard">
+    <div class="page-actions" data-aos="fade-up">
+        <h1 data-i18n="categories.title">Категории</h1>
+    </div>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="form-message {% if message.tags %}{{ message.tags }}{% endif %}" style="margin-bottom: 1rem;">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <!-- Форма добавления категории -->
+    <div class="card" data-aos="fade-up" data-aos-delay="100">
+        <h2>Добавить новую категорию</h2>
+        <form method="POST" class="category-form">
+            {% csrf_token %}
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="name">Название (RU)</label>
+                    <input type="text" id="name" name="name" placeholder="Русское название">
+                </div>
+                <div class="form-group">
+                    <label for="name_en">Название (EN)</label>
+                    <input type="text" id="name_en" name="name_en" placeholder="English name">
+                </div>
+                <div class="form-group">
+                    <label for="name_de">Название (DE) *</label>
+                    <input type="text" id="name_de" name="name_de" required placeholder="Deutscher Name">
+                </div>
+            </div>
+            <button type="submit" class="btn-primary">
+                <span><i class="fa-solid fa-plus"></i></span>
+                <span>Добавить категорию</span>
+            </button>
+        </form>
+    </div>
+
+    <!-- Список категорий -->
+    {% if categories %}
+    <div class="card categories-card" data-aos="fade-up" data-aos-delay="200">
+        <h2>Список категорий</h2>
+        <table class="categories-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Название (RU)</th>
+                    <th>Название (EN)</th>
+                    <th>Название (DE)</th>
+                    <th>Дата создания</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cat in categories %}
+                <tr id="category-row-{{ cat.id }}">
+                    <td>{{ cat.id }}</td>
+                    <td>{{ cat.name|default:"-" }}</td>
+                    <td>{{ cat.name_en|default:"-" }}</td>
+                    <td>{{ cat.name_de|default:"-" }}</td>
+                    <td>{{ cat.created_at|date:"d.m.Y H:i" }}</td>
+                    <td>
+                        <button class="btn-primary danger actions" onclick="deleteCategory({{ cat.id }})" style="padding: 0.25rem 0.5rem; font-weight: 500;">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="card" style="text-align: center; padding: 3rem;">
+        <h3>Категории не найдены</h3>
+        <p>Добавьте первую категорию, используя форму выше</p>
+    </div>
+    {% endif %}
+</main>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'adminka/js/pages/categories.js' %}"></script>
+<script>
+// Функция удаления категории через AJAX
+function deleteCategory(categoryId) {
+    if (!confirm('Вы уверены, что хотите удалить эту категорию?')) {
+        return;
+    }
+    
+    fetch(`/adminka/categories/${categoryId}/delete/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            document.getElementById(`category-row-${categoryId}`).remove();
+        } else {
+            alert('Ошибка: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Произошла ошибка при удалении категории');
+    });
+}
+</script>
+{% endblock %}
