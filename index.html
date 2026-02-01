@@ -621,26 +621,17 @@
     @media (max-width: 1023px) { .features__wrap { gap: 60px; } }
     .features__text { max-width: min(685px, 100%); width: 100%; }
     .features__grid {
-      display: grid;
+      display: flex;
+      flex-direction: column;
       gap: var(--spacing-md);
-      grid-template-columns: repeat(3, 1fr);
       max-width: 100%;
       min-width: 0;
     }
-    @media (max-width: 1023px) {
-      .features__grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-    @media (max-width: 767px) {
-      .features__grid {
-        grid-template-columns: 1fr;
-      }
-    }
-    @media (min-width: 1024px) {
-      .features__grid {
-        justify-self: end;
-      }
+    @media (min-width: 1024px) { .features__grid { justify-self: end; } }
+    .features__grid {
+      display: grid;
+      gap: var(--spacing-md);
+      grid-template-columns: 1fr;
     }
     .feature-card {
       padding: var(--spacing-lg);
