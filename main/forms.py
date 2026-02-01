@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django import forms
-from .models import SiteSettings, HeroCarouselImage, Service, Project, DesignSettings
+from .models import SiteSettings, HeroCarouselImage, Service, Project, DesignSettings, ElementSettings
 
 
 def set_image_from_upload(instance, field_data, field_type, field_name, uploaded_file):
@@ -146,3 +146,117 @@ class DesignSettingsForm(forms.ModelForm):
                           'text_light', 'text_muted']:
             if field_name in self.fields:
                 self.fields[field_name].widget.attrs.update({'class': 'color-picker'})
+
+
+class ElementSettingsForm(forms.ModelForm):
+    """Форма для редактирования настроек отдельного элемента."""
+    
+    # Поле для быстрого выбора популярных HTML тегов
+    html_tag = forms.ChoiceField(
+        label='HTML тег (быстрый выбор)',
+        required=False,
+        choices=[
+            ('', '--- Выберите тег или укажите селектор вручную ---'),
+            ('', '────────── Заголовки ──────────'),
+            ('h1', 'h1 - Заголовок 1'),
+            ('h2', 'h2 - Заголовок 2'),
+            ('h3', 'h3 - Заголовок 3'),
+            ('h4', 'h4 - Заголовок 4'),
+            ('h5', 'h5 - Заголовок 5'),
+            ('h6', 'h6 - Заголовок 6'),
+            ('', '────────── Текст ──────────'),
+            ('p', 'p - Параграф'),
+            ('span', 'span - Строковый элемент'),
+            ('a', 'a - Ссылка'),
+            ('strong', 'strong - Жирный текст'),
+            ('em', 'em - Курсив'),
+            ('', '────────── Структура ──────────'),
+            ('header', 'header - Шапка'),
+            ('footer', 'footer - Подвал'),
+            ('section', 'section - Секция'),
+            ('nav', 'nav - Навигация'),
+            ('main', 'main - Основной контент'),
+            ('article', 'article - Статья'),
+            ('aside', 'aside - Боковая панель'),
+            ('div', 'div - Блочный элемент'),
+            ('', '────────── Формы ──────────'),
+            ('button', 'button - Кнопка'),
+            ('input', 'input - Поле ввода'),
+            ('textarea', 'textarea - Текстовая область'),
+            ('label', 'label - Метка поля'),
+            ('select', 'select - Выпадающий список'),
+            ('', '────────── Списки ──────────'),
+            ('ul', 'ul - Маркированный список'),
+            ('ol', 'ol - Нумерованный список'),
+            ('li', 'li - Элемент списка'),
+            ('', '────────── Медиа ──────────'),
+            ('img', 'img - Изображение'),
+            ('video', 'video - Видео'),
+            ('', '────────── Таблицы ──────────'),
+            ('table', 'table - Таблица'),
+            ('tr', 'tr - Строка таблицы'),
+            ('td', 'td - Ячейка таблицы'),
+            ('th', 'th - Заголовок ячейки'),
+        ],
+        help_text='Выберите HTML тег для быстрой настройки (автоматически заполнит селектор). Или укажите CSS селектор вручную ниже.'
+    )
+    
+    class Meta:
+        model = ElementSettings
+        fields = '__all__'
+        widgets = {
+            'color': forms.TextInput(attrs={'type': 'color', 'style': 'width: 100px; height: 40px;'}),
+            'background_color': forms.TextInput(attrs={'type': 'color', 'style': 'width: 100px; height: 40px;'}),
+            'custom_css': forms.Textarea(attrs={'rows': 4, 'style': 'font-family: monospace;'}),
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Если это существующий объект и селектор - это HTML тег, установим html_tag
+        if self.instance.pk and self.instance.css_selector:
+            selector = self.instance.css_selector.strip()
+            # Проверяем, является ли селектор простым HTML тегом
+            if selector and not selector.startswith('.') and not selector.startswith('#'):
+                # Популярные HTML теги
+                html_tags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'span', 'a', 'header', 
+                           'footer', 'section', 'nav', 'main', 'article', 'div', 'button', 
+                           'ul', 'ol', 'li', 'img', 'input', 'textarea']
+                if selector in html_tags:
+                    self.fields['html_tag'].initial = selector
+        
+        # Делаем CSS селектор обязательным только при создании
+        if not self.instance.pk:
+            self.fields['css_selector'].required = False  # Будет заполнено из html_tag или вручную
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        html_tag = cleaned_data.get('html_tag')
+        css_selector = cleaned_data.get('css_selector')
+        selector_type = cleaned_data.get('selector_type')
+        
+        # Если выбран HTML тег (и это не пустая строка-разделитель), автоматически заполняем селектор
+        if html_tag and html_tag.strip() and not css_selector:
+            cleaned_data['css_selector'] = html_tag
+            cleaned_data['selector_type'] = 'tag'
+        elif html_tag and html_tag.strip() and css_selector != html_tag:
+            # Если выбран тег, но селектор другой, обновляем селектор
+            cleaned_data['css_selector'] = html_tag
+            cleaned_data['selector_type'] = 'tag'
+        
+        # Автоматически определяем тип селектора, если не указан
+        if css_selector and not selector_type:
+            if css_selector.startswith('.'):
+                cleaned_data['selector_type'] = 'class'
+            elif css_selector.startswith('#'):
+                cleaned_data['selector_type'] = 'id'
+            elif css_selector in ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'span', 'a', 
+                                 'header', 'footer', 'section', 'nav', 'main', 'article', 
+                                 'div', 'button', 'ul', 'ol', 'li', 'img', 'input', 'textarea']:
+                cleaned_data['selector_type'] = 'tag'
+            else:
+                cleaned_data['selector_type'] = 'custom'
+        
+        if not cleaned_data.get('css_selector'):
+            raise forms.ValidationError('Необходимо указать CSS селектор или выбрать HTML тег.')
+        
+        return cleaned_data

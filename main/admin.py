@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 from django.urls import reverse
-from .models import SiteSettings, HeroCarouselImage, Service, Project, DesignSettings
-from .forms import SiteSettingsForm, HeroCarouselImageForm, ServiceForm, ProjectForm, DesignSettingsForm
+from .models import SiteSettings, HeroCarouselImage, Service, Project, DesignSettings, ElementSettings
+from .forms import SiteSettingsForm, HeroCarouselImageForm, ServiceForm, ProjectForm, DesignSettingsForm, ElementSettingsForm
 
 
 class MultipartFormAdminMixin:
@@ -140,3 +140,76 @@ class DesignSettingsAdmin(admin.ModelAdmin):
     
     def has_delete_permission(self, request, obj=None):
         return False
+
+
+@admin.register(ElementSettings)
+class ElementSettingsAdmin(admin.ModelAdmin):
+    form = ElementSettingsForm
+    list_display = ['element_name', 'selector_type', 'css_selector', 'order', 'is_active', 'preview_css']
+    list_editable = ['order', 'is_active']
+    list_filter = ['is_active', 'position', 'selector_type']
+    search_fields = ['element_name', 'css_selector']
+    ordering = ['order', 'element_name']
+    
+    fieldsets = (
+        ('Основная информация', {
+            'fields': ('element_name', 'html_tag', 'selector_type', 'css_selector', 'order', 'is_active'),
+            'description': 'Выберите HTML тег из списка для быстрой настройки, или укажите CSS селектор вручную (например: .hero__title, #hero-title, h1, p, span, header, footer и т.д.)',
+        }),
+        ('Шрифт', {
+            'fields': (
+                ('font_size', 'font_size_min', 'font_size_max'),
+                ('font_weight', 'line_height', 'letter_spacing'),
+            ),
+        }),
+        ('Отступы (Margin)', {
+            'fields': (
+                ('margin_top', 'margin_bottom'),
+                ('margin_left', 'margin_right'),
+            ),
+            'classes': ('collapse',),
+        }),
+        ('Внутренние отступы (Padding)', {
+            'fields': (
+                ('padding_top', 'padding_bottom'),
+                ('padding_left', 'padding_right'),
+            ),
+            'classes': ('collapse',),
+        }),
+        ('Позиционирование', {
+            'fields': (
+                'position',
+                ('top', 'left'),
+                ('right', 'bottom'),
+                'z_index',
+            ),
+            'classes': ('collapse',),
+        }),
+        ('Размеры', {
+            'fields': (
+                ('width', 'max_width', 'min_width'),
+                ('height', 'max_height', 'min_height'),
+            ),
+            'classes': ('collapse',),
+        }),
+        ('Цвета', {
+            'fields': ('color', 'background_color'),
+        }),
+        ('Выравнивание', {
+            'fields': ('text_align',),
+        }),
+        ('Дополнительный CSS', {
+            'fields': ('custom_css',),
+            'description': 'Любые дополнительные CSS свойства. Например: transform: scale(1.1); border-radius: 10px;',
+        }),
+    )
+    
+    def preview_css(self, obj):
+        """Показывает предпросмотр CSS стилей."""
+        if obj.is_active and obj.get_css_style():
+            css = obj.get_css_style()
+            if len(css) > 100:
+                css = css[:100] + '...'
+            return mark_safe(f'<code style="font-size: 11px; background: #f0f0f0; padding: 2px 4px; border-radius: 3px;">{css}</code>')
+        return '—'
+    preview_css.short_description = 'CSS стили'

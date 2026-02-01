@@ -63,6 +63,13 @@
       --button-padding-v: {{ design_settings.button_padding_v|default:12 }}px;
     }
 
+    /* ========== ДИНАМИЧЕСКИЕ СТИЛИ ДЛЯ ЭЛЕМЕНТОВ ИЗ АДМИНКИ ========== */
+    {% for element in element_settings %}
+    {{ element.css_selector }} {
+      {{ element.get_css_style|safe }}
+    }
+    {% endfor %}
+
     /* ========== RESET & BASE ========== */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html {
