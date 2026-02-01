@@ -1,6 +1,7 @@
 {% load static %}
+{% load i18n %}
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="{{ LANGUAGE_CODE|default:'ru' }}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1156,6 +1157,11 @@
       transition: border-color var(--transition), background var(--transition);
     }
     .footer__lang-btn:hover { border-color: var(--accent-purple); background: rgba(124, 58, 237, 0.06); }
+    .footer__lang-btn.active { 
+      border-color: var(--accent-purple); 
+      background: var(--accent-purple); 
+      color: var(--white); 
+    }
     .footer__social--top { margin-top: var(--spacing-sm); }
     .footer__legal {
       display: flex;
@@ -1494,6 +1500,7 @@
             <button type="button" class="footer__form-tab" data-tab="review" role="tab" aria-selected="false">Отзыв</button>
           </div>
           <form class="footer__form" id="footerForm" novalidate>
+            {% csrf_token %}
             <input type="text" class="footer__input" name="name" placeholder="Имя" required aria-label="Имя">
             <input type="tel" class="footer__input" name="phone" placeholder="Телефон" required aria-label="Телефон">
             <input type="email" class="footer__input" name="email" placeholder="Email" required aria-label="Email">
@@ -1515,9 +1522,9 @@
               </div>
               <p class="footer__lang-label">Доступные языки:</p>
               <div class="footer__lang">
-                <button type="button" class="footer__lang-btn" aria-label="Deutsch">DE</button>
-                <button type="button" class="footer__lang-btn" aria-label="English">EN</button>
-                <button type="button" class="footer__lang-btn" aria-label="Русский">RU</button>
+                <button type="button" class="footer__lang-btn{% if LANGUAGE_CODE == 'de' %} active{% endif %}" data-lang="de" aria-label="Deutsch">DE</button>
+                <button type="button" class="footer__lang-btn{% if LANGUAGE_CODE == 'en' %} active{% endif %}" data-lang="en" aria-label="English">EN</button>
+                <button type="button" class="footer__lang-btn{% if LANGUAGE_CODE == 'ru' or not LANGUAGE_CODE %} active{% endif %}" data-lang="ru" aria-label="Русский">RU</button>
               </div>
             </div>
             <div class="footer__col">
@@ -1817,6 +1824,73 @@
       document.querySelectorAll('.feature-card, .service-card, .project-card').forEach(function(card) {
         card.addEventListener('mouseenter', function() {
           this.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+        });
+      });
+
+      // ----- Переключение языка -----
+      document.querySelectorAll('.footer__lang-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var lang = this.getAttribute('data-lang');
+          if (!lang) return;
+          
+          // Получаем CSRF токен
+          function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+              var cookies = document.cookie.split(';');
+              for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+                }
+              }
+            }
+            return cookieValue;
+          }
+          
+          var csrfToken = getCookie('csrftoken');
+          if (!csrfToken) {
+            // Пытаемся получить из формы
+            var csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
+            if (csrfInput) csrfToken = csrfInput.value;
+          }
+          
+          if (!csrfToken) {
+            console.error('CSRF token not found');
+            return;
+          }
+          
+          // Создаем форму для отправки языка
+          var form = document.createElement('form');
+          form.method = 'POST';
+          form.action = '/i18n/setlang/';
+          form.style.display = 'none';
+          
+          // Добавляем CSRF токен
+          var csrfInput = document.createElement('input');
+          csrfInput.type = 'hidden';
+          csrfInput.name = 'csrfmiddlewaretoken';
+          csrfInput.value = csrfToken;
+          form.appendChild(csrfInput);
+          
+          // Добавляем поле языка
+          var langInput = document.createElement('input');
+          langInput.type = 'hidden';
+          langInput.name = 'language';
+          langInput.value = lang;
+          form.appendChild(langInput);
+          
+          // Добавляем поле next (куда вернуться после переключения)
+          var nextInput = document.createElement('input');
+          nextInput.type = 'hidden';
+          nextInput.name = 'next';
+          nextInput.value = window.location.pathname + window.location.search + window.location.hash;
+          form.appendChild(nextInput);
+          
+          // Добавляем форму на страницу и отправляем
+          document.body.appendChild(form);
+          form.submit();
         });
       });
     })();

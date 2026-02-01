@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator
 from django.http import HttpResponse
+from django.utils import translation
 from .models import SiteSettings, HeroCarouselImage, Service, Project, DesignSettings, ElementSettings
 
 _MODEL_MAP = {
@@ -30,6 +31,7 @@ def home(request):
         'services': services,
         'page_obj': page_obj,
         'projects': page_obj.object_list,
+        'LANGUAGE_CODE': translation.get_language(),
     }
     return render(request, 'index.html', context)
 
