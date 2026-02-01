@@ -1,0 +1,201 @@
+# Django translations for English
+# Copyright (C) 2026
+# This file is distributed under the same license as the Django project.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Основная навигация"
+msgstr "Main Navigation"
+
+msgid "О нас"
+msgstr "About Us"
+
+msgid "Услуги"
+msgstr "Services"
+
+msgid "Проекты"
+msgstr "Projects"
+
+msgid "Контакты"
+msgstr "Contact"
+
+msgid "Оставить заявку"
+msgstr "Submit Request"
+
+msgid "Войти"
+msgstr "Login"
+
+msgid "Язык"
+msgstr "Language"
+
+msgid "Открыть меню"
+msgstr "Open Menu"
+
+msgid "Мобильная навигация"
+msgstr "Mobile Navigation"
+
+msgid "строим ваше будущее!"
+msgstr "building your future!"
+
+msgid "Поддержка клиентов на каждом этапе: от концепции и планирования до сдачи объекта «под ключ». Качество, надёжность и современные решения."
+msgstr "Customer support at every stage: from concept and planning to turnkey delivery. Quality, reliability and modern solutions."
+
+msgid "Лет на рынке"
+msgstr "Years in Market"
+
+msgid "Реализованных проектов"
+msgstr "Completed Projects"
+
+msgid "Термины и годы"
+msgstr "Terms and Years"
+
+msgid "Прокрутить вниз"
+msgstr "Scroll Down"
+
+msgid "Вниз"
+msgstr "Down"
+
+msgid "Мы поддерживаем наших клиентов на каждом этапе: от первоначальной концепции и планирования до сдачи объекта «под ключ»"
+msgstr "We support our clients at every stage: from initial concept and planning to turnkey delivery"
+
+msgid "Качество, надёжность и индивидуальный подход — основа нашей работы. Строим долгосрочные отношения с каждым клиентом."
+msgstr "Quality, reliability and individual approach are the foundation of our work. We build long-term relationships with each client."
+
+msgid "Поддержание качества"
+msgstr "Quality Assurance"
+
+msgid "Строгий контроль на всех этапах. Гарантия долговечности и соответствия стандартам."
+msgstr "Strict control at all stages. Guarantee of durability and compliance with standards."
+
+msgid "Инновационные решения"
+msgstr "Innovative Solutions"
+
+msgid "Современные технологии и материалы. Энергоэффективность и комфорт."
+msgstr "Modern technologies and materials. Energy efficiency and comfort."
+
+msgid "Комплексные проекты"
+msgstr "Comprehensive Projects"
+
+msgid "От проектирования до сдачи. Один подрядчик — полная ответственность."
+msgstr "From design to delivery. One contractor — full responsibility."
+
+msgid "Наши услуги"
+msgstr "Our Services"
+
+msgid "Какие наши услуги вам подходят?"
+msgstr "Which of our services suit you?"
+
+msgid "Описание услуги"
+msgstr "Service Description"
+
+msgid "Малярные работы"
+msgstr "Painting Works"
+
+msgid "Внутренняя и внешняя покраска"
+msgstr "Interior and Exterior Painting"
+
+msgid "Декоративная штукатурка"
+msgstr "Decorative Plaster"
+
+msgid "Поклейка обоев"
+msgstr "Wallpaper Installation"
+
+msgid "Обработка поверхностей"
+msgstr "Surface Treatment"
+
+msgid "Наши проекты"
+msgstr "Our Projects"
+
+msgid "Современные решения, комфорт и стиль"
+msgstr "Modern solutions, comfort and style"
+
+msgid "Подробнее узнать"
+msgstr "Learn More"
+
+msgid "Солнечные панели"
+msgstr "Solar Panels"
+
+msgid "Установка солнечных панелей"
+msgstr "Solar Panel Installation"
+
+msgid "Энергоэффективный дом с автономным электроснабжением. Современные панели и инверторы."
+msgstr "Energy-efficient house with autonomous power supply. Modern panels and inverters."
+
+msgid "У вас есть вопросы, предложения или нужна помощь с вашим проектом?"
+msgstr "Do you have questions, suggestions or need help with your project?"
+
+msgid "Свяжитесь с нами — ответим в течение 15 минут и обсудим вашу задачу."
+msgstr "Contact us — we will respond within 15 minutes and discuss your task."
+
+msgid "Связаться с нами"
+msgstr "Contact Us"
+
+msgid "Ваш партнёр по строительству"
+msgstr "Your Construction Partner"
+
+msgid "Заполните форму, и мы свяжемся с вами в течение 15 минут"
+msgstr "Fill out the form and we will contact you within 15 minutes"
+
+msgid "Заявка"
+msgstr "Request"
+
+msgid "Каталог"
+msgstr "Catalog"
+
+msgid "Отзыв"
+msgstr "Review"
+
+msgid "Имя"
+msgstr "Name"
+
+msgid "Телефон"
+msgstr "Phone"
+
+msgid "Сообщение"
+msgstr "Message"
+
+msgid "Введите имя."
+msgstr "Enter your name."
+
+msgid "Введите телефон."
+msgstr "Enter your phone."
+
+msgid "Введите корректный email."
+msgstr "Enter a valid email."
+
+msgid "Спасибо! Мы свяжемся с вами в течение 15 минут."
+msgstr "Thank you! We will contact you within 15 minutes."
+
+msgid "С 2024 года мы создаем исключительные строительные проекты, отличающиеся высочайшим качеством и инновационным подходом."
+msgstr "Since 2024, we have been creating exceptional construction projects distinguished by the highest quality and innovative approach."
+
+msgid "Доступные языки:"
+msgstr "Available Languages:"
+
+msgid "Карьера"
+msgstr "Career"
+
+msgid "Сотрудники"
+msgstr "Team"
+
+msgid "Преимущества"
+msgstr "Advantages"
+
+msgid "Часы работы: Пн-Пт 8:00-18:00"
+msgstr "Working Hours: Mon-Fri 8:00-18:00"
+
+msgid "Все права защищены."
+msgstr "All rights reserved."
+
+msgid "Политика конфиденциальности"
+msgstr "Privacy Policy"
+
+msgid "Условия использования"
+msgstr "Terms of Use"

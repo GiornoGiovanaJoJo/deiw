@@ -1270,18 +1270,18 @@
         <span class="header__logo-abbr">EP</span>
         Empire <span>Premium</span>
       </a>
-      <nav class="nav" aria-label="Основная навигация">
-        <a href="#about" class="nav__link">О нас</a>
-        <a href="#services" class="nav__link">Услуги</a>
-        <a href="#projects" class="nav__link">Проекты</a>
-        <a href="#contact" class="nav__link">Контакты</a>
+      <nav class="nav" aria-label="{% trans 'Основная навигация' %}">
+        <a href="#about" class="nav__link">{% trans 'О нас' %}</a>
+        <a href="#services" class="nav__link">{% trans 'Услуги' %}</a>
+        <a href="#projects" class="nav__link">{% trans 'Проекты' %}</a>
+        <a href="#contact" class="nav__link">{% trans 'Контакты' %}</a>
       </nav>
       <div class="header__cta">
-        <a href="#contact" class="btn btn--primary">Оставить заявку <i data-feather="arrow-right"></i></a>
-        <a href="#" class="btn btn--outline-purple">Войти</a>
-        <button type="button" class="btn btn--ghost" aria-label="Язык"><i data-feather="globe"></i> Язык</button>
+        <a href="#contact" class="btn btn--primary">{% trans 'Оставить заявку' %} <i data-feather="arrow-right"></i></a>
+        <a href="#" class="btn btn--outline-purple">{% trans 'Войти' %}</a>
+        <button type="button" class="btn btn--ghost" aria-label="{% trans 'Язык' %}"><i data-feather="globe"></i> {% trans 'Язык' %}</button>
       </div>
-      <button class="hamburger" id="hamburger" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="mobileMenu">
+      <button class="hamburger" id="hamburger" type="button" aria-label="{% trans 'Открыть меню' %}" aria-expanded="false" aria-controls="mobileMenu">
         <span></span><span></span><span></span>
       </button>
     </div>
@@ -1289,15 +1289,15 @@
 
   <!-- Mobile menu -->
   <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
-    <nav aria-label="Мобильная навигация">
-      <a href="#about" class="nav__link">О нас</a>
-      <a href="#services" class="nav__link">Услуги</a>
-      <a href="#projects" class="nav__link">Проекты</a>
-      <a href="#contact" class="nav__link">Контакты</a>
+    <nav aria-label="{% trans 'Мобильная навигация' %}">
+      <a href="#about" class="nav__link">{% trans 'О нас' %}</a>
+      <a href="#services" class="nav__link">{% trans 'Услуги' %}</a>
+      <a href="#projects" class="nav__link">{% trans 'Проекты' %}</a>
+      <a href="#contact" class="nav__link">{% trans 'Контакты' %}</a>
     </nav>
     <div class="header__cta">
-      <a href="#contact" class="btn btn--primary">Оставить заявку</a>
-      <a href="#" class="btn btn--outline-purple">Войти</a>
+      <a href="#contact" class="btn btn--primary">{% trans 'Оставить заявку' %}</a>
+      <a href="#" class="btn btn--outline-purple">{% trans 'Войти' %}</a>
     </div>
   </div>
 
@@ -1307,24 +1307,24 @@
       <div class="container">
         <div class="hero__content">
           <h1 class="hero__title" id="hero-title">
-            Empire Premium — <span class="underline hero__title-small">строим ваше будущее!</span>
+            Empire Premium — <span class="underline hero__title-small">{% trans 'строим ваше будущее!' %}</span>
           </h1>
           <p class="hero__subtitle">
-            Поддержка клиентов на каждом этапе: от концепции и планирования до сдачи объекта «под ключ». Качество, надёжность и современные решения.
+            {% trans 'Поддержка клиентов на каждом этапе: от концепции и планирования до сдачи объекта «под ключ». Качество, надёжность и современные решения.' %}
           </p>
-          <a href="#contact" class="btn btn--primary">Оставить заявку <i data-feather="arrow-right"></i></a>
+          <a href="#contact" class="btn btn--primary">{% trans 'Оставить заявку' %} <i data-feather="arrow-right"></i></a>
           <div class="hero__stats">
             <div class="hero__stat">
               <div class="hero__stat-num">2+</div>
-              <div class="hero__stat-label">Лет на рынке</div>
+              <div class="hero__stat-label">{% trans 'Лет на рынке' %}</div>
             </div>
             <div class="hero__stat">
               <div class="hero__stat-num">200+</div>
-              <div class="hero__stat-label">Реализованных проектов</div>
+              <div class="hero__stat-label">{% trans 'Реализованных проектов' %}</div>
             </div>
             <div class="hero__stat">
               <div class="hero__stat-num">5</div>
-              <div class="hero__stat-label">Термины и годы</div>
+              <div class="hero__stat-label">{% trans 'Термины и годы' %}</div>
             </div>
           </div>
         </div>
@@ -1352,9 +1352,9 @@
           </div>
         </div>
       </div>
-      <a href="#about" class="hero__scroll" aria-label="Прокрутить вниз">
+      <a href="#about" class="hero__scroll" aria-label="{% trans 'Прокрутить вниз' %}">
         <i data-feather="chevron-down"></i>
-        <span>Вниз</span>
+        <span>{% trans 'Вниз' %}</span>
       </a>
     </section>
 
@@ -1363,24 +1363,24 @@
       <div class="container">
         <div class="features__wrap">
           <div class="features__text">
-            <h2 class="section__title animate-on-scroll" id="features-title">Мы поддерживаем наших клиентов на каждом этапе: от первоначальной концепции и планирования до сдачи объекта «под ключ»</h2>
-            <p class="section__subtitle animate-on-scroll">Качество, надёжность и индивидуальный подход — основа нашей работы. Строим долгосрочные отношения с каждым клиентом.</p>
+            <h2 class="section__title animate-on-scroll" id="features-title">{% trans 'Мы поддерживаем наших клиентов на каждом этапе: от первоначальной концепции и планирования до сдачи объекта «под ключ»' %}</h2>
+            <p class="section__subtitle animate-on-scroll">{% trans 'Качество, надёжность и индивидуальный подход — основа нашей работы. Строим долгосрочные отношения с каждым клиентом.' %}</p>
           </div>
           <div class="features__grid">
             <article class="feature-card animate-on-scroll">
               <div class="feature-card__icon" aria-hidden="true"><i data-feather="thumbs-up"></i></div>
-              <h3 class="feature-card__title">Поддержание качества</h3>
-              <p class="feature-card__text">Строгий контроль на всех этапах. Гарантия долговечности и соответствия стандартам.</p>
+              <h3 class="feature-card__title">{% trans 'Поддержание качества' %}</h3>
+              <p class="feature-card__text">{% trans 'Строгий контроль на всех этапах. Гарантия долговечности и соответствия стандартам.' %}</p>
             </article>
             <article class="feature-card animate-on-scroll">
               <div class="feature-card__icon" aria-hidden="true"><i data-feather="zap"></i></div>
-              <h3 class="feature-card__title">Инновационные решения</h3>
-              <p class="feature-card__text">Современные технологии и материалы. Энергоэффективность и комфорт.</p>
+              <h3 class="feature-card__title">{% trans 'Инновационные решения' %}</h3>
+              <p class="feature-card__text">{% trans 'Современные технологии и материалы. Энергоэффективность и комфорт.' %}</p>
             </article>
             <article class="feature-card animate-on-scroll">
               <div class="feature-card__icon" aria-hidden="true"><i data-feather="heart"></i></div>
-              <h3 class="feature-card__title">Комплексные проекты</h3>
-              <p class="feature-card__text">От проектирования до сдачи. Один подрядчик — полная ответственность.</p>
+              <h3 class="feature-card__title">{% trans 'Комплексные проекты' %}</h3>
+              <p class="feature-card__text">{% trans 'От проектирования до сдачи. Один подрядчик — полная ответственность.' %}</p>
             </article>
           </div>
         </div>
@@ -1390,8 +1390,8 @@
     <!-- НАШИ УСЛУГИ -->
     <section class="section services" id="services" aria-labelledby="services-title">
       <div class="container">
-        <h2 class="section__title animate-on-scroll" id="services-title">Наши услуги</h2>
-        <p class="section__subtitle animate-on-scroll">Какие наши услуги вам подходят?</p>
+        <h2 class="section__title animate-on-scroll" id="services-title">{% trans 'Наши услуги' %}</h2>
+        <p class="section__subtitle animate-on-scroll">{% trans 'Какие наши услуги вам подходят?' %}</p>
         <div class="services__slider">
           <div class="services__track" id="servicesTrack">
             {% for service in services %}
@@ -1403,21 +1403,21 @@
                   {% if service.description %}
                     <li>{{ service.description|striptags|safe|truncatewords:20 }}</li>
                   {% else %}
-                    <li>Описание услуги</li>
+                    <li>{% trans 'Описание услуги' %}</li>
                   {% endif %}
                 </ul>
               </div>
             </article>
             {% empty %}
             <article class="service-card animate-on-scroll">
-              <div class="service-card__img">Малярные работы</div>
+              <div class="service-card__img">{% trans 'Малярные работы' %}</div>
               <div class="service-card__body">
-                <h3 class="service-card__title">Малярные работы</h3>
+                <h3 class="service-card__title">{% trans 'Малярные работы' %}</h3>
                 <ul class="service-card__list">
-                  <li>Внутренняя и внешняя покраска</li>
-                  <li>Декоративная штукатурка</li>
-                  <li>Поклейка обоев</li>
-                  <li>Обработка поверхностей</li>
+                  <li>{% trans 'Внутренняя и внешняя покраска' %}</li>
+                  <li>{% trans 'Декоративная штукатурка' %}</li>
+                  <li>{% trans 'Поклейка обоев' %}</li>
+                  <li>{% trans 'Обработка поверхностей' %}</li>
                 </ul>
               </div>
             </article>
@@ -1434,8 +1434,8 @@
     <!-- НАШИ ПРОЕКТЫ -->
     <section class="section projects" id="projects" aria-labelledby="projects-title">
       <div class="container">
-        <h2 class="section__title animate-on-scroll" id="projects-title">Наши проекты</h2>
-        <p class="section__subtitle animate-on-scroll">Современные решения, комфорт и стиль</p>
+        <h2 class="section__title animate-on-scroll" id="projects-title">{% trans 'Наши проекты' %}</h2>
+        <p class="section__subtitle animate-on-scroll">{% trans 'Современные решения, комфорт и стиль' %}</p>
         <div class="projects__grid">
           {% for project in projects %}
           <article class="project-card animate-on-scroll">
@@ -1443,16 +1443,16 @@
             <div class="project-card__body">
               <h3 class="project-card__title">{{ project.title }}</h3>
               <p class="project-card__desc">{{ project.description }}</p>
-              {% if project.link %}<a href="{{ project.link }}" class="project-card__link">Подробнее узнать <i data-feather="arrow-right"></i></a>{% endif %}
+              {% if project.link %}<a href="{{ project.link }}" class="project-card__link">{% trans 'Подробнее узнать' %} <i data-feather="arrow-right"></i></a>{% endif %}
             </div>
           </article>
           {% empty %}
           <article class="project-card animate-on-scroll">
-            <div class="project-card__img">Солнечные панели</div>
+            <div class="project-card__img">{% trans 'Солнечные панели' %}</div>
             <div class="project-card__body">
-              <h3 class="project-card__title">Установка солнечных панелей</h3>
-              <p class="project-card__desc">Энергоэффективный дом с автономным электроснабжением. Современные панели и инверторы.</p>
-              <a href="#" class="project-card__link">Подробнее узнать <i data-feather="arrow-right"></i></a>
+              <h3 class="project-card__title">{% trans 'Установка солнечных панелей' %}</h3>
+              <p class="project-card__desc">{% trans 'Энергоэффективный дом с автономным электроснабжением. Современные панели и инверторы.' %}</p>
+              <a href="#" class="project-card__link">{% trans 'Подробнее узнать' %} <i data-feather="arrow-right"></i></a>
             </div>
           </article>
           {% endfor %}
@@ -1478,9 +1478,9 @@
     <!-- CTA -->
     <section class="cta-section" id="contact" aria-labelledby="cta-title">
       <div class="container">
-        <h2 class="section__title animate-on-scroll" id="cta-title">У вас есть вопросы, предложения или нужна помощь с вашим проектом?</h2>
-        <p class="section__subtitle animate-on-scroll">Свяжитесь с нами — ответим в течение 15 минут и обсудим вашу задачу.</p>
-        <a href="#footer-form" class="btn btn--primary animate-on-scroll">Связаться с нами <i data-feather="arrow-right"></i></a>
+        <h2 class="section__title animate-on-scroll" id="cta-title">{% trans 'У вас есть вопросы, предложения или нужна помощь с вашим проектом?' %}</h2>
+        <p class="section__subtitle animate-on-scroll">{% trans 'Свяжитесь с нами — ответим в течение 15 минут и обсудим вашу задачу.' %}</p>
+        <a href="#footer-form" class="btn btn--primary animate-on-scroll">{% trans 'Связаться с нами' %} <i data-feather="arrow-right"></i></a>
       </div>
     </section>
 
@@ -1488,24 +1488,28 @@
     <footer class="footer" role="contentinfo">
       <div class="footer__banner">
         <div class="container" style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--spacing-lg);">
-          <p class="footer__slogan">Empire Premium — Ваш партнёр по строительству</p>
+          <p class="footer__slogan">Empire Premium — {% trans 'Ваш партнёр по строительству' %}</p>
         </div>
       </div>
       <div class="container footer__form-wrap">
         <div class="footer__form-box" id="footer-form">
-          <h3 class="footer__form-title">Заполните форму, и мы свяжемся с вами в течение 15 минут</h3>
+          <h3 class="footer__form-title">{% trans 'Заполните форму, и мы свяжемся с вами в течение 15 минут' %}</h3>
           <div class="footer__form-tabs" role="tablist">
-            <button type="button" class="footer__form-tab is-active" data-tab="request" role="tab" aria-selected="true">Заявка</button>
-            <button type="button" class="footer__form-tab" data-tab="catalog" role="tab" aria-selected="false">Каталог</button>
-            <button type="button" class="footer__form-tab" data-tab="review" role="tab" aria-selected="false">Отзыв</button>
+            <button type="button" class="footer__form-tab is-active" data-tab="request" role="tab" aria-selected="true">{% trans 'Заявка' %}</button>
+            <button type="button" class="footer__form-tab" data-tab="catalog" role="tab" aria-selected="false">{% trans 'Каталог' %}</button>
+            <button type="button" class="footer__form-tab" data-tab="review" role="tab" aria-selected="false">{% trans 'Отзыв' %}</button>
           </div>
-          <form class="footer__form" id="footerForm" novalidate>
+          <form class="footer__form" id="footerForm" novalidate 
+                data-msg-name="{% trans 'Введите имя.' %}"
+                data-msg-phone="{% trans 'Введите телефон.' %}"
+                data-msg-email="{% trans 'Введите корректный email.' %}"
+                data-msg-success="{% trans 'Спасибо! Мы свяжемся с вами в течение 15 минут.' %}">
             {% csrf_token %}
-            <input type="text" class="footer__input" name="name" placeholder="Имя" required aria-label="Имя">
-            <input type="tel" class="footer__input" name="phone" placeholder="Телефон" required aria-label="Телефон">
+            <input type="text" class="footer__input" name="name" placeholder="{% trans 'Имя' %}" required aria-label="{% trans 'Имя' %}">
+            <input type="tel" class="footer__input" name="phone" placeholder="{% trans 'Телефон' %}" required aria-label="{% trans 'Телефон' %}">
             <input type="email" class="footer__input" name="email" placeholder="Email" required aria-label="Email">
-            <textarea class="footer__input" name="message" placeholder="Сообщение" aria-label="Сообщение"></textarea>
-            <button type="submit" class="btn btn--primary">Оставить заявку</button>
+            <textarea class="footer__input" name="message" placeholder="{% trans 'Сообщение' %}" aria-label="{% trans 'Сообщение' %}"></textarea>
+            <button type="submit" class="btn btn--primary">{% trans 'Оставить заявку' %}</button>
             <p class="cta-section__message" id="footerFormMessage" aria-live="polite" style="margin-top:8px;font-size:14px;"></p>
           </form>
         </div>
@@ -1515,12 +1519,12 @@
           <div class="footer__top">
             <div class="footer__brand">
               <a href="#" class="footer__logo">Empire <span>Premium</span></a>
-              <p>С 2024 года мы создаем исключительные строительные проекты, отличающиеся высочайшим качеством и инновационным подходом.</p>
+              <p>{% trans 'С 2024 года мы создаем исключительные строительные проекты, отличающиеся высочайшим качеством и инновационным подходом.' %}</p>
               <div class="footer__social footer__social--top">
                 <a href="#" aria-label="Instagram"><svg class="icon-sprite" aria-hidden="true"><use href="#icon-instagram"/></svg></a>
                 <a href="#" aria-label="TikTok"><svg class="icon-sprite" aria-hidden="true"><use href="#icon-tiktok"/></svg></a>
               </div>
-              <p class="footer__lang-label">Доступные языки:</p>
+              <p class="footer__lang-label">{% trans 'Доступные языки:' %}</p>
               <div class="footer__lang">
                 <button type="button" class="footer__lang-btn{% if LANGUAGE_CODE == 'de' %} active{% endif %}" data-lang="de" aria-label="Deutsch">DE</button>
                 <button type="button" class="footer__lang-btn{% if LANGUAGE_CODE == 'en' %} active{% endif %}" data-lang="en" aria-label="English">EN</button>
@@ -1528,27 +1532,27 @@
               </div>
             </div>
             <div class="footer__col">
-              <h4>О нас</h4>
+              <h4>{% trans 'О нас' %}</h4>
               <ul>
-                <li><a href="#contact">Карьера</a></li>
-                <li><a href="#about">Сотрудники</a></li>
+                <li><a href="#contact">{% trans 'Карьера' %}</a></li>
+                <li><a href="#about">{% trans 'Сотрудники' %}</a></li>
               </ul>
             </div>
             <div class="footer__col">
-              <h4>Услуги</h4>
+              <h4>{% trans 'Услуги' %}</h4>
               <ul>
-                <li><a href="#projects">Проекты</a></li>
-                <li><a href="#services">Преимущества</a></li>
+                <li><a href="#projects">{% trans 'Проекты' %}</a></li>
+                <li><a href="#services">{% trans 'Преимущества' %}</a></li>
               </ul>
             </div>
             <div class="footer__col">
-              <h4>Связаться с нами</h4>
+              <h4>{% trans 'Связаться с нами' %}</h4>
               <ul>
                 <li class="footer__contact-item"><a href="mailto:info@empire-premium-bau.de">info@empire-premium-bau.de</a></li>
                 <li class="footer__contact-item"><a href="mailto:support@empire-premium-bau.de">support@empire-premium-bau.de</a></li>
                 <li class="footer__contact-item"><a href="mailto:partners@empire-premium-bau.de">partners@empire-premium-bau.de</a></li>
                 <li class="footer__contact-item"><a href="tel:+4917661951823">+49 17661951823</a></li>
-                <li class="footer__contact-item">Часы работы: Пн-Пт 8:00-18:00</li>
+                <li class="footer__contact-item">{% trans 'Часы работы: Пн-Пт 8:00-18:00' %}</li>
                 <li class="footer__contact-item">Hastedter Heerstraße 63, 28207 Bremen, Deutschland</li>
               </ul>
             </div>
@@ -1560,7 +1564,7 @@
               <a href="#" aria-label="LinkedIn"><i data-feather="linkedin"></i></a>
               <a href="#" aria-label="Twitter"><i data-feather="twitter"></i></a>
             </div>
-            <p class="footer__copy">© 2026 Empire Premium. Все права защищены. <a href="#" style="color:inherit;">Политика конфиденциальности</a> · <a href="#" style="color:inherit;">Условия использования</a></p>
+            <p class="footer__copy">© 2026 Empire Premium. {% trans 'Все права защищены.' %} <a href="#" style="color:inherit;">{% trans 'Политика конфиденциальности' %}</a> · <a href="#" style="color:inherit;">{% trans 'Условия использования' %}</a></p>
           </div>
         </div>
       </div>
@@ -1745,24 +1749,24 @@
           }
           
           if (!name) {
-            footerFormMessage.textContent = 'Введите имя.';
+            footerFormMessage.textContent = footerForm.getAttribute('data-msg-name') || 'Введите имя.';
             footerFormMessage.classList.add('error');
             footerFormMessage.style.animation = 'fadeIn 0.3s ease-out';
             return;
           }
           if (!phone) {
-            footerFormMessage.textContent = 'Введите телефон.';
+            footerFormMessage.textContent = footerForm.getAttribute('data-msg-phone') || 'Введите телефон.';
             footerFormMessage.classList.add('error');
             footerFormMessage.style.animation = 'fadeIn 0.3s ease-out';
             return;
           }
           if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            footerFormMessage.textContent = 'Введите корректный email.';
+            footerFormMessage.textContent = footerForm.getAttribute('data-msg-email') || 'Введите корректный email.';
             footerFormMessage.classList.add('error');
             footerFormMessage.style.animation = 'fadeIn 0.3s ease-out';
             return;
           }
-          footerFormMessage.textContent = 'Спасибо! Мы свяжемся с вами в течение 15 минут.';
+          footerFormMessage.textContent = footerForm.getAttribute('data-msg-success') || 'Спасибо! Мы свяжемся с вами в течение 15 минут.';
           footerFormMessage.classList.add('success');
           footerFormMessage.style.animation = 'scaleIn 0.4s ease-out';
           footerForm.reset();
