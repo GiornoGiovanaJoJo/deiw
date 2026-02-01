@@ -639,6 +639,19 @@
       border-radius: var(--radius-lg);
       transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
       border: 1px solid transparent;
+      width: 100%;
+      min-width: 300px;
+      max-width: 100%;
+    }
+    @media (min-width: 768px) {
+      .feature-card {
+        min-width: 400px;
+      }
+    }
+    @media (min-width: 1024px) {
+      .feature-card {
+        min-width: 500px;
+      }
     }
     .feature-card:hover {
       transform: translateY(-6px) scale(1.02);
