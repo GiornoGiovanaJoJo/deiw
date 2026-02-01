@@ -35,7 +35,7 @@
                 </p>
             </div>
 
-            <form id="loginForm" class="auth-form" method="POST" action="" data-aos="fade-up" data-aos-delay="150">
+            <form id="loginForm" class="auth-form" method="POST" action="{% url 'main:adminka_login' %}" data-aos="fade-up" data-aos-delay="150">
                 {% csrf_token %}
                 
                 {% if messages %}

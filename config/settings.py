@@ -22,16 +22,17 @@ if os.environ.get('RAILWAY_ENVIRONMENT'):
     ALLOWED_HOSTS.append('.up.railway.app')
 
 # Для Railway и других облаков: доверенные источники для CSRF
+# В Railway Dashboard добавьте переменную CSRF_TRUSTED_ORIGINS = https://ваш-домен.up.railway.app
 CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',')
 CSRF_TRUSTED_ORIGINS = [x.strip() for x in CSRF_TRUSTED_ORIGINS if x.strip()]
 
 # Автоматическое добавление Railway доменов в CSRF_TRUSTED_ORIGINS
 if RAILWAY_PUBLIC_DOMAIN:
-    # Добавляем с протоколом https
-    if not RAILWAY_PUBLIC_DOMAIN.startswith('http'):
-        CSRF_TRUSTED_ORIGINS.append(f'https://{RAILWAY_PUBLIC_DOMAIN}')
-    else:
-        CSRF_TRUSTED_ORIGINS.append(RAILWAY_PUBLIC_DOMAIN)
+    origin = RAILWAY_PUBLIC_DOMAIN.strip()
+    if not origin.startswith('http'):
+        origin = f'https://{origin}'
+    if origin not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS.append(origin)
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -124,6 +125,10 @@ MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# За прокси (Railway, Heroku и т.д.): доверять X-Forwarded-Proto для корректной проверки CSRF/Referer
+# Без этого Django видит запрос как HTTP и проверка Referer/Origin даёт 403
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Production: безопасные заголовки (если не DEBUG)
 if not DEBUG:

@@ -18,7 +18,7 @@
    | `DJANGO_SECRET_KEY` | длинная случайная строка | Обязательно в production. |
    | `DEBUG` | `False` | В production лучше выключить. |
    | `ALLOWED_HOSTS` | `ваш-домен.railway.app,.railway.app` | Домен вашего приложения. |
-   | `CSRF_TRUSTED_ORIGINS` | `https://ваш-домен.railway.app` | URL сайта с https. |
+   | `CSRF_TRUSTED_ORIGINS` | `https://web-production-fe99d.up.railway.app` | **Обязательно** для входа в `/adminka/login/`. Укажите точный URL вашего приложения (из адресной строки браузера). Без этого будет ошибка 403 CSRF при отправке формы входа. |
 
 3. **Start Command** можно не указывать — используется команда из Procfile (`web: sh run.sh`). Если нужно переопределить, укажите:
    ```bash
