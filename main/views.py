@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator
 from django.http import HttpResponse
-from .models import SiteSettings, HeroCarouselImage, Service, Project
+from .models import SiteSettings, HeroCarouselImage, Service, Project, DesignSettings
 
 _MODEL_MAP = {
     'sitesettings': (SiteSettings, 'logo_data', 'logo_type'),
@@ -13,6 +13,7 @@ _MODEL_MAP = {
 
 def home(request):
     settings = SiteSettings.get_settings()
+    design_settings = DesignSettings.get_settings()
     hero_images = list(HeroCarouselImage.objects.all()[:10])
     services = list(Service.objects.all())
     projects_qs = Project.objects.all()
@@ -22,6 +23,7 @@ def home(request):
 
     context = {
         'site_settings': settings,
+        'design_settings': design_settings,
         'hero_carousel_images': hero_images,
         'services': services,
         'page_obj': page_obj,

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django import forms
-from .models import SiteSettings, HeroCarouselImage, Service, Project
+from .models import SiteSettings, HeroCarouselImage, Service, Project, DesignSettings
 
 
 def set_image_from_upload(instance, field_data, field_type, field_name, uploaded_file):
@@ -116,3 +116,33 @@ class ProjectForm(forms.ModelForm):
         if commit:
             instance.save()
         return instance
+
+
+class DesignSettingsForm(forms.ModelForm):
+    """Форма для редактирования настроек дизайна."""
+    
+    class Meta:
+        model = DesignSettings
+        fields = '__all__'
+        widgets = {
+            'primary_gold': forms.TextInput(attrs={'type': 'color', 'style': 'width: 100px; height: 40px;'}),
+            'primary_dark': forms.TextInput(attrs={'type': 'color', 'style': 'width: 100px; height: 40px;'}),
+            'secondary_blue': forms.TextInput(attrs={'type': 'color', 'style': 'width: 100px; height: 40px;'}),
+            'accent_purple': forms.TextInput(attrs={'type': 'color', 'style': 'width: 100px; height: 40px;'}),
+            'bg_light': forms.TextInput(attrs={'type': 'color', 'style': 'width: 100px; height: 40px;'}),
+            'bg_lavender': forms.TextInput(attrs={'type': 'color', 'style': 'width: 100px; height: 40px;'}),
+            'white': forms.TextInput(attrs={'type': 'color', 'style': 'width: 100px; height: 40px;'}),
+            'text_dark': forms.TextInput(attrs={'type': 'color', 'style': 'width: 100px; height: 40px;'}),
+            'text_body': forms.TextInput(attrs={'type': 'color', 'style': 'width: 100px; height: 40px;'}),
+            'text_light': forms.TextInput(attrs={'type': 'color', 'style': 'width: 100px; height: 40px;'}),
+            'text_muted': forms.TextInput(attrs={'type': 'color', 'style': 'width: 100px; height: 40px;'}),
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Группируем поля по категориям для лучшей организации
+        for field_name in ['primary_gold', 'primary_dark', 'secondary_blue', 'accent_purple', 
+                          'bg_light', 'bg_lavender', 'white', 'text_dark', 'text_body', 
+                          'text_light', 'text_muted']:
+            if field_name in self.fields:
+                self.fields[field_name].widget.attrs.update({'class': 'color-picker'})

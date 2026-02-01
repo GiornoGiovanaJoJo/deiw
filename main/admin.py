@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 from django.urls import reverse
-from .models import SiteSettings, HeroCarouselImage, Service, Project
-from .forms import SiteSettingsForm, HeroCarouselImageForm, ServiceForm, ProjectForm
+from .models import SiteSettings, HeroCarouselImage, Service, Project, DesignSettings
+from .forms import SiteSettingsForm, HeroCarouselImageForm, ServiceForm, ProjectForm, DesignSettingsForm
 
 
 class MultipartFormAdminMixin:
@@ -88,3 +88,55 @@ class ProjectAdmin(MultipartFormAdminMixin, admin.ModelAdmin):
         return '—'
 
     preview.short_description = 'Фото'
+
+
+@admin.register(DesignSettings)
+class DesignSettingsAdmin(admin.ModelAdmin):
+    form = DesignSettingsForm
+    list_display = ['__str__']
+    
+    fieldsets = (
+        ('Цвета', {
+            'fields': (
+                ('primary_gold', 'primary_dark', 'secondary_blue'),
+                ('accent_purple', 'bg_light', 'bg_lavender'),
+                ('white', 'text_dark', 'text_body'),
+                ('text_light', 'text_muted'),
+            ),
+            'classes': ('wide',),
+        }),
+        ('Шрифты', {
+            'fields': ('font_primary', 'font_heading'),
+        }),
+        ('Размеры шрифтов', {
+            'fields': (
+                ('heading_xl', 'heading_xl_lh'),
+                ('heading_lg', 'heading_lg_lh'),
+                ('body_lg', 'body_lg_lh'),
+                ('body', 'body_lh'),
+                ('body_sm', 'body_sm_lh'),
+            ),
+        }),
+        ('Отступы', {
+            'fields': (
+                ('spacing_xs', 'spacing_sm', 'spacing_md'),
+                ('spacing_lg', 'spacing_xl'),
+            ),
+        }),
+        ('Размеры элементов', {
+            'fields': (
+                ('header_height', 'button_min_height'),
+                ('button_padding_h', 'button_padding_v'),
+                ('border_radius', 'border_radius_lg'),
+            ),
+        }),
+        ('Тени', {
+            'fields': ('shadow_sm', 'shadow_md', 'shadow_lg'),
+        }),
+    )
+    
+    def has_add_permission(self, request):
+        return not DesignSettings.objects.exists()
+    
+    def has_delete_permission(self, request, obj=None):
+        return False

@@ -14,49 +14,53 @@
   <link href="https://cdn.jsdelivr.net/npm/@fontsource/dejavu-sans@5.0.0/700.css" rel="stylesheet">
   <script src="https://unpkg.com/feather-icons"></script>
   <style>
-    /* ========== CSS CUSTOM PROPERTIES (Figma Empire Premium) ========== */
+    /* ========== CSS CUSTOM PROPERTIES (Динамические настройки из админки) ========== */
     :root {
-      --primary-gold: #D4AF37;
-      --primary-dark: #1A1A1A;
-      --secondary-blue: #0A2540;
-      --accent-purple: #695EF9;
-      --bg-light: #F8FAFC;
-      --bg-lavender: #F0EFFF;
-      --white: #FFFFFF;
-      --text-dark: #0A0D12;
-      --text-body: #0A0D12;
-      --text-light: #64748B;
-      --text-muted: #A4A7AE;
+      --primary-gold: {{ design_settings.primary_gold|default:'#D4AF37' }};
+      --primary-dark: {{ design_settings.primary_dark|default:'#1A1A1A' }};
+      --secondary-blue: {{ design_settings.secondary_blue|default:'#0A2540' }};
+      --accent-purple: {{ design_settings.accent_purple|default:'#695EF9' }};
+      --bg-light: {{ design_settings.bg_light|default:'#F8FAFC' }};
+      --bg-lavender: {{ design_settings.bg_lavender|default:'#F0EFFF' }};
+      --white: {{ design_settings.white|default:'#FFFFFF' }};
+      --text-dark: {{ design_settings.text_dark|default:'#0A0D12' }};
+      --text-body: {{ design_settings.text_body|default:'#0A0D12' }};
+      --text-light: {{ design_settings.text_light|default:'#64748B' }};
+      --text-muted: {{ design_settings.text_muted|default:'#A4A7AE' }};
       --placeholder: #D5D7DA;
-      --font-primary: 'Inter', sans-serif;
-      --font-heading: 'Inter', sans-serif;
-      --spacing-xs: 8px;
-      --spacing-sm: 16px;
-      --spacing-md: 24px;
-      --spacing-lg: 40px;
-      --spacing-xl: 64px;
+      --font-primary: {{ design_settings.font_primary|default:"'Inter', sans-serif" }};
+      --font-heading: {{ design_settings.font_heading|default:"'Inter', sans-serif" }};
+      --spacing-xs: {{ design_settings.spacing_xs|default:8 }}px;
+      --spacing-sm: {{ design_settings.spacing_sm|default:16 }}px;
+      --spacing-md: {{ design_settings.spacing_md|default:24 }}px;
+      --spacing-lg: {{ design_settings.spacing_lg|default:40 }}px;
+      --spacing-xl: {{ design_settings.spacing_xl|default:64 }}px;
       --transition: 0.3s ease;
-      --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
-      --shadow-md: 0 8px 24px rgba(0,0,0,0.1);
-      --shadow-lg: 0 16px 92px -4px rgba(27, 30, 27, 0.10);
-      --radius: 8px;
-      --radius-lg: 20px;
-      --header-height: 72px;
-      /* Figma typography */
-      --heading-xl: 44px;
-      --heading-xl-lh: 52px;
-      --heading-lg: 24px;
-      --heading-lg-lh: 28px;
-      --body-lg: 18px;
-      --body-lg-lh: 24px;
-      --body: 16px;
-      --body-lh: 22px;
-      --body-sm: 14px;
-      --body-sm-lh: 20px;
+      --shadow-sm: {{ design_settings.shadow_sm|default:'0 2px 8px rgba(0,0,0,0.06)' }};
+      --shadow-md: {{ design_settings.shadow_md|default:'0 8px 24px rgba(0,0,0,0.1)' }};
+      --shadow-lg: {{ design_settings.shadow_lg|default:'0 16px 92px -4px rgba(27, 30, 27, 0.10)' }};
+      --radius: {{ design_settings.border_radius|default:8 }}px;
+      --radius-lg: {{ design_settings.border_radius_lg|default:20 }}px;
+      --header-height: {{ design_settings.header_height|default:72 }}px;
+      /* Typography */
+      --heading-xl: {{ design_settings.heading_xl|default:44 }}px;
+      --heading-xl-lh: {{ design_settings.heading_xl_lh|default:52 }}px;
+      --heading-lg: {{ design_settings.heading_lg|default:24 }}px;
+      --heading-lg-lh: {{ design_settings.heading_lg_lh|default:28 }}px;
+      --body-lg: {{ design_settings.body_lg|default:18 }}px;
+      --body-lg-lh: {{ design_settings.body_lg_lh|default:24 }}px;
+      --body: {{ design_settings.body|default:16 }}px;
+      --body-lh: {{ design_settings.body_lh|default:22 }}px;
+      --body-sm: {{ design_settings.body_sm|default:14 }}px;
+      --body-sm-lh: {{ design_settings.body_sm_lh|default:20 }}px;
       --caption: 12px;
       --caption-lh: 16px;
       --stat-num: 48px;
       --stat-num-lh: 80px;
+      /* Button sizes */
+      --button-min-height: {{ design_settings.button_min_height|default:44 }}px;
+      --button-padding-h: {{ design_settings.button_padding_h|default:24 }}px;
+      --button-padding-v: {{ design_settings.button_padding_v|default:12 }}px;
     }
 
     /* ========== RESET & BASE ========== */
@@ -211,8 +215,8 @@
       align-items: center;
       justify-content: center;
       gap: var(--spacing-xs);
-      min-height: 44px;
-      padding: 0 var(--spacing-md);
+      min-height: var(--button-min-height);
+      padding: var(--button-padding-v) var(--button-padding-h);
       font-size: 16px;
       font-weight: 500;
       line-height: 24px;
@@ -1274,7 +1278,7 @@
     .footer__form-tab:hover:not(.is-active) { background: rgba(105, 94, 249, 0.08); }
     .footer__form .footer__input {
       width: 100%;
-      min-height: 44px;
+      min-height: var(--button-min-height);
       padding: 6px 8px 12px;
       border: none;
       border-bottom: 1px solid var(--accent-purple);
