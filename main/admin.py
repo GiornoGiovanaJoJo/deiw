@@ -147,20 +147,23 @@ class ElementSettingsAdmin(admin.ModelAdmin):
     form = ElementSettingsForm
     list_display = ['element_name', 'selector_type', 'css_selector', 'order', 'is_active', 'preview_css']
     list_editable = ['order', 'is_active']
-    list_filter = ['is_active', 'position', 'selector_type']
+    list_filter = ['is_active', 'selector_type', 'position']
     search_fields = ['element_name', 'css_selector']
     ordering = ['order', 'element_name']
+    list_per_page = 25
+    save_on_top = True
     
     fieldsets = (
         ('Основная информация', {
             'fields': ('element_name', 'html_tag', 'selector_type', 'css_selector', 'order', 'is_active'),
-            'description': 'Выберите HTML тег из списка для быстрой настройки, или укажите CSS селектор вручную (например: .hero__title, #hero-title, h1, p, span, header, footer и т.д.)',
+            'description': '💡 <strong>Совет:</strong> Выберите HTML тег из списка для быстрой настройки, или укажите CSS селектор вручную (например: .hero__title, #hero-title, h1, p, span, header, footer и т.д.)',
         }),
         ('Шрифт', {
             'fields': (
                 ('font_size', 'font_size_min', 'font_size_max'),
                 ('font_weight', 'line_height', 'letter_spacing'),
             ),
+            'description': '💡 <strong>Совет:</strong> Используйте font_size_min и font_size_max вместе с font_size для создания адаптивных размеров через clamp().',
         }),
         ('Отступы (Margin)', {
             'fields': (
@@ -168,6 +171,7 @@ class ElementSettingsAdmin(admin.ModelAdmin):
                 ('margin_left', 'margin_right'),
             ),
             'classes': ('collapse',),
+            'description': '💡 <strong>Совет:</strong> Отрицательные значения допустимы для margin (например, -10px).',
         }),
         ('Внутренние отступы (Padding)', {
             'fields': (
@@ -194,6 +198,7 @@ class ElementSettingsAdmin(admin.ModelAdmin):
         }),
         ('Цвета', {
             'fields': ('color', 'background_color'),
+            'description': '💡 <strong>Совет:</strong> Используйте HEX формат (например: #FFD700, #0A0D12).',
         }),
         ('Выравнивание', {
             'fields': ('text_align',),
@@ -208,8 +213,24 @@ class ElementSettingsAdmin(admin.ModelAdmin):
         """Показывает предпросмотр CSS стилей."""
         if obj.is_active and obj.get_css_style():
             css = obj.get_css_style()
-            if len(css) > 100:
-                css = css[:100] + '...'
-            return mark_safe(f'<code style="font-size: 11px; background: #f0f0f0; padding: 2px 4px; border-radius: 3px;">{css}</code>')
-        return '—'
+            if len(css) > 150:
+                css_preview = css[:150] + '...'
+            else:
+                css_preview = css
+            return mark_safe(
+                f'<code style="font-size: 11px; background: #f0f0f0; padding: 4px 8px; border-radius: 4px; display: block; max-width: 400px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{css}">{css_preview}</code>'
+            )
+        return mark_safe('<span style="color: #999;">—</span>')
     preview_css.short_description = 'CSS стили'
+    
+    def get_queryset(self, request):
+        """Оптимизация запросов."""
+        qs = super().get_queryset(request)
+        return qs.select_related()
+    
+    def changelist_view(self, request, extra_context=None):
+        """Добавляем статистику в контекст."""
+        extra_context = extra_context or {}
+        extra_context['total_elements'] = ElementSettings.objects.count()
+        extra_context['active_elements'] = ElementSettings.objects.filter(is_active=True).count()
+        return super().changelist_view(request, extra_context)

@@ -107,12 +107,12 @@ class DesignSettings(models.Model):
     primary_gold = models.CharField('Основной золотой цвет', max_length=7, default='#D4AF37', help_text='HEX формат, например: #D4AF37')
     primary_dark = models.CharField('Основной темный цвет', max_length=7, default='#1A1A1A', help_text='HEX формат')
     secondary_blue = models.CharField('Вторичный синий цвет', max_length=7, default='#0A2540', help_text='HEX формат')
-    accent_purple = models.CharField('Акцентный фиолетовый цвет', max_length=7, default='#695EF9', help_text='HEX формат')
+    accent_purple = models.CharField('Акцентный фиолетовый цвет', max_length=7, default='#7C3AED', help_text='HEX формат')
     bg_light = models.CharField('Светлый фон', max_length=7, default='#F8FAFC', help_text='HEX формат')
     bg_lavender = models.CharField('Лавандовый фон', max_length=7, default='#F0EFFF', help_text='HEX формат')
     white = models.CharField('Белый цвет', max_length=7, default='#FFFFFF', help_text='HEX формат')
-    text_dark = models.CharField('Темный текст', max_length=7, default='#0A0D12', help_text='HEX формат')
-    text_body = models.CharField('Цвет основного текста', max_length=7, default='#0A0D12', help_text='HEX формат')
+    text_dark = models.CharField('Темный текст', max_length=7, default='#0F172A', help_text='HEX формат')
+    text_body = models.CharField('Цвет основного текста', max_length=7, default='#0F172A', help_text='HEX формат')
     text_light = models.CharField('Светлый текст', max_length=7, default='#64748B', help_text='HEX формат')
     text_muted = models.CharField('Приглушенный текст', max_length=7, default='#A4A7AE', help_text='HEX формат')
     
@@ -144,7 +144,7 @@ class DesignSettings(models.Model):
     button_min_height = models.PositiveIntegerField('Минимальная высота кнопки (px)', default=44)
     button_padding_h = models.PositiveIntegerField('Горизонтальный отступ кнопки (px)', default=24)
     button_padding_v = models.PositiveIntegerField('Вертикальный отступ кнопки (px)', default=12)
-    border_radius = models.PositiveIntegerField('Радиус скругления (px)', default=8)
+    border_radius = models.PositiveIntegerField('Радиус скругления (px)', default=12)
     border_radius_lg = models.PositiveIntegerField('Большой радиус скругления (px)', default=20)
     
     # Тени
@@ -177,10 +177,11 @@ class ElementSettings(models.Model):
     ]
     
     # Основная информация
-    element_name = models.CharField('Название элемента', max_length=255, help_text='Например: Заголовок Hero, Подзаголовок Hero, Все параграфы')
+    element_name = models.CharField('Название элемента', max_length=255, blank=True, default='', 
+                                   help_text='Например: Заголовок Hero, Подзаголовок Hero, Все параграфы')
     selector_type = models.CharField('Тип селектора', max_length=20, choices=SELECTOR_TYPE_CHOICES, default='class', 
                                     help_text='Выберите тип элемента для редактирования')
-    css_selector = models.CharField('CSS селектор', max_length=255, unique=True, 
+    css_selector = models.CharField('CSS селектор', max_length=255, unique=True, blank=False,
                                    help_text='Например: h1, p, span, .hero__title, #hero-title, header, footer, section')
     
     # Размеры шрифта
@@ -245,7 +246,8 @@ class ElementSettings(models.Model):
         ordering = ['order', 'element_name']
     
     def __str__(self):
-        return f'{self.element_name} ({self.css_selector})'
+        name = self.element_name if self.element_name else 'Без названия'
+        return f'{name} ({self.css_selector})'
     
     def get_css_style(self):
         """Генерирует CSS стили для этого элемента."""
