@@ -72,7 +72,9 @@ class LanguageSwitcher {
         this.isLoading = true;
 
         try {
-            const response = await fetch(`library/lang/${lang}.json`);
+            // Используем глобальную переменную LANG_PATH или путь по умолчанию
+            const basePath = window.LANG_PATH || '/static/adminka/lang/';
+            const response = await fetch(`${basePath}${lang}.json`);
             if (!response.ok) {
                 throw new Error(`Failed to load language: ${lang}`);
             }

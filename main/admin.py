@@ -1,7 +1,11 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 from django.urls import reverse
-from .models import SiteSettings, HeroCarouselImage, Service, Project, DesignSettings, ElementSettings
+from .models import (
+    SiteSettings, HeroCarouselImage, Service, Project, 
+    DesignSettings, ElementSettings,
+    Category, AdminProject, ContactRequest
+)
 from .forms import SiteSettingsForm, HeroCarouselImageForm, ServiceForm, ProjectForm, DesignSettingsForm, ElementSettingsForm
 
 
@@ -234,3 +238,82 @@ class ElementSettingsAdmin(admin.ModelAdmin):
         extra_context['total_elements'] = ElementSettings.objects.count()
         extra_context['active_elements'] = ElementSettings.objects.filter(is_active=True).count()
         return super().changelist_view(request, extra_context)
+
+
+# ========== АДМИНКА ДЛЯ /adminka МОДЕЛЕЙ ==========
+
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ['id', 'name_de', 'name_en', 'name', 'created_at']
+    search_fields = ['name', 'name_en', 'name_de']
+    list_filter = ['created_at']
+    ordering = ['-created_at']
+    
+    fieldsets = (
+        ('Названия на разных языках', {
+            'fields': ('name', 'name_en', 'name_de'),
+            'description': 'Укажите название категории на разных языках',
+        }),
+    )
+
+
+@admin.register(AdminProject)
+class AdminProjectAdmin(admin.ModelAdmin):
+    list_display = ['project_code', 'name', 'category', 'status', 'year', 'created_at']
+    list_filter = ['status', 'category', 'year', 'created_at']
+    search_fields = ['project_code', 'name', 'description']
+    list_editable = ['status']
+    ordering = ['-created_at']
+    date_hierarchy = 'created_at'
+    
+    fieldsets = (
+        ('Основная информация', {
+            'fields': ('project_code', 'name', 'description', 'category', 'status'),
+        }),
+        ('Детали проекта', {
+            'fields': ('year', 'type', 'size', 'color', 'end_date'),
+            'classes': ('collapse',),
+        }),
+    )
+    
+    def get_readonly_fields(self, request, obj=None):
+        if obj:  # При редактировании
+            return ['created_at', 'updated_at']
+        return []
+
+
+@admin.register(ContactRequest)
+class ContactRequestAdmin(admin.ModelAdmin):
+    list_display = ['id', 'name', 'email', 'phone', 'reason', 'status', 'created_at', 'has_admin_response']
+    list_filter = ['status', 'reason', 'created_at']
+    search_fields = ['name', 'email', 'phone', 'message']
+    list_editable = ['status']
+    ordering = ['-created_at']
+    date_hierarchy = 'created_at'
+    readonly_fields = ['created_at']
+    
+    fieldsets = (
+        ('Информация о клиенте', {
+            'fields': ('name', 'email', 'phone'),
+        }),
+        ('Заявка', {
+            'fields': ('reason', 'message', 'status', 'created_at'),
+        }),
+        ('Ответ администратора', {
+            'fields': ('message_admin', 'admin_id'),
+            'classes': ('collapse',),
+        }),
+    )
+    
+    def has_admin_response(self, obj):
+        """Показывает, есть ли ответ администратора."""
+        if obj.message_admin:
+            return mark_safe('<span style="color: green;">✓</span>')
+        return mark_safe('<span style="color: #ccc;">—</span>')
+    has_admin_response.short_description = 'Ответ'
+    
+    def save_model(self, request, obj, form, change):
+        """Автоматически сохраняем ID администратора при ответе."""
+        if obj.message_admin and not obj.admin_id:
+            obj.admin_id = request.user.id
+        super().save_model(request, obj, form, change)

@@ -82,6 +82,10 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script>
+        // Устанавливаем базовый путь для загрузки переводов
+        window.LANG_PATH = '{% static "adminka/lang/" %}';
+    </script>
     <script src="{% static 'adminka/js/admin.js' %}"></script>
     <script src="{% static 'adminka/js/components.js' %}"></script>
     <script src="{% static 'adminka/js/components/language-switcher.js' %}"></script>
