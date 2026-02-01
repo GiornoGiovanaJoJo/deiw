@@ -7,11 +7,31 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-change-me-in-p
 
 DEBUG = os.environ.get('DEBUG', 'True').lower() in ('1', 'true', 'yes')
 
+# Базовые разрешенные хосты
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = [host.strip() for host in ALLOWED_HOSTS if host.strip()]
+
+# Автоматическое добавление Railway доменов
+RAILWAY_PUBLIC_DOMAIN = os.environ.get('RAILWAY_PUBLIC_DOMAIN')
+if RAILWAY_PUBLIC_DOMAIN:
+    ALLOWED_HOSTS.append(RAILWAY_PUBLIC_DOMAIN)
+
+# Добавляем поддержку всех Railway поддоменов (для динамических доменов)
+# Это безопасно, так как Railway контролирует эти домены
+if os.environ.get('RAILWAY_ENVIRONMENT'):
+    ALLOWED_HOSTS.append('.up.railway.app')
 
 # Для Railway и других облаков: доверенные источники для CSRF
 CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',')
 CSRF_TRUSTED_ORIGINS = [x.strip() for x in CSRF_TRUSTED_ORIGINS if x.strip()]
+
+# Автоматическое добавление Railway доменов в CSRF_TRUSTED_ORIGINS
+if RAILWAY_PUBLIC_DOMAIN:
+    # Добавляем с протоколом https
+    if not RAILWAY_PUBLIC_DOMAIN.startswith('http'):
+        CSRF_TRUSTED_ORIGINS.append(f'https://{RAILWAY_PUBLIC_DOMAIN}')
+    else:
+        CSRF_TRUSTED_ORIGINS.append(RAILWAY_PUBLIC_DOMAIN)
 
 INSTALLED_APPS = [
     'django.contrib.admin',
