@@ -1889,11 +1889,16 @@
           var nextInput = document.createElement('input');
           nextInput.type = 'hidden';
           nextInput.name = 'next';
-          nextInput.value = window.location.pathname + window.location.search + window.location.hash;
+          // Используем текущий URL без параметров языка
+          var currentPath = window.location.pathname;
+          // Убираем префикс языка если есть (например /de/, /en/)
+          currentPath = currentPath.replace(/^\/(de|en|ru)\//, '/');
+          nextInput.value = currentPath + window.location.search + window.location.hash;
           form.appendChild(nextInput);
           
           // Добавляем форму на страницу и отправляем
           document.body.appendChild(form);
+          console.log('Switching language to:', lang);
           form.submit();
         });
       });
