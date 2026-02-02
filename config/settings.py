@@ -21,12 +21,13 @@ if RAILWAY_PUBLIC_DOMAIN:
 if os.environ.get('RAILWAY_ENVIRONMENT'):
     ALLOWED_HOSTS.append('.up.railway.app')
 
-# Для Railway и других облаков: доверенные источники для CSRF
-# В Railway Dashboard добавьте переменную CSRF_TRUSTED_ORIGINS = https://ваш-домен.up.railway.app
+# Для Railway и других облаков: доверенные источники для CSRF.
+# В Railway Dashboard добавьте переменную: CSRF_TRUSTED_ORIGINS = https://ваш-домен.up.railway.app
+# (один URL или несколько через запятую). Иначе возможна ошибка 403 при входе.
 CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',')
 CSRF_TRUSTED_ORIGINS = [x.strip() for x in CSRF_TRUSTED_ORIGINS if x.strip()]
 
-# Автоматическое добавление Railway доменов в CSRF_TRUSTED_ORIGINS
+# Автоматическое добавление Railway домена в CSRF_TRUSTED_ORIGINS
 if RAILWAY_PUBLIC_DOMAIN:
     origin = RAILWAY_PUBLIC_DOMAIN.strip()
     if not origin.startswith('http'):

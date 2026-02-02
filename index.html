@@ -290,6 +290,50 @@
     .header .btn--outline, .header .btn--ghost { display: none; }
     @media (min-width: 768px) { .header .btn--outline, .header .btn--ghost { display: inline-flex; } }
 
+    /* Выпадающий список языков в шапке */
+    .header__lang-switcher { position: relative; display: inline-flex; }
+    .header__lang-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 4px;
+      min-width: 140px;
+      background: var(--white);
+      border: 1px solid rgba(0,0,0,0.08);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-md);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-8px);
+      transition: opacity var(--transition-fast), transform var(--transition-fast), visibility 0s linear 0.2s;
+      z-index: 1000;
+      overflow: hidden;
+    }
+    .header__lang-dropdown.is-open {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+      transition: opacity var(--transition-fast), transform var(--transition-fast);
+    }
+    .header__lang-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      padding: 10px 14px;
+      border: none;
+      background: none;
+      font-family: var(--font-primary);
+      font-size: var(--body-sm);
+      color: var(--text-dark);
+      cursor: pointer;
+      transition: background var(--transition-fast);
+      text-align: left;
+    }
+    .header__lang-option:hover { background: rgba(124, 58, 237, 0.08); }
+    .header__lang-option:first-child { border-radius: var(--radius) var(--radius) 0 0; }
+    .header__lang-option:last-child { border-radius: 0 0 var(--radius) var(--radius); }
+
     /* Hamburger */
     .hamburger {
       display: flex;
@@ -395,7 +439,8 @@
       align-items: center;
     }
     @media (min-width: 1024px) {
-      .hero .container { grid-template-columns: 1fr 1fr; gap: var(--spacing-xl); }
+      /* Визуал hero ~30% больше: колонка с каруселью шире */
+      .hero .container { grid-template-columns: 1fr 1.32fr; gap: var(--spacing-xl); }
     }
 
     .hero__content {
@@ -1292,7 +1337,14 @@
       <div class="header__cta">
         <a href="#contact" class="btn btn--primary">{% trans 'Оставить заявку' %} <i data-feather="arrow-right"></i></a>
         <a href="#" class="btn btn--outline-purple">{% trans 'Войти' %}</a>
-        <button type="button" class="btn btn--ghost" aria-label="{% trans 'Язык' %}"><i data-feather="globe"></i> {% trans 'Язык' %}</button>
+        <div class="header__lang-switcher">
+          <button type="button" class="btn btn--ghost" id="headerLangBtn" aria-label="{% trans 'Язык' %}" aria-haspopup="true" aria-expanded="false"><i data-feather="globe"></i> {% trans 'Язык' %}</button>
+          <div class="header__lang-dropdown" id="headerLangDropdown" role="menu" aria-hidden="true">
+            <button type="button" class="header__lang-option" role="menuitem" data-lang="de">Deutsch</button>
+            <button type="button" class="header__lang-option" role="menuitem" data-lang="en">English</button>
+            <button type="button" class="header__lang-option" role="menuitem" data-lang="ru">Русский</button>
+          </div>
+        </div>
       </div>
       <button class="hamburger" id="hamburger" type="button" aria-label="{% trans 'Открыть меню' %}" aria-expanded="false" aria-controls="mobileMenu">
         <span></span><span></span><span></span>
@@ -1844,77 +1896,87 @@
         });
       });
 
-      // ----- Переключение языка -----
-      document.querySelectorAll('.footer__lang-btn').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-          var lang = this.getAttribute('data-lang');
-          if (!lang) return;
-          
-          // Получаем CSRF токен
-          function getCookie(name) {
-            var cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-              var cookies = document.cookie.split(';');
-              for (var i = 0; i < cookies.length; i++) {
-                var cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                  break;
-                }
-              }
+      // ----- Переключение языка (общая функция отправки формы) -----
+      function getCsrfToken() {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+          var cookies = document.cookie.split(';');
+          for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.substring(0, 10) === 'csrftoken=') {
+              cookieValue = decodeURIComponent(cookie.substring(10));
+              break;
             }
-            return cookieValue;
           }
-          
-          var csrfToken = getCookie('csrftoken');
-          if (!csrfToken) {
-            // Пытаемся получить из формы
-            var csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
-            if (csrfInput) csrfToken = csrfInput.value;
-          }
-          
-          if (!csrfToken) {
-            console.error('CSRF token not found');
-            return;
-          }
-          
-          // Создаем форму для отправки языка
-          var form = document.createElement('form');
-          form.method = 'POST';
-          form.action = '/i18n/setlang/';
-          form.style.display = 'none';
-          
-          // Добавляем CSRF токен
-          var csrfInput = document.createElement('input');
-          csrfInput.type = 'hidden';
-          csrfInput.name = 'csrfmiddlewaretoken';
-          csrfInput.value = csrfToken;
-          form.appendChild(csrfInput);
-          
-          // Добавляем поле языка
-          var langInput = document.createElement('input');
-          langInput.type = 'hidden';
-          langInput.name = 'language';
-          langInput.value = lang;
-          form.appendChild(langInput);
-          
-          // Добавляем поле next (куда вернуться после переключения)
-          var nextInput = document.createElement('input');
-          nextInput.type = 'hidden';
-          nextInput.name = 'next';
-          // Используем текущий URL без параметров языка
-          var currentPath = window.location.pathname;
-          // Убираем префикс языка если есть (например /de/, /en/)
-          currentPath = currentPath.replace(/^\/(de|en|ru)\//, '/');
-          nextInput.value = currentPath + window.location.search + window.location.hash;
-          form.appendChild(nextInput);
-          
-          // Добавляем форму на страницу и отправляем
-          document.body.appendChild(form);
-          console.log('Switching language to:', lang);
-          form.submit();
-        });
+        }
+        if (!cookieValue) {
+          var csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
+          if (csrfInput) cookieValue = csrfInput.value;
+        }
+        return cookieValue;
+      }
+      function submitSetLanguage(lang) {
+        if (!lang) return;
+        var csrfToken = getCsrfToken();
+        if (!csrfToken) { console.error('CSRF token not found'); return; }
+        var form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/i18n/setlang/';
+        form.style.display = 'none';
+        var csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'csrfmiddlewaretoken';
+        csrfInput.value = csrfToken;
+        form.appendChild(csrfInput);
+        var langInput = document.createElement('input');
+        langInput.type = 'hidden';
+        langInput.name = 'language';
+        langInput.value = lang;
+        form.appendChild(langInput);
+        var nextInput = document.createElement('input');
+        nextInput.type = 'hidden';
+        nextInput.name = 'next';
+        var currentPath = window.location.pathname.replace(/^\/(de|en|ru)\//, '/');
+        nextInput.value = currentPath + window.location.search + window.location.hash;
+        form.appendChild(nextInput);
+        document.body.appendChild(form);
+        form.submit();
+      }
+      document.querySelectorAll('.footer__lang-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() { submitSetLanguage(this.getAttribute('data-lang')); });
       });
+      // Выпадающий список языков в шапке
+      var headerLangBtn = document.getElementById('headerLangBtn');
+      var headerLangDropdown = document.getElementById('headerLangDropdown');
+      if (headerLangBtn && headerLangDropdown) {
+        headerLangBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          var isOpen = headerLangDropdown.classList.contains('is-open');
+          headerLangDropdown.classList.toggle('is-open', !isOpen);
+          headerLangBtn.setAttribute('aria-expanded', !isOpen);
+          headerLangDropdown.setAttribute('aria-hidden', isOpen);
+        });
+        headerLangDropdown.querySelectorAll('.header__lang-option').forEach(function(opt) {
+          opt.addEventListener('click', function(e) {
+            e.stopPropagation();
+            submitSetLanguage(this.getAttribute('data-lang'));
+          });
+        });
+        document.addEventListener('click', function(e) {
+          if (!headerLangBtn.contains(e.target) && !headerLangDropdown.contains(e.target)) {
+            headerLangDropdown.classList.remove('is-open');
+            headerLangBtn.setAttribute('aria-expanded', 'false');
+            headerLangDropdown.setAttribute('aria-hidden', 'true');
+          }
+        });
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape') {
+            headerLangDropdown.classList.remove('is-open');
+            headerLangBtn.setAttribute('aria-expanded', 'false');
+            headerLangDropdown.setAttribute('aria-hidden', 'true');
+          }
+        });
+      }
     })();
   </script>
 </body>
