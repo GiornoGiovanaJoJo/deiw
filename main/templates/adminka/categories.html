@@ -29,18 +29,24 @@
         <h2>Добавить новую категорию</h2>
         <form method="POST" class="category-form">
             {% csrf_token %}
+            {% if form.non_field_errors %}
+            <ul class="errorlist">{{ form.non_field_errors }}</ul>
+            {% endif %}
             <div class="form-row">
                 <div class="form-group">
-                    <label for="name">Название (RU)</label>
-                    <input type="text" id="name" name="name" placeholder="Русское название">
+                    <label for="id_name">Название (RU)</label>
+                    {{ form.name }}
+                    {{ form.name.errors }}
                 </div>
                 <div class="form-group">
-                    <label for="name_en">Название (EN)</label>
-                    <input type="text" id="name_en" name="name_en" placeholder="English name">
+                    <label for="id_name_en">Название (EN)</label>
+                    {{ form.name_en }}
+                    {{ form.name_en.errors }}
                 </div>
                 <div class="form-group">
-                    <label for="name_de">Название (DE) *</label>
-                    <input type="text" id="name_de" name="name_de" required placeholder="Deutscher Name">
+                    <label for="id_name_de">Название (DE)</label>
+                    {{ form.name_de }}
+                    {{ form.name_de.errors }}
                 </div>
             </div>
             <button type="submit" class="btn-primary">

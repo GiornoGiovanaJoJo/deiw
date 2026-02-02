@@ -1,0 +1,36 @@
+{% extends 'cabinet/base.html' %}
+{% load static %}
+
+{% block title %}Заказ #{{ req_obj.display_number }} - Empire Premium{% endblock %}
+
+{% block content %}
+<div class="page-actions" data-aos="fade-up">
+    <h1>Заказ</h1>
+    <a href="{% url 'main:cabinet_orders' %}" class="btn-secondary"><i class="fa-solid fa-arrow-left"></i> Назад к заказам</a>
+</div>
+
+<div class="cabinet-detail-grid" data-aos="fade-up">
+    <div class="card cabinet-detail-card">
+        <div class="cabinet-detail-placeholder" style="width:100%; height:120px; background:var(--color-surface-alt); border-radius:8px; margin-bottom:1rem;"></div>
+        <div class="cabinet-detail-row"><span class="cabinet-detail-label">Название</span><span class="cabinet-detail-value">{{ req_obj.message|truncatewords:10|default:"Название заказа" }}</span></div>
+        <div class="cabinet-detail-row"><span class="cabinet-detail-label">Номер</span><span class="cabinet-detail-value">{{ req_obj.display_number }}</span></div>
+        <div class="cabinet-detail-row"><span class="cabinet-detail-label">Категория</span><span class="cabinet-detail-value">{{ req_obj.category|default:"—" }}</span></div>
+        <div class="cabinet-detail-row"><span class="cabinet-detail-label">Услуги</span><span class="cabinet-detail-value">{% for k, v in req_obj.extra_answers.items %}{{ v }}{% if not forloop.last %}, {% endif %}{% empty %}—{% endfor %}</span></div>
+        <div class="cabinet-detail-row"><span class="cabinet-detail-label">Создан</span><span class="cabinet-detail-value">{{ req_obj.created_at|date:"d.m.Y" }}</span></div>
+        <div class="cabinet-detail-row"><span class="cabinet-detail-label">Завершен</span><span class="cabinet-detail-value">{{ req_obj.get_status_display }}</span></div>
+    </div>
+    <div class="card cabinet-detail-card">
+        <h2>Этапы проекта</h2>
+        {% for stage in stages %}
+        <div class="cabinet-stage-card">
+            <div class="cabinet-stage-icon">{{ forloop.counter }}</div>
+            <div>
+                <div class="cabinet-stage-title">{{ stage.title }}</div>
+                <div class="cabinet-stage-desc">{{ stage.description|default:"Название этапа" }}</div>
+            </div>
+            <div class="cabinet-detail-placeholder" style="width:60px; height:60px; background:var(--color-surface-alt); border-radius:8px; flex-shrink:0;"></div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

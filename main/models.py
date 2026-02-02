@@ -2,6 +2,9 @@ from django.conf import settings
 from django.db import models
 from django.urls import reverse
 
+# Константы (KISS: единственное место для лимитов)
+HERO_CAROUSEL_MAX_IMAGES = 10
+
 
 def _image_url(model_name, pk):
     if not pk:
@@ -48,9 +51,8 @@ class HeroCarouselImage(models.Model):
         return self.alt or f'Слайд {self.order}'
 
     def save(self, *args, **kwargs):
-        if not self.pk:
-            if HeroCarouselImage.objects.count() >= 10:
-                raise ValueError('Максимум 10 изображений в карусели Hero.')
+        if not self.pk and HeroCarouselImage.objects.count() >= HERO_CAROUSEL_MAX_IMAGES:
+            raise ValueError(f'Максимум {HERO_CAROUSEL_MAX_IMAGES} изображений в карусели Hero.')
         super().save(*args, **kwargs)
 
     def get_image_url(self):
@@ -250,13 +252,22 @@ class ElementSettings(models.Model):
         name = self.element_name if self.element_name else 'Без названия'
         return f'{name} ({self.css_selector})'
     
+    def _box_sides_css(self, top, right, bottom, left, prop_name):
+        """Формирует CSS для margin/padding (top right bottom left)."""
+        parts = [
+            f'{top}px' if top is not None else '0',
+            f'{right}px' if right is not None else '0',
+            f'{bottom}px' if bottom is not None else '0',
+            f'{left}px' if left is not None else '0',
+        ]
+        return f'{prop_name}: {" ".join(parts)};'
+
     def get_css_style(self):
         """Генерирует CSS стили для этого элемента."""
-        styles = []
-        
         if not self.is_active:
             return ''
-        
+        styles = []
+
         # Размеры шрифта
         if self.font_size_min and self.font_size_max and self.font_size:
             styles.append(f'font-size: clamp({self.font_size_min}px, 5vw, {self.font_size_max}px);')
@@ -266,58 +277,23 @@ class ElementSettings(models.Model):
             styles.append(f'font-size: min({self.font_size_min}px, 5vw);')
         elif self.font_size_max:
             styles.append(f'font-size: max({self.font_size_max}px, 5vw);')
-        
+
         if self.font_weight:
             styles.append(f'font-weight: {self.font_weight};')
         if self.line_height:
             styles.append(f'line-height: {self.line_height}px;')
         if self.letter_spacing:
             styles.append(f'letter-spacing: {self.letter_spacing};')
-        
-        # Отступы (margin) - добавляем только если хотя бы одно значение задано
-        if any([self.margin_top is not None, self.margin_right is not None, 
-                self.margin_bottom is not None, self.margin_left is not None]):
-            margin_parts = []
-            if self.margin_top is not None:
-                margin_parts.append(f'{self.margin_top}px')
-            else:
-                margin_parts.append('0')
-            if self.margin_right is not None:
-                margin_parts.append(f'{self.margin_right}px')
-            else:
-                margin_parts.append('0')
-            if self.margin_bottom is not None:
-                margin_parts.append(f'{self.margin_bottom}px')
-            else:
-                margin_parts.append('0')
-            if self.margin_left is not None:
-                margin_parts.append(f'{self.margin_left}px')
-            else:
-                margin_parts.append('0')
-            styles.append(f'margin: {" ".join(margin_parts)};')
-        
-        # Внутренние отступы (padding) - добавляем только если хотя бы одно значение задано
-        if any([self.padding_top is not None, self.padding_right is not None, 
-                self.padding_bottom is not None, self.padding_left is not None]):
-            padding_parts = []
-            if self.padding_top is not None:
-                padding_parts.append(f'{self.padding_top}px')
-            else:
-                padding_parts.append('0')
-            if self.padding_right is not None:
-                padding_parts.append(f'{self.padding_right}px')
-            else:
-                padding_parts.append('0')
-            if self.padding_bottom is not None:
-                padding_parts.append(f'{self.padding_bottom}px')
-            else:
-                padding_parts.append('0')
-            if self.padding_left is not None:
-                padding_parts.append(f'{self.padding_left}px')
-            else:
-                padding_parts.append('0')
-            styles.append(f'padding: {" ".join(padding_parts)};')
-        
+
+        if any(x is not None for x in (self.margin_top, self.margin_right, self.margin_bottom, self.margin_left)):
+            styles.append(self._box_sides_css(
+                self.margin_top, self.margin_right, self.margin_bottom, self.margin_left, 'margin'
+            ))
+        if any(x is not None for x in (self.padding_top, self.padding_right, self.padding_bottom, self.padding_left)):
+            styles.append(self._box_sides_css(
+                self.padding_top, self.padding_right, self.padding_bottom, self.padding_left, 'padding'
+            ))
+
         # Позиционирование
         if self.position:
             styles.append(f'position: {self.position};')
@@ -407,6 +383,10 @@ class AdminProject(models.Model):
         verbose_name_plural = 'Проекты (админка)'
         db_table = 'projects'
         ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['status']),
+            models.Index(fields=['-created_at']),
+        ]
     
     def __str__(self):
         return f'{self.project_code} - {self.name}'
@@ -440,6 +420,10 @@ class ContactRequest(models.Model):
         verbose_name_plural = 'Поддержка'
         db_table = 'contact_requests'
         ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['status']),
+            models.Index(fields=['-created_at']),
+        ]
 
     def __str__(self):
         return f'{self.name} - {self.email} ({self.get_status_display()})'
@@ -514,6 +498,14 @@ class Request(models.Model):
         ('in_progress', 'В процессе'),
         ('closed', 'Закрыта'),
     ]
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='cabinet_requests',
+        verbose_name='Пользователь',
+    )
     name = models.CharField('Имя', max_length=100)
     phone = models.CharField('Телефон', max_length=20)
     email = models.EmailField('Email', max_length=100)
@@ -531,10 +523,47 @@ class Request(models.Model):
         verbose_name_plural = 'Заявки'
         db_table = 'requests'
         ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['status']),
+            models.Index(fields=['-created_at']),
+            models.Index(fields=['category', 'status']),
+        ]
 
     def __str__(self):
         cat = self.category_id and self.category or '-'
         return f'{self.name} - {self.email} ({cat})'
+
+    def display_number(self):
+        """Номер заявки для отображения (например 001 100 0001)."""
+        return f'{self.pk:09d}'[:9]
+
+
+class RequestStage(models.Model):
+    """Этап/история заявки: «История заявки» или «Этапы проекта»."""
+    STAGE_TYPE_CHOICES = [
+        ('history', 'История заявки'),
+        ('project', 'Этапы проекта'),
+    ]
+    request = models.ForeignKey(Request, on_delete=models.CASCADE, related_name='stages')
+    title = models.CharField('Название', max_length=255)
+    description = models.TextField('Описание', blank=True)
+    order = models.PositiveSmallIntegerField('Порядок', default=0)
+    stage_type = models.CharField(
+        'Тип',
+        max_length=20,
+        choices=STAGE_TYPE_CHOICES,
+        default='history',
+    )
+    created_at = models.DateTimeField('Дата', auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Этап заявки'
+        verbose_name_plural = 'Этапы заявок'
+        db_table = 'request_stages'
+        ordering = ['order', 'created_at']
+
+    def __str__(self):
+        return f'{self.request_id} — {self.title}'
 
 
 class UserProfile(models.Model):
@@ -542,6 +571,7 @@ class UserProfile(models.Model):
     USER_TYPE_CHOICES = [
         ('client', 'Клиент'),
         ('company', 'Компания'),
+        ('worker', 'Работник'),
     ]
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
@@ -557,6 +587,7 @@ class UserProfile(models.Model):
     )
     company_name = models.CharField('Название компании', max_length=255, blank=True)
     phone = models.CharField('Телефон', max_length=20, blank=True)
+    avatar = models.ImageField('Аватар', upload_to='avatars/', null=True, blank=True)
     created_at = models.DateTimeField('Дата регистрации', auto_now_add=True)
     updated_at = models.DateTimeField('Дата обновления', auto_now=True)
 

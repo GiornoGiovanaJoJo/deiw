@@ -1,0 +1,92 @@
+{% extends 'cabinet/base.html' %}
+{% load static %}
+
+{% block title %}Управление профилем - Empire Premium{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'adminka/css/pages/profile.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="page-actions" data-aos="fade-up">
+    <h1>Управление профилем</h1>
+</div>
+
+<div class="card" data-aos="fade-up">
+    <div class="cabinet-profile-layout">
+        <div class="cabinet-profile-avatar-block">
+            <form method="post" action="{% url 'main:cabinet_profile' %}" enctype="multipart/form-data" class="cabinet-avatar-form">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="avatar">
+                <label class="cabinet-avatar-label">
+                    {% if profile.avatar %}
+                    <div class="cabinet-avatar cabinet-avatar-large cabinet-avatar-img" style="background-image: url('{{ profile.avatar.url }}');"></div>
+                    {% else %}
+                    <div class="cabinet-avatar cabinet-avatar-large">
+                        <span>{% with name=profile_user.get_full_name|default:profile_user.username %}{{ name|slice:":1"|upper }}{% endwith %}</span>
+                    </div>
+                    {% endif %}
+                    <input type="file" name="avatar" accept="image/jpeg,image/png,image/gif,image/webp" class="cabinet-avatar-input">
+                    <span class="cabinet-change-photo">Изменить фото</span>
+                </label>
+            </form>
+            <p class="cabinet-change-photo-hint">JPG, PNG до 5 МБ</p>
+        </div>
+        <div class="cabinet-profile-fields">
+            <form method="post" class="profile-form">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="profile">
+                <div class="form-group">
+                    <label for="id_first_name">Изменить имя</label>
+                    <input type="text" id="id_first_name" name="first_name" value="{% if profile_form.first_name.value %}{{ profile_form.first_name.value }}{% else %}{{ profile_user.first_name|default:'' }}{% endif %}" placeholder="Имя" style="flex:1;" aria-invalid="{% if profile_form.first_name.errors %}true{% endif %}">
+                    <input type="text" name="last_name" value="{% if profile_form.last_name.value != None %}{{ profile_form.last_name.value }}{% else %}{{ profile_user.last_name|default:'' }}{% endif %}" placeholder="Фамилия" style="flex:1;" aria-invalid="{% if profile_form.last_name.errors %}true{% endif %}">
+                    {% if profile_form.first_name.errors or profile_form.last_name.errors %}<span class="auth-field-error" role="alert">{% for e in profile_form.first_name.errors %}{{ e }}{% endfor %}{% for e in profile_form.last_name.errors %}{{ e }}{% endfor %}</span>{% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="id_phone">Изменить номер</label>
+                    <input type="tel" id="id_phone" name="phone" value="{% if profile_form.phone.value != None %}{{ profile_form.phone.value }}{% else %}{{ profile.phone|default:'' }}{% endif %}" placeholder="+49 (900) 000 000 000" aria-invalid="{% if profile_form.phone.errors %}true{% endif %}">
+                    {% if profile_form.phone.errors %}<span class="auth-field-error" role="alert">{% for e in profile_form.phone.errors %}{{ e }}{% endfor %}</span>{% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="id_email">Изменить почту</label>
+                    <input type="email" id="id_email" name="email" value="{% if profile_form.email.value != None %}{{ profile_form.email.value }}{% else %}{{ profile_user.email|default:'' }}{% endif %}" placeholder="Почта" required aria-invalid="{% if profile_form.email.errors %}true{% endif %}">
+                    {% if profile_form.email.errors %}<span class="auth-field-error" role="alert">{% for e in profile_form.email.errors %}{{ e }}{% endfor %}</span>{% endif %}
+                </div>
+                <p class="cabinet-profile-id">ID {{ profile_user.pk }}</p>
+                <button type="submit" class="btn-primary btn-outline-purple">Готово</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="card" data-aos="fade-up">
+    <h3>Сменить пароль</h3>
+    <form method="post" class="profile-form">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="password">
+        <div class="form-group">
+            <label for="old_password">Текущий пароль</label>
+            <input type="password" id="old_password" name="old_password" autocomplete="current-password" placeholder="Введите текущий пароль">
+        </div>
+        <div class="form-group">
+            <label for="new_password1">Новый пароль</label>
+            <input type="password" id="new_password1" name="new_password1" autocomplete="new-password" placeholder="Не менее 8 символов">
+        </div>
+        <div class="form-group">
+            <label for="new_password2">Повторите новый пароль</label>
+            <input type="password" id="new_password2" name="new_password2" autocomplete="new-password" placeholder="Повторите пароль">
+        </div>
+        <button type="submit" class="btn-primary">Изменить пароль</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function() {
+    var form = document.querySelector('.cabinet-avatar-form');
+    var input = form && form.querySelector('input[name="avatar"]');
+    if (input) input.addEventListener('change', function() { if (this.files.length) form.submit(); });
+})();
+</script>
+{% endblock %}

@@ -3,6 +3,7 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# В production обязательно задайте DJANGO_SECRET_KEY в переменных окружения
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-change-me-in-production')
 
 DEBUG = os.environ.get('DEBUG', 'True').lower() in ('1', 'true', 'yes')
@@ -72,7 +73,8 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.media',
-                'django.template.context_processors.i18n',  # Добавляем поддержку языков
+                'django.template.context_processors.i18n',
+                'main.context_processors.cabinet_profile',
             ],
         },
     },
@@ -127,6 +129,10 @@ MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Вход: URL страницы входа и редирект после успешного входа
+LOGIN_URL = '/adminka/login/'
+LOGIN_REDIRECT_URL = '/cabinet/'
 
 # За прокси (Railway, Heroku и т.д.): доверять X-Forwarded-Proto для корректной проверки CSRF/Referer
 # Без этого Django видит запрос как HTTP и проверка Referer/Origin даёт 403

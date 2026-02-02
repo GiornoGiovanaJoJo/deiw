@@ -58,7 +58,13 @@ form {
     background: var(--color-background);
     box-shadow: 0 0 0 2px var(--color-primary), 0 2px 8px var(--color-shadow);
   }
-  
+
+  input.is-invalid,
+  textarea.is-invalid,
+  select.is-invalid {
+    border-color: var(--color-error, #dc3545);
+  }
+
   input[disabled],
   textarea[disabled],
   select[disabled] {

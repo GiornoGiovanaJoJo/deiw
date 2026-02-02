@@ -1,5 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from django.http import HttpResponse, JsonResponse
 from django.utils import translation
 from django.views.decorators.csrf import ensure_csrf_cookie
@@ -7,6 +9,7 @@ from django.views.decorators.http import require_GET, require_POST
 from .models import (
     SiteSettings, HeroCarouselImage, Service, Project, DesignSettings, ElementSettings,
     RequestCategory, RequestSubcategory, RequestQuestion, Request, ContactRequest,
+    HERO_CAROUSEL_MAX_IMAGES,
 )
 
 _MODEL_MAP = {
@@ -22,7 +25,7 @@ def home(request):
     settings = SiteSettings.get_settings()
     design_settings = DesignSettings.get_settings()
     element_settings = ElementSettings.objects.filter(is_active=True).order_by('order', 'element_name')
-    hero_images = list(HeroCarouselImage.objects.all()[:10])
+    hero_images = list(HeroCarouselImage.objects.all()[:HERO_CAROUSEL_MAX_IMAGES])
     services = list(Service.objects.all())
     projects_qs = Project.objects.all()
     paginator = Paginator(projects_qs, 3)
@@ -78,6 +81,18 @@ def _lang_name(obj, prefix='name'):
     return getattr(obj, prefix, '')
 
 
+def _validate_contact_email(email):
+    """Валидация email для форм поддержки/заявки. Возвращает (ok, error_message)."""
+    email = (email or '').strip()
+    if not email:
+        return False, 'Укажите email.'
+    try:
+        validate_email(email)
+    except ValidationError:
+        return False, 'Некорректный email.'
+    return True, None
+
+
 @require_GET
 def api_request_categories(request):
     """Список категорий заявок для формы."""
@@ -128,10 +143,11 @@ def api_submit_support(request):
     phone = (request.POST.get('phone') or '').strip()
     email = (request.POST.get('email') or '').strip()
     message = (request.POST.get('message') or '').strip()
-    if not name or not phone or not email:
+    if not name or not phone:
         return JsonResponse({'success': False, 'error': 'Заполните имя, телефон и email.'}, status=400)
-    if '@' not in email:
-        return JsonResponse({'success': False, 'error': 'Некорректный email.'}, status=400)
+    ok, err = _validate_contact_email(email)
+    if not ok:
+        return JsonResponse({'success': False, 'error': err}, status=400)
     ContactRequest.objects.create(
         name=name, phone=phone, email=email, message=message, reason='support',
     )
@@ -151,10 +167,11 @@ def api_submit_request(request):
     for key, value in request.POST.items():
         if key.startswith('extra_') and value:
             extra_answers[key.replace('extra_', '', 1)] = value
-    if not name or not phone or not email:
+    if not name or not phone:
         return JsonResponse({'success': False, 'error': 'Заполните имя, телефон и email.'}, status=400)
-    if '@' not in email:
-        return JsonResponse({'success': False, 'error': 'Некорректный email.'}, status=400)
+    ok, err = _validate_contact_email(email)
+    if not ok:
+        return JsonResponse({'success': False, 'error': err}, status=400)
     category = None
     if category_id:
         try:
@@ -167,7 +184,9 @@ def api_submit_request(request):
             subcategory = RequestSubcategory.objects.get(pk=subcategory_id)
         except RequestSubcategory.DoesNotExist:
             pass
+    user = request.user if request.user.is_authenticated else None
     Request.objects.create(
+        user=user,
         name=name, phone=phone, email=email, message=message,
         category=category, subcategory=subcategory, extra_answers=extra_answers,
     )

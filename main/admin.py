@@ -5,7 +5,7 @@ from .models import (
     SiteSettings, HeroCarouselImage, Service, Project,
     DesignSettings, ElementSettings,
     Category, AdminProject, ContactRequest,
-    RequestCategory, RequestSubcategory, RequestQuestion, Request,
+    RequestCategory, RequestSubcategory, RequestQuestion, Request, RequestStage,
     UserProfile,
 )
 from .forms import SiteSettingsForm, HeroCarouselImageForm, ServiceForm, ProjectForm, DesignSettingsForm, ElementSettingsForm
@@ -372,9 +372,17 @@ class UserProfileAdmin(admin.ModelAdmin):
     readonly_fields = ['created_at', 'updated_at']
 
 
+@admin.register(RequestStage)
+class RequestStageAdmin(admin.ModelAdmin):
+    list_display = ['request', 'title', 'stage_type', 'order', 'created_at']
+    list_filter = ['stage_type', 'request']
+    list_editable = ['order']
+    ordering = ['request', 'order', 'created_at']
+
+
 @admin.register(Request)
 class RequestAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'email', 'phone', 'category', 'subcategory', 'status', 'created_at']
+    list_display = ['id', 'name', 'email', 'phone', 'user', 'category', 'subcategory', 'status', 'created_at']
     list_filter = ['status', 'category', 'created_at']
     search_fields = ['name', 'email', 'phone', 'message']
     list_editable = ['status']
@@ -382,7 +390,7 @@ class RequestAdmin(admin.ModelAdmin):
     date_hierarchy = 'created_at'
     readonly_fields = ['created_at']
     fieldsets = (
-        ('Клиент', {'fields': ('name', 'email', 'phone', 'message')}),
+        ('Клиент', {'fields': ('user', 'name', 'email', 'phone', 'message')}),
         ('Категория', {'fields': ('category', 'subcategory')}),
         ('Ответы на вопросы', {'fields': ('extra_answers',), 'classes': ('collapse',)}),
         ('Статус', {'fields': ('status', 'created_at')}),

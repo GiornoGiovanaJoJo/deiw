@@ -39,66 +39,104 @@
             <h1 class="auth-title">Регистрация</h1>
 
             <div class="auth-type-toggle" role="group" aria-label="Тип учётной записи">
-                <button type="button" class="auth-type-btn active" data-type="client">Клиент</button>
-                <button type="button" class="auth-type-btn" data-type="company">Компания</button>
+                <button type="button" class="auth-type-btn active" data-type="client">КЛИЕНТ</button>
+                <button type="button" class="auth-type-btn" data-type="worker">РАБОТНИК</button>
+                <button type="button" class="auth-type-btn" data-type="company">КОМПАНИЯ</button>
             </div>
 
-            <form class="auth-form" method="POST" action="{% url 'main:register' %}" data-aos="fade-up" data-aos-delay="100">
+            <form class="auth-form" method="POST" action="{% url 'main:register' %}" data-aos="fade-up" data-aos-delay="100" novalidate>
                 {% csrf_token %}
-                <input type="hidden" name="user_type" id="user_type" value="{{ form_data.user_type|default:'client' }}">
+                <input type="hidden" name="user_type" id="user_type" value="{{ form.user_type.value|default:'client' }}">
 
-                {% if errors %}
-                    <div class="form-message error">
-                        {% for key, msg in errors.items %}{{ msg }}{% if not forloop.last %} {% endif %}{% endfor %}
+                {% if form.non_field_errors %}
+                    <div class="form-message error" role="alert">
+                        {% for error in form.non_field_errors %}{{ error }}{% endfor %}
                     </div>
                 {% endif %}
 
                 <div class="form-group auth-input-group">
-                    <input type="text" name="full_name" value="{{ form_data.full_name|default:'' }}"
-                           placeholder="Полное имя" class="auth-input-underline" required
-                           autocomplete="name">
-                    {% if errors.full_name %}<span class="auth-field-error">{{ errors.full_name }}</span>{% endif %}
+                    <label for="id_full_name" class="sr-only">Полное имя</label>
+                    <input type="text" name="full_name" id="id_full_name" value="{{ form.full_name.value|default:'' }}"
+                           placeholder="Полное имя" class="auth-input-underline {% if form.full_name.errors %}is-invalid{% endif %}"
+                           autocomplete="name" required
+                           aria-describedby="{% if form.full_name.errors %}id_full_name_errors{% endif %}"
+                           aria-invalid="{% if form.full_name.errors %}true{% else %}false{% endif %}">
+                    {% if form.full_name.errors %}
+                        <span id="id_full_name_errors" class="auth-field-error" role="alert">{% for e in form.full_name.errors %}{{ e }}{% endfor %}</span>
+                    {% endif %}
                 </div>
 
                 <div class="form-group auth-input-group">
-                    <input type="email" name="email" value="{{ form_data.email|default:'' }}"
-                           placeholder="Адрес эл. почты" class="auth-input-underline" required
-                           autocomplete="email">
-                    {% if errors.email %}<span class="auth-field-error">{{ errors.email }}</span>{% endif %}
+                    <label for="id_email" class="sr-only">Адрес эл. почты</label>
+                    <input type="email" name="email" id="id_email" value="{{ form.email.value|default:'' }}"
+                           placeholder="Адрес эл. почты" class="auth-input-underline {% if form.email.errors %}is-invalid{% endif %}"
+                           autocomplete="email" required
+                           aria-describedby="{% if form.email.errors %}id_email_errors{% endif %}"
+                           aria-invalid="{% if form.email.errors %}true{% else %}false{% endif %}">
+                    {% if form.email.errors %}
+                        <span id="id_email_errors" class="auth-field-error" role="alert">{% for e in form.email.errors %}{{ e }}{% endfor %}</span>
+                    {% endif %}
                 </div>
 
                 <div class="form-group auth-input-group">
-                    <input type="tel" name="phone" value="{{ form_data.phone|default:'' }}"
+                    <label for="id_phone" class="sr-only">Номер телефона</label>
+                    <input type="tel" name="phone" id="id_phone" value="{{ form.phone.value|default:'' }}"
                            placeholder="Номер телефона" class="auth-input-underline"
                            autocomplete="tel">
                 </div>
 
                 <div class="form-group auth-input-group auth-company-field" id="company_name_group" style="display: none;">
-                    <input type="text" name="company_name" value="{{ form_data.company_name|default:'' }}"
-                           placeholder="Название компании" class="auth-input-underline"
-                           autocomplete="organization">
-                    {% if errors.company_name %}<span class="auth-field-error">{{ errors.company_name }}</span>{% endif %}
+                    <label for="id_company_name" class="sr-only">Название компании</label>
+                    <input type="text" name="company_name" id="id_company_name" value="{{ form.company_name.value|default:'' }}"
+                           placeholder="Название компании" class="auth-input-underline {% if form.company_name.errors %}is-invalid{% endif %}"
+                           autocomplete="organization"
+                           aria-describedby="{% if form.company_name.errors %}id_company_name_errors{% endif %}">
+                    {% if form.company_name.errors %}
+                        <span id="id_company_name_errors" class="auth-field-error" role="alert">{% for e in form.company_name.errors %}{{ e }}{% endfor %}</span>
+                    {% endif %}
+                </div>
+
+                <div class="form-group auth-checkbox-group">
+                    <label class="auth-checkbox-label">
+                        <input type="checkbox" name="accept_terms" id="id_accept_terms" {% if form.accept_terms.value %}checked{% endif %}
+                               aria-describedby="{% if form.accept_terms.errors %}id_accept_terms_errors{% endif %}"
+                               aria-invalid="{% if form.accept_terms.errors %}true{% else %}false{% endif %}">
+                        <span>Я принимаю <a href="{% url 'main:privacy' %}" target="_blank" rel="noopener">политику конфиденциальности</a></span>
+                    </label>
+                    {% if form.accept_terms.errors %}
+                        <span id="id_accept_terms_errors" class="auth-field-error" role="alert">{% for e in form.accept_terms.errors %}{{ e }}{% endfor %}</span>
+                    {% endif %}
                 </div>
 
                 <div class="form-group auth-input-group">
+                    <label for="id_password1" class="sr-only">Пароль</label>
                     <div class="password-input auth-input-underline-wrap">
-                        <input type="password" name="password1" placeholder="Введите пароль"
-                               class="auth-input-underline" required minlength="8"
-                               autocomplete="new-password">
+                        <input type="password" name="password1" id="id_password1" placeholder="Введите пароль"
+                               class="auth-input-underline {% if form.password1.errors %}is-invalid{% endif %}"
+                               autocomplete="new-password" minlength="8" required
+                               aria-describedby="{% if form.password1.errors %}id_password1_errors{% endif %}"
+                               aria-invalid="{% if form.password1.errors %}true{% else %}false{% endif %}">
                     </div>
-                    {% if errors.password1 %}<span class="auth-field-error">{{ errors.password1 }}</span>{% endif %}
+                    {% if form.password1.errors %}
+                        <span id="id_password1_errors" class="auth-field-error" role="alert">{% for e in form.password1.errors %}{{ e }}{% endfor %}</span>
+                    {% endif %}
                 </div>
 
                 <div class="form-group auth-input-group">
+                    <label for="id_password2" class="sr-only">Повторите пароль</label>
                     <div class="password-input auth-input-underline-wrap">
-                        <input type="password" name="password2" placeholder="Повторите пароль"
-                               class="auth-input-underline" required
-                               autocomplete="new-password">
+                        <input type="password" name="password2" id="id_password2" placeholder="Повторите пароль"
+                               class="auth-input-underline {% if form.password2.errors %}is-invalid{% endif %}"
+                               autocomplete="new-password" required
+                               aria-describedby="{% if form.password2.errors %}id_password2_errors{% endif %}"
+                               aria-invalid="{% if form.password2.errors %}true{% else %}false{% endif %}">
                     </div>
-                    {% if errors.password2 %}<span class="auth-field-error">{{ errors.password2 }}</span>{% endif %}
+                    {% if form.password2.errors %}
+                        <span id="id_password2_errors" class="auth-field-error" role="alert">{% for e in form.password2.errors %}{{ e }}{% endfor %}</span>
+                    {% endif %}
                 </div>
 
-                <button type="submit" class="auth-submit-btn">Создать аккаунт</button>
+                <button type="submit" class="auth-submit-btn">СОЗДАТЬ АККАУНТ</button>
 
                 <div class="auth-links">
                     <p>У вас уже есть аккаунт? <a href="{% url 'main:adminka_login' %}">Войти</a></p>
@@ -130,9 +168,9 @@
             }
             var initialType = (hidden && hidden.value) ? hidden.value : 'client';
             updateType(initialType);
-            if (toggle && initialType === 'company') {
+            if (toggle && (initialType === 'company' || initialType === 'worker')) {
                 toggle.querySelectorAll('.auth-type-btn').forEach(function(b) {
-                    b.classList.toggle('active', b.getAttribute('data-type') === 'company');
+                    b.classList.toggle('active', b.getAttribute('data-type') === initialType);
                 });
             }
         })();

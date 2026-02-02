@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views, adminka_views
+from . import views, adminka_views, cabinet_views
 
 app_name = 'main'
 
@@ -43,4 +43,13 @@ urlpatterns = [
     # Категории
     path('adminka/categories/', adminka_views.adminka_categories, name='adminka_categories'),
     path('adminka/categories/<int:pk>/delete/', adminka_views.adminka_category_delete, name='adminka_category_delete'),
+    
+    # Личный кабинет пользователя (не staff)
+    path('cabinet/', cabinet_views.cabinet_dashboard, name='cabinet_dashboard'),
+    path('cabinet/orders/', cabinet_views.cabinet_orders, name='cabinet_orders'),
+    path('cabinet/orders/<int:pk>/', cabinet_views.cabinet_order_detail, name='cabinet_order_detail'),
+    path('cabinet/requests/', cabinet_views.cabinet_requests, name='cabinet_requests'),
+    path('cabinet/requests/<int:pk>/', cabinet_views.cabinet_request_detail, name='cabinet_request_detail'),
+    path('cabinet/profile/', cabinet_views.cabinet_profile, name='cabinet_profile'),
+    path('cabinet/support/', cabinet_views.cabinet_support, name='cabinet_support'),
 ]

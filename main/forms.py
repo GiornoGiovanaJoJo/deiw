@@ -1,6 +1,21 @@
 # -*- coding: utf-8 -*-
 from django import forms
-from .models import SiteSettings, HeroCarouselImage, Service, Project, DesignSettings, ElementSettings
+from django.contrib.auth.models import User
+from django.core.validators import MinLengthValidator
+from .models import (
+    SiteSettings,
+    HeroCarouselImage,
+    Service,
+    Project,
+    DesignSettings,
+    ElementSettings,
+    UserProfile,
+    AdminProject,
+    Category,
+)
+
+# Лимит размера аватара (5 МБ)
+AVATAR_MAX_SIZE = 5 * 1024 * 1024
 
 
 def set_image_from_upload(instance, field_data, field_type, field_name, uploaded_file):
@@ -258,5 +273,124 @@ class ElementSettingsForm(forms.ModelForm):
         
         if not cleaned_data.get('css_selector'):
             raise forms.ValidationError('Необходимо указать CSS селектор или выбрать HTML тег.')
-        
+
         return cleaned_data
+
+
+class RegisterForm(forms.Form):
+    """Форма регистрации: клиент, работник или компания."""
+    USER_TYPE_CHOICES = [
+        ('client', 'Клиент'),
+        ('worker', 'Работник'),
+        ('company', 'Компания'),
+    ]
+    full_name = forms.CharField(
+        max_length=255,
+        strip=True,
+        label='Полное имя',
+        widget=forms.TextInput(attrs={'placeholder': 'Полное имя', 'autocomplete': 'name'}),
+    )
+    email = forms.EmailField(
+        label='Email',
+        widget=forms.EmailInput(attrs={'placeholder': 'Адрес эл. почты', 'autocomplete': 'email'}),
+    )
+    phone = forms.CharField(
+        max_length=20,
+        required=False,
+        strip=True,
+        widget=forms.TextInput(attrs={'placeholder': 'Номер телефона', 'autocomplete': 'tel'}),
+    )
+    user_type = forms.ChoiceField(
+        choices=USER_TYPE_CHOICES,
+        initial='client',
+        widget=forms.HiddenInput(),
+    )
+    company_name = forms.CharField(
+        max_length=255,
+        required=False,
+        strip=True,
+        widget=forms.TextInput(attrs={'placeholder': 'Название компании', 'autocomplete': 'organization'}),
+    )
+    password1 = forms.CharField(
+        label='Пароль',
+        min_length=8,
+        widget=forms.PasswordInput(attrs={'placeholder': 'Введите пароль', 'autocomplete': 'new-password'}),
+        validators=[MinLengthValidator(8, message='Пароль должен быть не менее 8 символов.')],
+    )
+    password2 = forms.CharField(
+        widget=forms.PasswordInput(attrs={'placeholder': 'Повторите пароль', 'autocomplete': 'new-password'}),
+        label='Повторите пароль',
+    )
+    accept_terms = forms.BooleanField(
+        required=True,
+        label='Я принимаю политику конфиденциальности',
+        error_messages={'required': 'Необходимо принять политику конфиденциальности.'},
+    )
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email', '').strip().lower()
+        if email and User.objects.filter(email=email).exists():
+            raise forms.ValidationError('Пользователь с таким email уже зарегистрирован.')
+        return email
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password1 = cleaned_data.get('password1')
+        password2 = cleaned_data.get('password2')
+        if password1 and password2 and password1 != password2:
+            self.add_error('password2', 'Пароли не совпадают.')
+        user_type = cleaned_data.get('user_type', 'client')
+        if user_type == 'company' and not (cleaned_data.get('company_name') or '').strip():
+            self.add_error('company_name', 'Укажите название компании.')
+        return cleaned_data
+
+
+class AvatarUploadForm(forms.Form):
+    """Загрузка аватара с валидацией через Pillow (Django ImageField)."""
+    avatar = forms.ImageField(
+        label='Аватар',
+        required=True,
+        widget=forms.FileInput(attrs={'accept': 'image/jpeg,image/png,image/gif,image/webp'}),
+    )
+
+    def clean_avatar(self):
+        avatar = self.cleaned_data.get('avatar')
+        if avatar and avatar.size > AVATAR_MAX_SIZE:
+            raise forms.ValidationError('Размер файла не должен превышать 5 МБ.')
+        return avatar
+
+
+class CabinetProfileForm(forms.Form):
+    """Редактирование профиля кабинета: имя, телефон, email."""
+    first_name = forms.CharField(max_length=150, required=False, strip=True)
+    last_name = forms.CharField(max_length=150, required=False, strip=True)
+    email = forms.EmailField(required=True)
+    phone = forms.CharField(max_length=20, required=False, strip=True)
+
+
+class AdminProjectForm(forms.ModelForm):
+    """Форма создания/редактирования проекта админки."""
+    class Meta:
+        model = AdminProject
+        fields = [
+            'project_code', 'name', 'description', 'category', 'status',
+            'year', 'type', 'size', 'color', 'end_date',
+        ]
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 4}),
+            'end_date': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['category'].required = False
+        self.fields['category'].empty_label = 'Выберите категорию'
+        self.fields['year'].required = False
+        self.fields['end_date'].required = False
+
+
+class CategoryForm(forms.ModelForm):
+    """Форма создания категории."""
+    class Meta:
+        model = Category
+        fields = ['name', 'name_en', 'name_de']

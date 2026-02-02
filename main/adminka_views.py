@@ -1,16 +1,18 @@
 """
 Views для кастомной админки /adminka
 """
+from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from django.http import JsonResponse, HttpResponseForbidden
-from django.db.models import Q, Count
+from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import ensure_csrf_cookie
-from .models import AdminProject, Category, ContactRequest, Request, UserProfile
 from django.contrib.auth.models import User
+
+from .models import AdminProject, Category, ContactRequest, Request, UserProfile
+from .forms import RegisterForm, AdminProjectForm, CategoryForm
 
 
 def is_staff_user(user):
@@ -37,11 +39,13 @@ def adminka_login(request):
         
         user = authenticate(request, username=username, password=password)
         
-        if user is not None and user.is_staff:
+        if user is not None:
             login(request, user)
-            return redirect('main:adminka_dashboard')
+            if user.is_staff:
+                return redirect('main:adminka_dashboard')
+            return redirect('main:cabinet_requests')
         else:
-            messages.error(request, 'Неверный email или пароль, либо у вас нет прав администратора')
+            messages.error(request, 'Неверный email или пароль')
     
     return render(request, 'adminka/login.html')
 
@@ -60,38 +64,16 @@ def _make_username_from_email(email):
 
 @ensure_csrf_cookie
 def register_view(request):
-    """Регистрация: клиент или компания."""
+    """Регистрация: клиент, работник или компания. Валидация через RegisterForm."""
     if request.user.is_authenticated:
         return redirect('main:home')
 
-    errors = {}
     if request.method == 'POST':
-        full_name = (request.POST.get('full_name') or '').strip()
-        email = (request.POST.get('email') or '').strip().lower()
-        phone = (request.POST.get('phone') or '').strip()
-        password1 = request.POST.get('password1', '')
-        password2 = request.POST.get('password2', '')
-        user_type = request.POST.get('user_type', 'client')
-        company_name = (request.POST.get('company_name') or '').strip() if user_type == 'company' else ''
-
-        if not full_name:
-            errors['full_name'] = 'Укажите имя.'
-        if not email:
-            errors['email'] = 'Укажите email.'
-        elif '@' not in email:
-            errors['email'] = 'Некорректный email.'
-        elif User.objects.filter(email=email).exists():
-            errors['email'] = 'Пользователь с таким email уже зарегистрирован.'
-        if not password1:
-            errors['password1'] = 'Введите пароль.'
-        elif len(password1) < 8:
-            errors['password1'] = 'Пароль должен быть не короче 8 символов.'
-        if password1 != password2:
-            errors['password2'] = 'Пароли не совпадают.'
-        if user_type == 'company' and not company_name:
-            errors['company_name'] = 'Укажите название компании.'
-
-        if not errors:
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            cleaned = form.cleaned_data
+            email = cleaned['email'].strip().lower()
+            full_name = cleaned['full_name'].strip()
             parts = full_name.split(None, 1)
             first_name = parts[0] if parts else full_name
             last_name = parts[1] if len(parts) > 1 else ''
@@ -99,7 +81,7 @@ def register_view(request):
             user = User.objects.create_user(
                 username=username,
                 email=email,
-                password=password1,
+                password=cleaned['password1'],
                 first_name=first_name,
                 last_name=last_name,
                 is_staff=False,
@@ -107,27 +89,20 @@ def register_view(request):
             )
             UserProfile.objects.create(
                 user=user,
-                user_type=user_type,
-                company_name=company_name,
-                phone=phone,
+                user_type=cleaned['user_type'],
+                company_name=(cleaned.get('company_name') or '').strip(),
+                phone=(cleaned.get('phone') or '').strip(),
             )
             messages.success(request, 'Регистрация прошла успешно. Войдите в систему.')
             return redirect('main:adminka_login')
-        form_data = {
-            'full_name': full_name,
-            'email': email,
-            'phone': phone,
-            'user_type': user_type,
-            'company_name': company_name,
-        }
     else:
-        form_data = {}
+        form = RegisterForm(initial={'user_type': 'client'})
 
-    return render(request, 'adminka/register.html', {'errors': errors, 'form_data': form_data})
+    return render(request, 'adminka/register.html', {'form': form})
 
 
-@login_required(login_url='/adminka/login/')
-@user_passes_test(is_staff_user, login_url='/adminka/login/')
+@login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_staff_user, login_url=settings.LOGIN_URL)
 def adminka_logout(request):
     """Выход из админки"""
     logout(request)
@@ -135,8 +110,8 @@ def adminka_logout(request):
     return redirect('main:adminka_login')
 
 
-@login_required(login_url='/adminka/login/')
-@user_passes_test(is_staff_user, login_url='/adminka/login/')
+@login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_staff_user, login_url=settings.LOGIN_URL)
 def adminka_profile(request):
     """Профиль администратора: данные и смена пароля."""
     user = request.user
@@ -174,8 +149,8 @@ def adminka_profile(request):
     return render(request, 'adminka/profile.html', context)
 
 
-@login_required(login_url='/adminka/login/')
-@user_passes_test(is_staff_user, login_url='/adminka/login/')
+@login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_staff_user, login_url=settings.LOGIN_URL)
 def adminka_dashboard(request):
     """Главная страница админки"""
     # Статистика
@@ -204,8 +179,8 @@ def adminka_dashboard(request):
     return render(request, 'adminka/dashboard.html', context)
 
 
-@login_required(login_url='/adminka/login/')
-@user_passes_test(is_staff_user, login_url='/adminka/login/')
+@login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_staff_user, login_url=settings.LOGIN_URL)
 def adminka_projects(request):
     """Список проектов"""
     projects = AdminProject.objects.select_related('category').order_by('-created_at')
@@ -226,72 +201,44 @@ def adminka_projects(request):
     return render(request, 'adminka/projects.html', context)
 
 
-@login_required(login_url='/adminka/login/')
-@user_passes_test(is_staff_user, login_url='/adminka/login/')
+@login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_staff_user, login_url=settings.LOGIN_URL)
 def adminka_project_add(request):
-    """Добавление проекта"""
-    if request.method == 'POST':
-        try:
-            project = AdminProject.objects.create(
-                project_code=request.POST.get('project_code'),
-                name=request.POST.get('name'),
-                description=request.POST.get('description', ''),
-                category_id=request.POST.get('category') or None,
-                status=request.POST.get('status', 'planned'),
-                year=request.POST.get('year') or None,
-                type=request.POST.get('type', ''),
-                size=request.POST.get('size', ''),
-                color=request.POST.get('color', ''),
-                end_date=request.POST.get('end_date') or None,
-            )
-            messages.success(request, f'Проект "{project.name}" успешно создан')
-            return redirect('main:adminka_projects')
-        except Exception as e:
-            messages.error(request, f'Ошибка при создании проекта: {str(e)}')
-    
-    categories = Category.objects.all()
+    """Добавление проекта."""
+    form = AdminProjectForm(request.POST or None)
+    if request.method == 'POST' and form.is_valid():
+        project = form.save()
+        messages.success(request, f'Проект "{project.name}" успешно создан')
+        return redirect('main:adminka_projects')
     context = {
         'admin_name': request.user.get_full_name() or request.user.username,
-        'categories': categories,
+        'form': form,
+        'categories': Category.objects.all(),
     }
     return render(request, 'adminka/project_add.html', context)
 
 
-@login_required(login_url='/adminka/login/')
-@user_passes_test(is_staff_user, login_url='/adminka/login/')
+@login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_staff_user, login_url=settings.LOGIN_URL)
 def adminka_project_edit(request, pk):
-    """Редактирование проекта"""
+    """Редактирование проекта."""
     project = get_object_or_404(AdminProject, pk=pk)
-    
-    if request.method == 'POST':
-        try:
-            project.project_code = request.POST.get('project_code')
-            project.name = request.POST.get('name')
-            project.description = request.POST.get('description', '')
-            project.category_id = request.POST.get('category') or None
-            project.status = request.POST.get('status', 'planned')
-            project.year = request.POST.get('year') or None
-            project.type = request.POST.get('type', '')
-            project.size = request.POST.get('size', '')
-            project.color = request.POST.get('color', '')
-            project.end_date = request.POST.get('end_date') or None
-            project.save()
-            messages.success(request, f'Проект "{project.name}" успешно обновлен')
-            return redirect('main:adminka_projects')
-        except Exception as e:
-            messages.error(request, f'Ошибка при обновлении проекта: {str(e)}')
-    
-    categories = Category.objects.all()
+    form = AdminProjectForm(request.POST or None, instance=project)
+    if request.method == 'POST' and form.is_valid():
+        form.save()
+        messages.success(request, f'Проект "{project.name}" успешно обновлен')
+        return redirect('main:adminka_projects')
     context = {
         'admin_name': request.user.get_full_name() or request.user.username,
         'project': project,
-        'categories': categories,
+        'form': form,
+        'categories': Category.objects.all(),
     }
     return render(request, 'adminka/project_edit.html', context)
 
 
-@login_required(login_url='/adminka/login/')
-@user_passes_test(is_staff_user, login_url='/adminka/login/')
+@login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_staff_user, login_url=settings.LOGIN_URL)
 def adminka_project_view(request, pk):
     """Просмотр проекта"""
     project = get_object_or_404(AdminProject, pk=pk)
@@ -302,22 +249,19 @@ def adminka_project_view(request, pk):
     return render(request, 'adminka/project_view.html', context)
 
 
-@login_required(login_url='/adminka/login/')
-@user_passes_test(is_staff_user, login_url='/adminka/login/')
+@login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_staff_user, login_url=settings.LOGIN_URL)
 @require_POST
 def adminka_project_delete(request, pk):
-    """Удаление проекта (AJAX)"""
-    try:
-        project = get_object_or_404(AdminProject, pk=pk)
-        project_name = project.name
-        project.delete()
-        return JsonResponse({'success': True, 'message': f'Проект "{project_name}" удален'})
-    except Exception as e:
-        return JsonResponse({'success': False, 'message': str(e)}, status=400)
+    """Удаление проекта (AJAX)."""
+    project = get_object_or_404(AdminProject, pk=pk)
+    project_name = project.name
+    project.delete()
+    return JsonResponse({'success': True, 'message': f'Проект "{project_name}" удален'})
 
 
-@login_required(login_url='/adminka/login/')
-@user_passes_test(is_staff_user, login_url='/adminka/login/')
+@login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_staff_user, login_url=settings.LOGIN_URL)
 def adminka_support(request):
     """Список заявок в поддержку"""
     requests_list = ContactRequest.objects.order_by('-created_at')
@@ -329,8 +273,8 @@ def adminka_support(request):
     return render(request, 'adminka/support.html', context)
 
 
-@login_required(login_url='/adminka/login/')
-@user_passes_test(is_staff_user, login_url='/adminka/login/')
+@login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_staff_user, login_url=settings.LOGIN_URL)
 def adminka_support_edit(request, pk):
     """Редактирование заявки"""
     contact_request = get_object_or_404(ContactRequest, pk=pk)
@@ -353,23 +297,20 @@ def adminka_support_edit(request, pk):
     return render(request, 'adminka/support_edit.html', context)
 
 
-@login_required(login_url='/adminka/login/')
-@user_passes_test(is_staff_user, login_url='/adminka/login/')
+@login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_staff_user, login_url=settings.LOGIN_URL)
 @require_POST
 def adminka_support_delete(request, pk):
-    """Удаление заявки (AJAX)"""
-    try:
-        contact_request = get_object_or_404(ContactRequest, pk=pk)
-        contact_request.delete()
-        return JsonResponse({'success': True, 'message': 'Заявка удалена'})
-    except Exception as e:
-        return JsonResponse({'success': False, 'message': str(e)}, status=400)
+    """Удаление заявки (AJAX)."""
+    contact_request = get_object_or_404(ContactRequest, pk=pk)
+    contact_request.delete()
+    return JsonResponse({'success': True, 'message': 'Заявка удалена'})
 
 
 # ---------- Заявки (таблица заявок с сайта) ----------
 
-@login_required(login_url='/adminka/login/')
-@user_passes_test(is_staff_user, login_url='/adminka/login/')
+@login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_staff_user, login_url=settings.LOGIN_URL)
 def adminka_requests(request):
     """Список заявок с сайта (вкладка «Заявка»)."""
     requests_list = Request.objects.select_related('category', 'subcategory').order_by('-created_at')
@@ -380,8 +321,8 @@ def adminka_requests(request):
     return render(request, 'adminka/requests.html', context)
 
 
-@login_required(login_url='/adminka/login/')
-@user_passes_test(is_staff_user, login_url='/adminka/login/')
+@login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_staff_user, login_url=settings.LOGIN_URL)
 def adminka_request_edit(request, pk):
     """Редактирование заявки."""
     req = get_object_or_404(Request, pk=pk)
@@ -402,51 +343,39 @@ def adminka_request_edit(request, pk):
     return render(request, 'adminka/request_edit.html', context)
 
 
-@login_required(login_url='/adminka/login/')
-@user_passes_test(is_staff_user, login_url='/adminka/login/')
+@login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_staff_user, login_url=settings.LOGIN_URL)
 @require_POST
 def adminka_request_delete(request, pk):
-    try:
-        req = get_object_or_404(Request, pk=pk)
-        req.delete()
-        return JsonResponse({'success': True, 'message': 'Заявка удалена'})
-    except Exception as e:
-        return JsonResponse({'success': False, 'message': str(e)}, status=400)
+    """Удаление заявки (AJAX)."""
+    req = get_object_or_404(Request, pk=pk)
+    req.delete()
+    return JsonResponse({'success': True, 'message': 'Заявка удалена'})
 
 
-@login_required(login_url='/adminka/login/')
-@user_passes_test(is_staff_user, login_url='/adminka/login/')
+@login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_staff_user, login_url=settings.LOGIN_URL)
 def adminka_categories(request):
-    """Список категорий"""
+    """Список категорий."""
     categories = Category.objects.order_by('-created_at')
-    
-    if request.method == 'POST':
-        try:
-            Category.objects.create(
-                name=request.POST.get('name', ''),
-                name_en=request.POST.get('name_en', ''),
-                name_de=request.POST.get('name_de', ''),
-            )
-            messages.success(request, 'Категория успешно создана')
-            return redirect('main:adminka_categories')
-        except Exception as e:
-            messages.error(request, f'Ошибка при создании категории: {str(e)}')
-    
+    form = CategoryForm(request.POST or None)
+    if request.method == 'POST' and form.is_valid():
+        form.save()
+        messages.success(request, 'Категория успешно создана')
+        return redirect('main:adminka_categories')
     context = {
         'admin_name': request.user.get_full_name() or request.user.username,
         'categories': categories,
+        'form': form,
     }
     return render(request, 'adminka/categories.html', context)
 
 
-@login_required(login_url='/adminka/login/')
-@user_passes_test(is_staff_user, login_url='/adminka/login/')
+@login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_staff_user, login_url=settings.LOGIN_URL)
 @require_POST
 def adminka_category_delete(request, pk):
-    """Удаление категории (AJAX)"""
-    try:
-        category = get_object_or_404(Category, pk=pk)
-        category.delete()
-        return JsonResponse({'success': True, 'message': 'Категория удалена'})
-    except Exception as e:
-        return JsonResponse({'success': False, 'message': str(e)}, status=400)
+    """Удаление категории (AJAX)."""
+    category = get_object_or_404(Category, pk=pk)
+    category.delete()
+    return JsonResponse({'success': True, 'message': 'Категория удалена'})

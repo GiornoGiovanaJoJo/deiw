@@ -1,0 +1,75 @@
+{% extends 'cabinet/base.html' %}
+{% load static %}
+
+{% block title %}Заказы - Empire Premium{% endblock %}
+
+{% block content %}
+<div class="page-actions" data-aos="fade-up">
+    <h1>Заказы</h1>
+    <div class="cabinet-filters">
+        <select id="statusFilter" class="filter-select">
+            <option value="">Статус заказа</option>
+            <option value="closed">Завершен</option>
+            <option value="in_progress">Активен</option>
+        </select>
+        <select id="categoryFilter" class="filter-select">
+            <option value="">Категория услуги</option>
+            {% for cat in categories %}
+            <option value="{{ cat.name_de|default:cat.name|default:'' }}">{{ cat.name_de|default:cat.name|default:"—" }}</option>
+            {% endfor %}
+        </select>
+        <input type="text" id="searchInput" class="search-input" placeholder="Поиск по номеру заказа..." />
+    </div>
+</div>
+
+{% if not user_requests %}
+<div class="card" style="text-align: center; padding: 3rem;">
+    <h3>Заказов пока нет</h3>
+    <p>Ваши заявки появятся здесь после отправки</p>
+    <a href="{% url 'main:home' %}#contact" class="btn-primary">Оставить заявку</a>
+</div>
+{% else %}
+<div class="cabinet-section" data-aos="fade-up">
+    <h2 class="section-title">Завершен</h2>
+    <div class="cabinet-cards">
+        {% for req in user_requests %}
+        {% if req.status == 'closed' %}
+        <div class="cabinet-card cabinet-order-card" data-status="{{ req.status }}" data-category="{{ req.category.name_de|default:''|lower }}" data-number="{{ req.display_number }}">
+            <div class="cabinet-card-content">
+                <span class="cabinet-card-status status-closed">Завершен</span>
+                <h3 class="cabinet-card-title">{{ req.message|truncatewords:5|default:"Название заказа" }}</h3>
+                <p class="cabinet-card-meta">Категория заказа: {{ req.category|default:"—" }}</p>
+                <p class="cabinet-card-meta">Номер заказа: {{ req.display_number }}</p>
+            </div>
+            <div class="cabinet-card-placeholder"></div>
+            <a href="{% url 'main:cabinet_order_detail' req.pk %}" class="cabinet-card-link">Открыть</a>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
+<div class="cabinet-section" data-aos="fade-up">
+    <h2 class="section-title">Активен</h2>
+    <div class="cabinet-cards">
+        {% for req in user_requests %}
+        {% if req.status == 'in_progress' or req.status == 'new' %}
+        <div class="cabinet-card cabinet-order-card" data-status="{{ req.status }}" data-category="{{ req.category.name_de|default:''|lower }}" data-number="{{ req.display_number }}">
+            <div class="cabinet-card-content">
+                <span class="cabinet-card-status status-active">Активен</span>
+                <h3 class="cabinet-card-title">{{ req.message|truncatewords:5|default:"Название заказа" }}</h3>
+                <p class="cabinet-card-meta">Категория заказа: {{ req.category|default:"—" }}</p>
+                <p class="cabinet-card-meta">Номер заказа: {{ req.display_number }}</p>
+            </div>
+            <div class="cabinet-card-placeholder"></div>
+            <a href="{% url 'main:cabinet_order_detail' req.pk %}" class="cabinet-card-link">Открыть</a>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{% block extra_js %}
+<script src="{% static 'adminka/js/pages/cabinet-filters.js' %}"></script>
+{% endblock %}
+{% endblock %}

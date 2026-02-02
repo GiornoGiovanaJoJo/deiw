@@ -1,0 +1,43 @@
+{% extends 'cabinet/base.html' %}
+{% load static %}
+
+{% block title %}Поддержка - Empire Premium{% endblock %}
+
+{% block content %}
+<div class="page-actions" data-aos="fade-up">
+    <h1>Поддержка</h1>
+</div>
+
+{% if not support_requests %}
+<div class="card" style="text-align: center; padding: 3rem;">
+    <h3>Обращений пока нет</h3>
+    <p>Напишите в поддержку на главной странице</p>
+    <a href="{% url 'main:home' %}#contact" class="btn-primary">Связаться</a>
+</div>
+{% else %}
+<div class="card" data-aos="fade-up">
+    <table class="orders-table" style="width:100%;">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Причина</th>
+                <th>Сообщение</th>
+                <th>Статус</th>
+                <th>Дата</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for req in support_requests %}
+            <tr>
+                <td>{{ req.id }}</td>
+                <td>{{ req.get_reason_display }}</td>
+                <td>{{ req.message|truncatewords:15|default:"—" }}</td>
+                <td class="status-{{ req.status }}">{{ req.get_status_display }}</td>
+                <td>{{ req.created_at|date:"d.m.Y H:i" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+{% endblock %}

@@ -28,72 +28,66 @@
     <div class="card" data-aos="fade-up" data-aos-delay="200">
         <form method="POST" class="project-form">
             {% csrf_token %}
-            
+            {% if form.non_field_errors %}
+            <ul class="errorlist">{{ form.non_field_errors }}</ul>
+            {% endif %}
             <div class="form-row">
                 <div class="form-group">
-                    <label for="project_code">Код проекта *</label>
-                    <input type="text" id="project_code" name="project_code" required value="{{ project.project_code }}">
+                    <label for="id_project_code">Код проекта *</label>
+                    {{ form.project_code }}
+                    {{ form.project_code.errors }}
                 </div>
-                
                 <div class="form-group">
-                    <label for="name">Название проекта *</label>
-                    <input type="text" id="name" name="name" required value="{{ project.name }}">
+                    <label for="id_name">Название проекта *</label>
+                    {{ form.name }}
+                    {{ form.name.errors }}
                 </div>
             </div>
-
             <div class="form-group">
-                <label for="description">Описание</label>
-                <textarea id="description" name="description" rows="4">{{ project.description }}</textarea>
+                <label for="id_description">Описание</label>
+                {{ form.description }}
+                {{ form.description.errors }}
             </div>
-
             <div class="form-row">
                 <div class="form-group">
-                    <label for="category">Категория</label>
-                    <select id="category" name="category">
-                        <option value="">Выберите категорию</option>
-                        {% for cat in categories %}
-                        <option value="{{ cat.id }}" {% if project.category_id == cat.id %}selected{% endif %}>{{ cat.name_de }}</option>
-                        {% endfor %}
-                    </select>
+                    <label for="id_category">Категория</label>
+                    {{ form.category }}
+                    {{ form.category.errors }}
                 </div>
-
                 <div class="form-group">
-                    <label for="status">Статус *</label>
-                    <select id="status" name="status" required>
-                        <option value="planned" {% if project.status == 'planned' %}selected{% endif %}>Запланирован</option>
-                        <option value="in_progress" {% if project.status == 'in_progress' %}selected{% endif %}>В работе</option>
-                        <option value="completed" {% if project.status == 'completed' %}selected{% endif %}>Завершен</option>
-                    </select>
+                    <label for="id_status">Статус *</label>
+                    {{ form.status }}
+                    {{ form.status.errors }}
                 </div>
             </div>
-
             <div class="form-row">
                 <div class="form-group">
-                    <label for="year">Год</label>
-                    <input type="number" id="year" name="year" value="{{ project.year|default:'' }}" min="2000" max="2100">
+                    <label for="id_year">Год</label>
+                    {{ form.year }}
+                    {{ form.year.errors }}
                 </div>
-
                 <div class="form-group">
-                    <label for="type">Тип</label>
-                    <input type="text" id="type" name="type" value="{{ project.type }}">
+                    <label for="id_type">Тип</label>
+                    {{ form.type }}
+                    {{ form.type.errors }}
                 </div>
             </div>
-
             <div class="form-row">
                 <div class="form-group">
-                    <label for="size">Размер</label>
-                    <input type="text" id="size" name="size" value="{{ project.size }}">
+                    <label for="id_size">Размер</label>
+                    {{ form.size }}
+                    {{ form.size.errors }}
                 </div>
-
                 <div class="form-group">
-                    <label for="color">Цвет</label>
-                    <input type="color" id="color" name="color" value="{{ project.color|default:'#D4AF37' }}">
+                    <label for="id_color">Цвет</label>
+                    {{ form.color }}
+                    {{ form.color.errors }}
                 </div>
             </div>
-
             <div class="form-group">
-                <label for="end_date">Дата окончания</label>
-                <input type="date" id="end_date" name="end_date" value="{{ project.end_date|date:'Y-m-d' }}">
+                <label for="id_end_date">Дата окончания</label>
+                {{ form.end_date }}
+                {{ form.end_date.errors }}
             </div>
 
             <div class="form-actions">

@@ -1,0 +1,364 @@
+/* Личный кабинет: хедер как на сайте + сайдбар + контент */
+.cabinet-page {
+    min-height: 100vh;
+    background: var(--color-background);
+}
+.cabinet-page .login-page-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1001;
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.cabinet-sidebar {
+    position: fixed;
+    top: 65px;
+    left: 20px;
+    width: 220px;
+    bottom: 20px;
+    background: var(--color-surface);
+    border-radius: 15px;
+    box-shadow: 0 4px 12px var(--color-shadow);
+    padding: 1.25rem;
+    z-index: 1000;
+    overflow-y: auto;
+}
+.cabinet-user {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--color-border);
+}
+.cabinet-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--color-surface-alt);
+    color: var(--color-text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 0.75rem;
+    font-size: 1.75rem;
+    font-weight: 700;
+}
+.cabinet-user-name {
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: 0.25rem;
+}
+.cabinet-user-id {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+}
+.cabinet-nav-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+}
+.cabinet-nav a {
+    display: block;
+    padding: 0.6rem 1rem;
+    border-radius: 10px;
+    color: var(--color-text-primary);
+    text-decoration: none;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+    transition: background 0.2s, color 0.2s;
+}
+.cabinet-nav a:hover {
+    background: rgba(108, 99, 255, 0.1);
+    color: var(--color-primary);
+}
+.cabinet-nav a.active {
+    background: rgba(108, 99, 255, 0.15);
+    color: var(--color-primary);
+    font-weight: 600;
+    border-left: 3px solid var(--color-primary);
+    padding-left: calc(1rem - 3px);
+}
+
+.cabinet-main {
+    margin-left: 260px;
+    margin-top: 75px;
+    padding: 2rem;
+    min-height: calc(100vh - 75px);
+    transition: margin-left 0.3s;
+}
+.cabinet-main .card {
+    background: var(--color-surface);
+    border-radius: 16px;
+    box-shadow: 0 4px 12px var(--color-shadow);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+.cabinet-main h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: 1.25rem;
+}
+
+.cabinet-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+}
+.cabinet-filters .filter-select,
+.cabinet-filters .search-input {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    font-size: 0.95rem;
+    min-width: 160px;
+}
+.cabinet-filters .search-input {
+    min-width: 220px;
+}
+.cabinet-section {
+    margin-bottom: 2rem;
+}
+.cabinet-section .section-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: 1rem;
+}
+.cabinet-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+}
+.cabinet-card {
+    background: var(--color-surface);
+    border-radius: 12px;
+    padding: 1.25rem;
+    box-shadow: 0 2px 8px var(--color-shadow);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 1rem;
+    border: 1px solid var(--color-border);
+}
+.cabinet-card-content {
+    flex: 1;
+    min-width: 0;
+}
+.cabinet-card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--color-text-primary);
+}
+.cabinet-card-meta {
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+    margin: 0.25rem 0;
+}
+.cabinet-card-placeholder {
+    width: 80px;
+    height: 80px;
+    background: var(--color-surface-alt);
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+.cabinet-card-status {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
+}
+.cabinet-card-status.status-closed {
+    background: rgba(40, 167, 69, 0.15);
+    color: var(--color-success);
+}
+.cabinet-card-status.status-active {
+    background: rgba(108, 99, 255, 0.15);
+    color: var(--color-primary);
+}
+.cabinet-card-link {
+    display: inline-block;
+    margin-top: 0.5rem;
+    padding: 0.4rem 0.8rem;
+    background: var(--color-primary);
+    color: #fff;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+.cabinet-card-link:hover {
+    background: var(--color-secondary);
+    color: #fff;
+}
+
+/* Деталь заявки/заказа: два столбца */
+.cabinet-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+@media (max-width: 900px) {
+    .cabinet-detail-grid {
+        grid-template-columns: 1fr;
+    }
+}
+.cabinet-detail-card h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--color-text-primary);
+}
+.cabinet-detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 0.5rem 0;
+    border-bottom: 1px dotted var(--color-primary);
+    gap: 1rem;
+}
+.cabinet-detail-label {
+    color: var(--color-text-secondary);
+    flex-shrink: 0;
+}
+.cabinet-detail-value {
+    text-align: right;
+    color: var(--color-text-primary);
+}
+.cabinet-stage-card {
+    background: rgba(108, 99, 255, 0.08);
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid rgba(108, 99, 255, 0.2);
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+.cabinet-stage-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--color-surface);
+    border: 2px solid var(--color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--color-primary);
+}
+.cabinet-stage-title {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+.cabinet-stage-desc {
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+}
+
+.cabinet-profile-layout {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    align-items: flex-start;
+}
+.cabinet-profile-avatar-block {
+    text-align: center;
+}
+.cabinet-avatar-large {
+    width: 100px;
+    height: 100px;
+    font-size: 2rem;
+}
+.cabinet-avatar-form { margin: 0; }
+.cabinet-avatar-label {
+    cursor: pointer;
+    display: inline-block;
+}
+.cabinet-avatar-input {
+    position: absolute;
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    z-index: -1;
+}
+.cabinet-avatar-img {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.cabinet-avatar-img span { display: none; }
+.cabinet-change-photo {
+    font-size: 0.9rem;
+    color: var(--color-primary);
+    margin-top: 0.5rem;
+    cursor: pointer;
+    display: block;
+}
+.cabinet-change-photo-hint {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    margin-top: 0.25rem;
+}
+.cabinet-profile-fields {
+    flex: 1;
+    min-width: 280px;
+}
+.cabinet-profile-fields .form-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+.cabinet-profile-fields .form-group label {
+    width: 140px;
+    flex-shrink: 0;
+}
+.cabinet-profile-id {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    margin: 1rem 0;
+}
+.btn-outline-purple {
+    background: transparent;
+    color: var(--color-primary);
+    border: 1px solid var(--color-primary);
+    padding: 0.5rem 1.5rem;
+    border-radius: 10px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+.btn-outline-purple:hover {
+    background: var(--color-primary);
+    color: #fff;
+}
+
+@media (max-width: 768px) {
+    .cabinet-sidebar {
+        width: 100%;
+        left: 0;
+        right: 0;
+        top: auto;
+        bottom: 0;
+        border-radius: 15px 15px 0 0;
+        max-height: 50vh;
+    }
+    .cabinet-main {
+        margin-left: 0;
+        margin-bottom: 120px;
+        padding: 1rem;
+    }
+}
