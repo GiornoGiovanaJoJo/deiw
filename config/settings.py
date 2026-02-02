@@ -50,6 +50,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',  # Добавляем поддержку языков
     'django.middleware.common.CommonMiddleware',
+    'main.middleware.CsrfTrustOriginMiddleware',   # До CSRF: добавляет origin запроса в CSRF_TRUSTED_ORIGINS
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -129,6 +130,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # За прокси (Railway, Heroku и т.д.): доверять X-Forwarded-Proto для корректной проверки CSRF/Referer
 # Без этого Django видит запрос как HTTP и проверка Referer/Origin даёт 403
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# CSRF: хранить токен в сессии вместо отдельной куки — надёжнее за прокси (Railway/Heroku)
+CSRF_USE_SESSIONS = True
 
 # Production: безопасные заголовки (если не DEBUG)
 if not DEBUG:

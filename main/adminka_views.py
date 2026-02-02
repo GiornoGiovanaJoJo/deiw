@@ -8,6 +8,7 @@ from django.contrib import messages
 from django.http import JsonResponse, HttpResponseForbidden
 from django.db.models import Q, Count
 from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import ensure_csrf_cookie
 from .models import AdminProject, Category, ContactRequest
 from django.contrib.auth.models import User
 
@@ -17,6 +18,7 @@ def is_staff_user(user):
     return user.is_authenticated and user.is_staff
 
 
+@ensure_csrf_cookie
 def adminka_login(request):
     """Страница входа в админку"""
     if request.user.is_authenticated and request.user.is_staff:
