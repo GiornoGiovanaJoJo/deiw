@@ -46,8 +46,8 @@
     <div class="site-footer__legal">
       <a href="{% url 'main:privacy' %}">{% trans 'Политика конфиденциальности' %}</a>
       <a href="{% url 'main:terms' %}">{% trans 'Условия использования' %}</a>
-      <a href="#">Импрессум</a>
-      <a href="#">Cookies</a>
+      <a href="{% url 'main:terms' %}#impressum" class="site-footer__legal-link">Импрессум</a>
+      <a href="{% url 'main:privacy' %}#cookies" class="site-footer__legal-link">Cookies</a>
     </div>
   </div>
 </footer>
