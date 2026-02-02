@@ -368,6 +368,14 @@ class CabinetProfileForm(forms.Form):
     phone = forms.CharField(max_length=20, required=False, strip=True)
 
 
+class CabinetRequestEditForm(forms.Form):
+    """Редактирование заявки пользователем в кабинете: имя, телефон, email, сообщение."""
+    name = forms.CharField(max_length=100, required=True, strip=True, label='Имя')
+    phone = forms.CharField(max_length=20, required=True, strip=True, label='Телефон')
+    email = forms.EmailField(required=True, label='Email')
+    message = forms.CharField(required=False, strip=True, widget=forms.Textarea(attrs={'rows': 3}), label='Сообщение')
+
+
 class AdminProjectForm(forms.ModelForm):
     """Форма создания/редактирования проекта админки."""
     class Meta:

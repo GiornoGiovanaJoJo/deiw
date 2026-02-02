@@ -8,8 +8,12 @@
 {% endblock %}
 
 {% block content %}
+<div class="profile-page">
 <div class="page-actions" data-aos="fade-up">
     <h1>Управление профилем</h1>
+    <button type="button" class="btn-primary" id="btnEditProfileModal" title="Редактировать имя, телефон и почту">
+        <i class="fa-solid fa-pen"></i> Редактировать данные
+    </button>
 </div>
 
 <div class="card" data-aos="fade-up">
@@ -33,30 +37,53 @@
             <p class="cabinet-change-photo-hint">JPG, PNG до 5 МБ</p>
         </div>
         <div class="cabinet-profile-fields">
-            <form method="post" class="profile-form">
-                {% csrf_token %}
-                <input type="hidden" name="action" value="profile">
-                <div class="form-group">
-                    <label for="id_first_name">Изменить имя</label>
-                    <input type="text" id="id_first_name" name="first_name" value="{% if profile_form.first_name.value %}{{ profile_form.first_name.value }}{% else %}{{ profile_user.first_name|default:'' }}{% endif %}" placeholder="Имя" style="flex:1;" aria-invalid="{% if profile_form.first_name.errors %}true{% endif %}">
-                    <input type="text" name="last_name" value="{% if profile_form.last_name.value != None %}{{ profile_form.last_name.value }}{% else %}{{ profile_user.last_name|default:'' }}{% endif %}" placeholder="Фамилия" style="flex:1;" aria-invalid="{% if profile_form.last_name.errors %}true{% endif %}">
-                    {% if profile_form.first_name.errors or profile_form.last_name.errors %}<span class="auth-field-error" role="alert">{% for e in profile_form.first_name.errors %}{{ e }}{% endfor %}{% for e in profile_form.last_name.errors %}{{ e }}{% endfor %}</span>{% endif %}
-                </div>
-                <div class="form-group">
-                    <label for="id_phone">Изменить номер</label>
-                    <input type="tel" id="id_phone" name="phone" value="{% if profile_form.phone.value != None %}{{ profile_form.phone.value }}{% else %}{{ profile.phone|default:'' }}{% endif %}" placeholder="+49 (900) 000 000 000" aria-invalid="{% if profile_form.phone.errors %}true{% endif %}">
-                    {% if profile_form.phone.errors %}<span class="auth-field-error" role="alert">{% for e in profile_form.phone.errors %}{{ e }}{% endfor %}</span>{% endif %}
-                </div>
-                <div class="form-group">
-                    <label for="id_email">Изменить почту</label>
-                    <input type="email" id="id_email" name="email" value="{% if profile_form.email.value != None %}{{ profile_form.email.value }}{% else %}{{ profile_user.email|default:'' }}{% endif %}" placeholder="Почта" required aria-invalid="{% if profile_form.email.errors %}true{% endif %}">
-                    {% if profile_form.email.errors %}<span class="auth-field-error" role="alert">{% for e in profile_form.email.errors %}{{ e }}{% endfor %}</span>{% endif %}
-                </div>
-                <p class="cabinet-profile-id">ID {{ profile_user.pk }}</p>
-                <button type="submit" class="btn-primary btn-outline-purple">Готово</button>
-            </form>
+            <p class="cabinet-profile-id">ID {{ profile_user.pk|stringformat:"011d" }}</p>
+            <p style="color: var(--color-text-secondary); margin-top: 0.5rem;">Имя: {% firstof profile_user.get_full_name "—" %}</p>
+            <p style="color: var(--color-text-secondary);">Телефон: {{ profile.phone|default:"—" }}</p>
+            <p style="color: var(--color-text-secondary);">Почта: {{ profile_user.email|default:"—" }}</p>
         </div>
     </div>
+</div>
+
+<!-- Модальное окно: Редактирование профиля -->
+<div class="cabinet-modal" id="modalEditProfile" role="dialog" aria-labelledby="modalEditProfileTitle" aria-modal="true" hidden>
+    <div class="cabinet-modal-backdrop"></div>
+    <div class="cabinet-modal-content cabinet-modal-animate">
+        <div class="cabinet-modal-header">
+            <h2 id="modalEditProfileTitle">Редактировать данные</h2>
+            <button type="button" class="cabinet-modal-close" aria-label="Закрыть">&times;</button>
+        </div>
+        <form method="post" action="{% url 'main:cabinet_profile' %}" class="cabinet-modal-form" id="formEditProfile">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="profile">
+            <div class="form-group">
+                <label for="modal_first_name">Имя</label>
+                <input type="text" id="modal_first_name" name="first_name" value="{% if profile_form.first_name.value %}{{ profile_form.first_name.value }}{% else %}{{ profile_user.first_name|default:'' }}{% endif %}" placeholder="Имя">
+                <input type="text" name="last_name" value="{% if profile_form.last_name.value != None %}{{ profile_form.last_name.value }}{% else %}{{ profile_user.last_name|default:'' }}{% endif %}" placeholder="Фамилия">
+                {% if profile_form.first_name.errors or profile_form.last_name.errors %}<span class="auth-field-error">{% for e in profile_form.first_name.errors %}{{ e }}{% endfor %}{% for e in profile_form.last_name.errors %}{{ e }}{% endfor %}</span>{% endif %}
+            </div>
+            <div class="form-group">
+                <label for="modal_phone">Номер телефона</label>
+                <input type="tel" id="modal_phone" name="phone" value="{% if profile_form.phone.value != None %}{{ profile_form.phone.value }}{% else %}{{ profile.phone|default:'' }}{% endif %}" placeholder="+49 (900) 000 000 000">
+                {% if profile_form.phone.errors %}<span class="auth-field-error">{% for e in profile_form.phone.errors %}{{ e }}{% endfor %}</span>{% endif %}
+            </div>
+            <div class="form-group">
+                <label for="modal_email">Почта *</label>
+                <input type="email" id="modal_email" name="email" value="{% if profile_form.email.value != None %}{{ profile_form.email.value }}{% else %}{{ profile_user.email|default:'' }}{% endif %}" placeholder="Почта" required>
+                {% if profile_form.email.errors %}<span class="auth-field-error">{% for e in profile_form.email.errors %}{{ e }}{% endfor %}</span>{% endif %}
+            </div>
+            <div class="cabinet-modal-footer">
+                <button type="button" class="btn-secondary cabinet-modal-close-btn">Отмена</button>
+                <button type="submit" class="btn-primary">Готово</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card" data-aos="fade-up">
+    <h3>Двухфакторная аутентификация (2FA)</h3>
+    <p style="color: var(--color-text-secondary); margin-bottom: 0.75rem;">Подтверждение входа по SMS или Telegram повышает безопасность аккаунта.</p>
+    <p class="cabinet-2fa-placeholder"><i class="fa-solid fa-lock" title="В разработке"></i> Функция в разработке. Скоро будет доступна настройка 2FA через SMS и Telegram.</p>
 </div>
 
 <div class="card" data-aos="fade-up">
@@ -79,6 +106,7 @@
         <button type="submit" class="btn-primary">Изменить пароль</button>
     </form>
 </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
@@ -87,6 +115,19 @@
     var form = document.querySelector('.cabinet-avatar-form');
     var input = form && form.querySelector('input[name="avatar"]');
     if (input) input.addEventListener('change', function() { if (this.files.length) form.submit(); });
+
+    var modal = document.getElementById('modalEditProfile');
+    var btnOpen = document.getElementById('btnEditProfileModal');
+    function openProfileModal() {
+        if (modal) { modal.removeAttribute('hidden'); document.body.style.overflow = 'hidden'; }
+    }
+    function closeProfileModal() {
+        if (modal) { modal.setAttribute('hidden', ''); document.body.style.overflow = ''; }
+    }
+    if (btnOpen) btnOpen.addEventListener('click', openProfileModal);
+    if (modal) modal.querySelectorAll('.cabinet-modal-close, .cabinet-modal-close-btn, .cabinet-modal-backdrop').forEach(function(el) {
+        el.addEventListener('click', closeProfileModal);
+    });
 })();
 </script>
 {% endblock %}

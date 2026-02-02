@@ -4,71 +4,116 @@
 {% block title %}Заявки - Empire Premium{% endblock %}
 
 {% block content %}
-<div class="page-actions" data-aos="fade-up">
+<div class="page-actions cabinet-requests-header" data-aos="fade-up">
     <h1>Заявки</h1>
-    <div class="cabinet-filters">
-        <select id="statusFilter" class="filter-select">
-            <option value="">Все статусы</option>
-            <option value="new">Новая</option>
-            <option value="in_progress">В процессе</option>
-            <option value="closed">Закрыта</option>
-        </select>
-        <select id="categoryFilter" class="filter-select">
-            <option value="">Категория услуги</option>
-            {% for cat in categories %}
-            <option value="{{ cat.name_de|default:cat.name|default:'' }}">{{ cat.name_de|default:cat.name|default:"—" }}</option>
-            {% endfor %}
-        </select>
-        <input type="text" id="searchInput" class="search-input" placeholder="Поиск по номеру заявки..." />
-    </div>
+    <button type="button" class="btn-primary" id="btnCreateRequest" title="Создать новую заявку">
+        <i class="fa-solid fa-plus"></i> Создать заявку
+    </button>
 </div>
 
+<form method="get" class="cabinet-filters-form" id="cabinetFiltersForm">
+    <div class="cabinet-filters">
+        <select name="status" id="statusFilter" class="filter-select" title="Статус заявки">
+            <option value="">Статус заказа</option>
+            <option value="new" {% if filter_status == 'new' %}selected{% endif %}>Новая</option>
+            <option value="in_progress" {% if filter_status == 'in_progress' %}selected{% endif %}>В обработке</option>
+            <option value="approved" {% if filter_status == 'approved' %}selected{% endif %}>Одобрена</option>
+            <option value="rejected" {% if filter_status == 'rejected' %}selected{% endif %}>Отклонена</option>
+            <option value="closed" {% if filter_status == 'closed' %}selected{% endif %}>Закрыта</option>
+        </select>
+        <select name="category" id="categoryFilter" class="filter-select" title="Категория услуги">
+            <option value="">Категория услуги</option>
+            {% for cat in all_categories %}
+            <option value="{{ cat.pk }}" {% if filter_category == cat.pk %}selected{% endif %}>{{ cat.name_de|default:cat.name|default:"—" }}</option>
+            {% endfor %}
+        </select>
+        <input type="date" name="date_from" value="{{ date_from|date:'Y-m-d' }}" class="filter-select" title="Дата от" />
+        <input type="date" name="date_to" value="{{ date_to|date:'Y-m-d' }}" class="filter-select" title="Дата до" />
+        <input type="text" name="search" id="searchInput" class="search-input" value="{{ filter_search|default:'' }}" placeholder="Поиск по номеру заявки..." title="Поиск по номеру" />
+        <button type="submit" class="btn-secondary">Применить</button>
+    </div>
+</form>
+
 {% if not user_requests %}
-<div class="card" style="text-align: center; padding: 3rem;">
+<div class="card cabinet-empty-state" data-aos="fade-up">
+    <div class="cabinet-empty-state-icon"><i class="fa-solid fa-folder-open"></i></div>
     <h3>Заявок пока нет</h3>
-    <p>Оставьте заявку на главной странице</p>
-    <a href="{% url 'main:home' %}#contact" class="btn-primary">Оставить заявку</a>
+    <p>Создайте первую заявку или оставьте заявку на главной странице.</p>
+    <button type="button" class="btn-primary" id="btnCreateRequestEmpty"><i class="fa-solid fa-plus"></i> Создать заявку</button>
 </div>
 {% else %}
-<div class="cabinet-section" data-aos="fade-up">
-    <h2 class="section-title">В обработке</h2>
+{% for status_key, status_label in status_sections %}
+<div class="cabinet-section" data-aos="fade-up" data-section-status="{{ status_key }}">
+    <h2 class="section-title">{{ status_label }}</h2>
     <div class="cabinet-cards">
         {% for req in user_requests %}
-        {% if req.status == 'new' %}
-        <div class="cabinet-card" data-status="{{ req.status }}" data-category="{{ req.category.name_de|default:''|lower }}" data-number="{{ req.display_number }}">
+        {% if req.status == status_key %}
+        <div class="cabinet-card cabinet-card--request" data-status="{{ req.status }}" data-category="{{ req.category.name_de|default:''|lower }}" data-number="{{ req.display_number }}" data-pk="{{ req.pk }}">
             <div class="cabinet-card-content">
                 <h3 class="cabinet-card-title">{{ req.message|truncatewords:5|default:"Название заявки" }}</h3>
                 <p class="cabinet-card-meta">Категория: {{ req.category|default:"—" }}</p>
                 <p class="cabinet-card-meta">Номер заявки: {{ req.display_number }}</p>
+                <a href="{% url 'main:cabinet_request_detail' req.pk %}" class="cabinet-card-link" title="Открыть">Открыть</a>
+                <button type="button" class="cabinet-card-delete" data-pk="{{ req.pk }}" title="Удалить заявку"><i class="fa-solid fa-trash"></i></button>
             </div>
             <div class="cabinet-card-placeholder"></div>
-            <a href="{% url 'main:cabinet_request_detail' req.pk %}" class="cabinet-card-link">Открыть</a>
         </div>
         {% endif %}
         {% endfor %}
     </div>
 </div>
-<div class="cabinet-section" data-aos="fade-up">
-    <h2 class="section-title">В работе</h2>
-    <div class="cabinet-cards">
-        {% for req in user_requests %}
-        {% if req.status == 'in_progress' or req.status == 'closed' %}
-        <div class="cabinet-card" data-status="{{ req.status }}" data-category="{{ req.category.name_de|default:''|lower }}" data-number="{{ req.display_number }}">
-            <div class="cabinet-card-content">
-                <h3 class="cabinet-card-title">{{ req.message|truncatewords:5|default:"Название заявки" }}</h3>
-                <p class="cabinet-card-meta">Категория: {{ req.category|default:"—" }}</p>
-                <p class="cabinet-card-meta">Номер заявки: {{ req.display_number }}</p>
-            </div>
-            <div class="cabinet-card-placeholder"></div>
-            <a href="{% url 'main:cabinet_request_detail' req.pk %}" class="cabinet-card-link">Открыть</a>
-        </div>
-        {% endif %}
-        {% endfor %}
-    </div>
-</div>
+{% endfor %}
 {% endif %}
+
+<!-- Модальное окно: Создать заявку -->
+<div class="cabinet-modal" id="modalCreateRequest" role="dialog" aria-labelledby="modalCreateRequestTitle" aria-modal="true" hidden>
+    <div class="cabinet-modal-backdrop"></div>
+    <div class="cabinet-modal-content cabinet-modal-animate">
+        <div class="cabinet-modal-header">
+            <h2 id="modalCreateRequestTitle">Создать заявку</h2>
+            <button type="button" class="cabinet-modal-close" aria-label="Закрыть">&times;</button>
+        </div>
+        <form id="formCreateRequest" class="cabinet-modal-form">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="modalCategory">Категория</label>
+                <select id="modalCategory" name="category_id" required>
+                    <option value="">— Выберите —</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="modalSubcategory">Подкатегория</label>
+                <select id="modalSubcategory" name="subcategory_id">
+                    <option value="">— Выберите —</option>
+                </select>
+            </div>
+            <div id="modalQuestions"></div>
+            <div class="form-group">
+                <label for="modalName">Имя *</label>
+                <input type="text" id="modalName" name="name" required value="{{ user.get_full_name|default:user.email }}" />
+            </div>
+            <div class="form-group">
+                <label for="modalPhone">Телефон *</label>
+                <input type="tel" id="modalPhone" name="phone" required />
+            </div>
+            <div class="form-group">
+                <label for="modalEmail">Email *</label>
+                <input type="email" id="modalEmail" name="email" required value="{{ user.email }}" />
+            </div>
+            <div class="form-group">
+                <label for="modalMessage">Сообщение</label>
+                <textarea id="modalMessage" name="message" rows="3"></textarea>
+            </div>
+            <div class="cabinet-modal-footer">
+                <button type="button" class="btn-secondary cabinet-modal-close-btn">Отмена</button>
+                <button type="submit" class="btn-primary">Отправить заявку</button>
+            </div>
+        </form>
+    </div>
+</div>
 
 {% block extra_js %}
 <script src="{% static 'adminka/js/pages/cabinet-filters.js' %}"></script>
+<script src="{% static 'adminka/js/pages/cabinet-requests.js' %}"></script>
 {% endblock %}
 {% endblock %}

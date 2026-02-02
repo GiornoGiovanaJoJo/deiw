@@ -177,6 +177,14 @@
   border: 1px solid #f5c2c7;
 }
 
+.cabinet-2fa-placeholder {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 @media (max-width: 767px) {
   .profile-page .profile-header {
     flex-direction: column;

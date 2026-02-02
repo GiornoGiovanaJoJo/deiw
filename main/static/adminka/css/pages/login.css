@@ -238,6 +238,11 @@ body.login-page {
 .toggle-password:hover {
     color: var(--color-primary);
 }
+.toggle-password i.eye-open,
+.toggle-password i.eye-closed {
+    display: inline-block;
+    pointer-events: none;
+}
 
 /* Кнопка ВОЙТИ ========== */
 .auth-submit-btn {

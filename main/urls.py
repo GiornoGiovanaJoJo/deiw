@@ -1,4 +1,5 @@
-from django.urls import path
+from django.urls import path, reverse_lazy
+from django.contrib.auth import views as auth_views
 from . import views, adminka_views, cabinet_views
 
 app_name = 'main'
@@ -50,6 +51,16 @@ urlpatterns = [
     path('cabinet/orders/<int:pk>/', cabinet_views.cabinet_order_detail, name='cabinet_order_detail'),
     path('cabinet/requests/', cabinet_views.cabinet_requests, name='cabinet_requests'),
     path('cabinet/requests/<int:pk>/', cabinet_views.cabinet_request_detail, name='cabinet_request_detail'),
+    path('cabinet/requests/<int:pk>/edit/', cabinet_views.cabinet_request_edit, name='cabinet_request_edit'),
     path('cabinet/profile/', cabinet_views.cabinet_profile, name='cabinet_profile'),
     path('cabinet/support/', cabinet_views.cabinet_support, name='cabinet_support'),
+    path('cabinet/analytics/', cabinet_views.cabinet_analytics, name='cabinet_analytics'),
+    path('cabinet/requests/<int:pk>/delete/', cabinet_views.cabinet_request_delete, name='cabinet_request_delete'),
+    path('cabinet/export/pdf/', cabinet_views.cabinet_export_pdf, name='cabinet_export_pdf'),
+    path('cabinet/export/excel/', cabinet_views.cabinet_export_excel, name='cabinet_export_excel'),
+    # Восстановление пароля (Django auth views)
+    path('password-reset/', auth_views.PasswordResetView.as_view(template_name='cabinet/password_reset_form.html', email_template_name='cabinet/password_reset_email.html', success_url=reverse_lazy('main:password_reset_done'), extra_email_context={'site_name': 'Empire Premium'}), name='password_reset'),
+    path('password-reset/done/', auth_views.PasswordResetDoneView.as_view(template_name='cabinet/password_reset_done.html'), name='password_reset_done'),
+    path('password-reset-confirm/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='cabinet/password_reset_confirm.html', success_url=reverse_lazy('main:password_reset_complete')), name='password_reset_confirm'),
+    path('password-reset/complete/', auth_views.PasswordResetCompleteView.as_view(template_name='cabinet/password_reset_complete.html'), name='password_reset_complete'),
 ]

@@ -13,10 +13,14 @@
     <link rel="stylesheet" href="{% static 'adminka/css/forms.css' %}" />
     <link rel="stylesheet" href="{% static 'adminka/css/components/header.css' %}" />
     <link rel="stylesheet" href="{% static 'adminka/css/pages/cabinet.css' %}" />
+    <link rel="stylesheet" href="{% static 'adminka/css/components/site-footer.css' %}" />
     {% block extra_css %}{% endblock %}
 </head>
 <body class="cabinet-page">
     <header class="login-page-header">
+        <button type="button" class="cabinet-header-burger" id="cabinetBurger" aria-label="Меню" title="Меню">
+            <i class="fa-solid fa-bars"></i>
+        </button>
         <a href="{% url 'main:home' %}" class="login-page-logo">EXP <span>Empire Premium</span></a>
         <nav class="login-page-nav">
             <a href="{% url 'main:home' %}#about">О нас</a>
@@ -34,6 +38,7 @@
         </div>
     </header>
 
+    <div class="cabinet-sidebar-overlay" id="cabinetSidebarOverlay" aria-hidden="true"></div>
     <aside class="cabinet-sidebar" id="cabinetSidebar">
         <div class="cabinet-user">
             {% if profile and profile.avatar %}
@@ -44,14 +49,16 @@
             </div>
             {% endif %}
             <div class="cabinet-user-name">{% firstof user.get_full_name user.username %}</div>
-            <div class="cabinet-user-id">ID {{ user.pk }}</div>
+            <div class="cabinet-user-id">ID {{ user.pk|stringformat:"011d" }}</div>
         </div>
         <nav class="cabinet-nav">
             <div class="cabinet-nav-title">Заказы</div>
-            <a href="{% url 'main:cabinet_orders' %}" class="{% if request.resolver_match.url_name == 'cabinet_orders' or request.resolver_match.url_name == 'cabinet_order_detail' %}active{% endif %}">Заказы</a>
-            <a href="{% url 'main:cabinet_requests' %}" class="{% if request.resolver_match.url_name == 'cabinet_requests' or request.resolver_match.url_name == 'cabinet_request_detail' %}active{% endif %}">Заявки</a>
-            <a href="{% url 'main:cabinet_profile' %}" class="{% if request.resolver_match.url_name == 'cabinet_profile' %}active{% endif %}">Управление профилем</a>
-            <a href="{% url 'main:cabinet_support' %}" class="{% if request.resolver_match.url_name == 'cabinet_support' %}active{% endif %}">Поддержка</a>
+            <a href="{% url 'main:cabinet_orders' %}" class="{% if request.resolver_match.url_name == 'cabinet_orders' or request.resolver_match.url_name == 'cabinet_order_detail' %}active{% endif %}" title="Список заказов">Заказы</a>
+            <a href="{% url 'main:cabinet_requests' %}" class="{% if request.resolver_match.url_name == 'cabinet_requests' or request.resolver_match.url_name == 'cabinet_request_detail' %}active{% endif %}" title="Управление заявками">Заявки</a>
+            <a href="{% url 'main:cabinet_profile' %}" class="{% if request.resolver_match.url_name == 'cabinet_profile' %}active{% endif %}" title="Редактировать профиль">Управление профилем</a>
+            <a href="{% url 'main:cabinet_support' %}" class="{% if request.resolver_match.url_name == 'cabinet_support' %}active{% endif %}" title="Поддержка">Поддержка</a>
+            <a href="{% url 'main:cabinet_analytics' %}" class="{% if request.resolver_match.url_name == 'cabinet_analytics' %}active{% endif %}" title="История и аналитика">Аналитика</a>
+            <a href="{% url 'main:adminka_logout' %}" class="cabinet-nav-logout" title="Выйти из аккаунта"><i class="fa-solid fa-right-from-bracket"></i> Выход</a>
         </nav>
     </aside>
 
@@ -64,7 +71,26 @@
         {% block content %}{% endblock %}
     </main>
 
+    {% include 'components/site_footer.html' %}
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script>
+    (function() {
+        var burger = document.getElementById('cabinetBurger');
+        var sidebar = document.getElementById('cabinetSidebar');
+        var overlay = document.getElementById('cabinetSidebarOverlay');
+        function toggleSidebar() {
+            document.body.classList.toggle('cabinet-sidebar-open');
+            if (overlay) overlay.setAttribute('aria-hidden', document.body.classList.contains('cabinet-sidebar-open') ? 'false' : 'true');
+        }
+        function closeSidebar() {
+            document.body.classList.remove('cabinet-sidebar-open');
+            if (overlay) overlay.setAttribute('aria-hidden', 'true');
+        }
+        if (burger) burger.addEventListener('click', toggleSidebar);
+        if (overlay) overlay.addEventListener('click', closeSidebar);
+    })();
+    </script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>

@@ -5,12 +5,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Регистрация - Empire Premium</title>
+    <link href="https://use.fontawesome.com/releases/v6.5.1/css/all.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
     <link rel="stylesheet" href="{% static 'adminka/css/themes/light.css' %}" />
     <link rel="stylesheet" href="{% static 'adminka/css/themes/dark.css' %}" />
     <link rel="stylesheet" href="{% static 'adminka/css/forms.css' %}" />
     <link rel="stylesheet" href="{% static 'adminka/css/pages/login.css' %}" />
-    <link rel="stylesheet" href="{% static 'adminka/css/components/theme-switcher.css' %}" />
+    <link rel="stylesheet" href="{% static 'adminka/css/components/site-footer.css' %}" />
 </head>
 <body class="login-page">
 
@@ -67,6 +68,13 @@
                 </div>
 
                 <div class="form-group auth-input-group">
+                    <label for="id_phone" class="sr-only">Номер телефона</label>
+                    <input type="tel" name="phone" id="id_phone" value="{{ form.phone.value|default:'' }}"
+                           placeholder="Номер телефона" class="auth-input-underline"
+                           autocomplete="tel">
+                </div>
+
+                <div class="form-group auth-input-group">
                     <label for="id_email" class="sr-only">Адрес эл. почты</label>
                     <input type="email" name="email" id="id_email" value="{{ form.email.value|default:'' }}"
                            placeholder="Адрес эл. почты" class="auth-input-underline {% if form.email.errors %}is-invalid{% endif %}"
@@ -76,13 +84,6 @@
                     {% if form.email.errors %}
                         <span id="id_email_errors" class="auth-field-error" role="alert">{% for e in form.email.errors %}{{ e }}{% endfor %}</span>
                     {% endif %}
-                </div>
-
-                <div class="form-group auth-input-group">
-                    <label for="id_phone" class="sr-only">Номер телефона</label>
-                    <input type="tel" name="phone" id="id_phone" value="{{ form.phone.value|default:'' }}"
-                           placeholder="Номер телефона" class="auth-input-underline"
-                           autocomplete="tel">
                 </div>
 
                 <div class="form-group auth-input-group auth-company-field" id="company_name_group" style="display: none;">
@@ -116,6 +117,10 @@
                                autocomplete="new-password" minlength="8" required
                                aria-describedby="{% if form.password1.errors %}id_password1_errors{% endif %}"
                                aria-invalid="{% if form.password1.errors %}true{% else %}false{% endif %}">
+                        <button type="button" class="toggle-password" aria-label="Показать пароль" data-target="id_password1">
+                            <i class="fa-solid fa-eye eye-open"></i>
+                            <i class="fa-solid fa-eye-slash eye-closed" style="display:none"></i>
+                        </button>
                     </div>
                     {% if form.password1.errors %}
                         <span id="id_password1_errors" class="auth-field-error" role="alert">{% for e in form.password1.errors %}{{ e }}{% endfor %}</span>
@@ -130,6 +135,10 @@
                                autocomplete="new-password" required
                                aria-describedby="{% if form.password2.errors %}id_password2_errors{% endif %}"
                                aria-invalid="{% if form.password2.errors %}true{% else %}false{% endif %}">
+                        <button type="button" class="toggle-password" aria-label="Показать пароль" data-target="id_password2">
+                            <i class="fa-solid fa-eye eye-open"></i>
+                            <i class="fa-solid fa-eye-slash eye-closed" style="display:none"></i>
+                        </button>
                     </div>
                     {% if form.password2.errors %}
                         <span id="id_password2_errors" class="auth-field-error" role="alert">{% for e in form.password2.errors %}{{ e }}{% endfor %}</span>
@@ -144,6 +153,8 @@
             </form>
         </div>
     </div>
+
+    {% include 'components/site_footer.html' %}
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
     <script>
@@ -173,6 +184,17 @@
                     b.classList.toggle('active', b.getAttribute('data-type') === initialType);
                 });
             }
+            document.querySelectorAll('.toggle-password').forEach(function(btn) {
+                var targetId = btn.getAttribute('data-target');
+                var input = targetId ? document.getElementById(targetId) : null;
+                if (!input || !btn) return;
+                btn.addEventListener('click', function() {
+                    var isPw = input.type === 'password';
+                    input.type = isPw ? 'text' : 'password';
+                    btn.querySelector('.eye-open').style.display = isPw ? 'none' : 'inline-block';
+                    btn.querySelector('.eye-closed').style.display = isPw ? 'inline-block' : 'none';
+                });
+            });
         })();
     </script>
 </body>

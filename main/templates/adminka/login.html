@@ -5,12 +5,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Вход - Empire Premium</title>
+    <link href="https://use.fontawesome.com/releases/v6.5.1/css/all.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
     <link rel="stylesheet" href="{% static 'adminka/css/themes/light.css' %}" />
     <link rel="stylesheet" href="{% static 'adminka/css/themes/dark.css' %}" />
     <link rel="stylesheet" href="{% static 'adminka/css/forms.css' %}" />
     <link rel="stylesheet" href="{% static 'adminka/css/pages/login.css' %}" />
-    <link rel="stylesheet" href="{% static 'adminka/css/components/theme-switcher.css' %}" />
+    <link rel="stylesheet" href="{% static 'adminka/css/components/site-footer.css' %}" />
 </head>
 <body class="login-page">
 
@@ -39,8 +40,8 @@
             <h1 class="auth-title">Вход</h1>
 
             <div class="auth-type-toggle" role="group" aria-label="Тип входа">
-                <button type="button" class="auth-type-btn active" data-type="client">Клиент</button>
-                <button type="button" class="auth-type-btn" data-type="company">Компания</button>
+                <button type="button" class="auth-type-btn active" data-type="client">КЛИЕНТ</button>
+                <button type="button" class="auth-type-btn" data-type="worker">РАБОТНИК</button>
             </div>
 
             <form id="loginForm" class="auth-form" method="POST" action="{% url 'main:adminka_login' %}" data-aos="fade-up" data-aos-delay="100">
@@ -78,15 +79,17 @@
                     </div>
                 </div>
 
-                <button type="submit" class="auth-submit-btn">Войти</button>
+                <button type="submit" class="auth-submit-btn">ВОЙТИ</button>
 
                 <div class="auth-links">
                     <p>У вас еще нет аккаунта? <a href="{% url 'main:register' %}">Регистрация</a></p>
-                    <p><a href="#">Забыли пароль?</a></p>
+                    <p><a href="{% url 'main:password_reset' %}">Забыли пароль?</a></p>
                 </div>
             </form>
         </div>
     </div>
+
+    {% include 'components/site_footer.html' %}
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
     <script>

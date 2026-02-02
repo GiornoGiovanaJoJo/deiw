@@ -1,23 +1,48 @@
 """
-Личный кабинет пользователя (не staff): Заказы, Заявки, Управление профилем, Поддержка.
+Личный кабинет пользователя (не staff): Заказы, Заявки, Управление профилем, Поддержка, Аналитика.
 """
 from functools import wraps
-from django.shortcuts import render, redirect, get_object_or_404
+from datetime import datetime, date
+from decimal import Decimal
+from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import login
-from django.db.models import Q
+from django.db.models import Q, Count
+from django.utils import timezone
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST, require_GET
+from django.views.decorators.csrf import ensure_csrf_cookie
+import json
 
-from .models import Request, RequestStage, UserProfile, ContactRequest
-from .forms import AvatarUploadForm, CabinetProfileForm
+from .models import (
+    Request, RequestStage, UserProfile, ContactRequest,
+    RequestCategory, RequestSubcategory, RequestQuestion,
+)
+from .forms import AvatarUploadForm, CabinetProfileForm, CabinetRequestEditForm
 
 
-def _user_requests(user):
-    """Заявки пользователя: по user_id или по email."""
-    return Request.objects.filter(
+def _user_requests(user, date_from=None, date_to=None, status=None, category_id=None, search=None):
+    """Заявки пользователя: по user_id или по email, с опциональными фильтрами."""
+    qs = Request.objects.filter(
         Q(user=user) | Q(email=user.email)
     ).select_related('category', 'subcategory').order_by('-created_at')
+    if date_from:
+        qs = qs.filter(created_at__date__gte=date_from)
+    if date_to:
+        qs = qs.filter(created_at__date__lte=date_to)
+    if status:
+        qs = qs.filter(status=status)
+    if category_id:
+        qs = qs.filter(category_id=category_id)
+    if search:
+        search_clean = search.strip().replace(' ', '')
+        if search_clean.isdigit():
+            qs = qs.filter(pk=int(search_clean))
+        else:
+            qs = qs.filter(Q(name__icontains=search) | Q(email__icontains=search))
+    return qs
 
 
 def _user_support(user):
@@ -47,12 +72,53 @@ def cabinet_dashboard(request):
 @login_required(login_url=settings.LOGIN_URL)
 @cabinet_required()
 def cabinet_requests(request):
-    """Список заявок пользователя."""
-    requests_list = _user_requests(request.user)
+    """Список заявок пользователя с фильтрами по дате, статусу, категории и поиску по номеру."""
+    date_from = request.GET.get('date_from')
+    date_to = request.GET.get('date_to')
+    status = request.GET.get('status', '').strip() or None
+    category_id = request.GET.get('category', '').strip() or None
+    search = request.GET.get('search', '').strip() or None
+    if category_id and category_id.isdigit():
+        category_id = int(category_id)
+    else:
+        category_id = None
+    if date_from:
+        try:
+            date_from = datetime.strptime(date_from, '%Y-%m-%d').date()
+        except ValueError:
+            date_from = None
+    if date_to:
+        try:
+            date_to = datetime.strptime(date_to, '%Y-%m-%d').date()
+        except ValueError:
+            date_to = None
+    requests_list = _user_requests(
+        request.user,
+        date_from=date_from,
+        date_to=date_to,
+        status=status,
+        category_id=category_id,
+        search=search,
+    )
     categories = list(set(r.category for r in requests_list if r.category_id))
+    all_categories = RequestCategory.objects.all()
+    status_sections = [
+        ('new', 'Новая'),
+        ('in_progress', 'В обработке'),
+        ('approved', 'Одобрена'),
+        ('rejected', 'Отклонена'),
+        ('closed', 'Закрыта'),
+    ]
     return render(request, 'cabinet/requests.html', {
         'user_requests': requests_list,
         'categories': categories,
+        'all_categories': all_categories,
+        'date_from': date_from,
+        'date_to': date_to,
+        'filter_status': status,
+        'filter_category': category_id,
+        'filter_search': search,
+        'status_sections': status_sections,
     })
 
 
@@ -60,11 +126,27 @@ def cabinet_requests(request):
 @cabinet_required()
 def cabinet_orders(request):
     """Список заказов (те же заявки, вид «Заказы» с фильтрами)."""
-    requests_list = _user_requests(request.user)
+    date_from = request.GET.get('date_from')
+    date_to = request.GET.get('date_to')
+    status = request.GET.get('status', '').strip() or None
+    if date_from:
+        try:
+            date_from = datetime.strptime(date_from, '%Y-%m-%d').date()
+        except ValueError:
+            date_from = None
+    if date_to:
+        try:
+            date_to = datetime.strptime(date_to, '%Y-%m-%d').date()
+        except ValueError:
+            date_to = None
+    requests_list = _user_requests(request.user, date_from=date_from, date_to=date_to, status=status)
     categories = list(set(r.category for r in requests_list if r.category_id))
     return render(request, 'cabinet/orders.html', {
         'user_requests': requests_list,
         'categories': categories,
+        'date_from': date_from,
+        'date_to': date_to,
+        'filter_status': status,
     })
 
 
@@ -178,3 +260,157 @@ def cabinet_support(request):
     """Обращения в поддержку пользователя."""
     support_list = _user_support(request.user)
     return render(request, 'cabinet/support.html', {'support_requests': support_list})
+
+
+@login_required(login_url=settings.LOGIN_URL)
+@cabinet_required()
+def cabinet_request_edit(request, pk):
+    """Редактирование заявки пользователем: имя, телефон, email, сообщение."""
+    req = get_object_or_404(Request, pk=pk)
+    if req.user_id != request.user.id and req.email != request.user.email:
+        return redirect('main:cabinet_requests')
+    form = CabinetRequestEditForm(
+        initial={
+            'name': req.name,
+            'phone': req.phone,
+            'email': req.email,
+            'message': req.message or '',
+        }
+    )
+    if request.method == 'POST':
+        form = CabinetRequestEditForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            req.name = cd['name']
+            req.phone = cd['phone']
+            req.email = cd['email']
+            req.message = (cd.get('message') or '').strip()
+            req.save()
+            messages.success(request, 'Заявка обновлена.')
+            return redirect('main:cabinet_request_detail', pk=pk)
+    return render(request, 'cabinet/request_edit.html', {'req_obj': req, 'form': form})
+
+
+@login_required(login_url=settings.LOGIN_URL)
+@cabinet_required()
+@require_POST
+def cabinet_request_delete(request, pk):
+    """Удаление заявки пользователя (только своя)."""
+    req = get_object_or_404(Request, pk=pk)
+    if req.user_id != request.user.id and req.email != request.user.email:
+        return JsonResponse({'success': False, 'error': 'Нет доступа'}, status=403)
+    req.delete()
+    return JsonResponse({'success': True, 'message': 'Заявка удалена'})
+
+
+@login_required(login_url=settings.LOGIN_URL)
+@cabinet_required()
+def cabinet_analytics(request):
+    """История и аналитика: таблица, графики (Chart.js), экспорт."""
+    user = request.user
+    qs = Request.objects.filter(Q(user=user) | Q(email=user.email)).select_related('category').order_by('-created_at')
+    history = []
+    for r in qs:
+        history.append({
+            'id': r.pk,
+            'created_at': r.created_at.strftime('%d.%m.%Y') if r.created_at else '',
+            'amount': float(r.amount) if r.amount is not None else None,
+            'status': r.status,
+            'status_display': r.get_status_display(),
+            'display_number': r.display_number(),
+        })
+    by_status = list(qs.values('status').annotate(count=Count('id')))
+    months_qs = qs.dates('created_at', 'month', order='ASC')
+    by_month = []
+    for d in months_qs:
+        year, month = d.year, d.month
+        approved_count = qs.filter(created_at__year=year, created_at__month=month, status='approved').count()
+        by_month.append({'month': d.strftime('%Y-%m'), 'label': d.strftime('%b %Y'), 'count': approved_count})
+    return render(request, 'cabinet/analytics.html', {
+        'history': history,
+        'by_status': by_status,
+        'by_month': by_month,
+        'by_status_json': json.dumps(list(by_status)),
+        'by_month_json': json.dumps(by_month),
+        'user_requests': qs,
+    })
+
+
+@login_required(login_url=settings.LOGIN_URL)
+@cabinet_required()
+@require_GET
+def cabinet_export_pdf(request):
+    """Экспорт истории заявок в PDF."""
+    try:
+        from reportlab.lib import colors
+        from reportlab.lib.pagesizes import A4
+        from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
+        from reportlab.lib.styles import getSampleStyleSheet
+        from io import BytesIO
+    except ImportError:
+        return HttpResponse('Модуль reportlab не установлен', status=500)
+    user = request.user
+    qs = Request.objects.filter(Q(user=user) | Q(email=user.email)).select_related('category').order_by('-created_at')
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=A4)
+    styles = getSampleStyleSheet()
+    data = [['Дата', 'Номер', 'Статус', 'Сумма']]
+    for r in qs:
+        data.append([
+            r.created_at.strftime('%d.%m.%Y') if r.created_at else '',
+            r.display_number(),
+            r.get_status_display(),
+            str(r.amount) if r.amount is not None else '—',
+        ])
+    t = Table(data)
+    t.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#6c63ff')),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 10),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+    ]))
+    doc.build([t])
+    buffer.seek(0)
+    response = HttpResponse(buffer.getvalue(), content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="cabinet_requests.pdf"'
+    return response
+
+
+@login_required(login_url=settings.LOGIN_URL)
+@cabinet_required()
+@require_GET
+def cabinet_export_excel(request):
+    """Экспорт истории заявок в Excel."""
+    try:
+        from openpyxl import Workbook
+        from openpyxl.styles import Font, Alignment
+        from io import BytesIO
+    except ImportError:
+        return HttpResponse('Модуль openpyxl не установлен', status=500)
+    user = request.user
+    qs = Request.objects.filter(Q(user=user) | Q(email=user.email)).select_related('category').order_by('-created_at')
+    wb = Workbook()
+    ws = wb.active
+    ws.title = 'Заявки'
+    ws.append(['Дата', 'Номер', 'Категория', 'Статус', 'Сумма'])
+    for r in qs:
+        ws.append([
+            r.created_at.strftime('%d.%m.%Y') if r.created_at else '',
+            r.display_number(),
+            str(r.category) if r.category else '—',
+            r.get_status_display(),
+            float(r.amount) if r.amount is not None else '',
+        ])
+    for cell in ws[1]:
+        cell.font = Font(bold=True)
+        cell.alignment = Alignment(horizontal='center')
+    buffer = BytesIO()
+    wb.save(buffer)
+    buffer.seek(0)
+    response = HttpResponse(buffer.getvalue(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename="cabinet_requests.xlsx"'
+    return response

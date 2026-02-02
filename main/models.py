@@ -495,8 +495,10 @@ class Request(models.Model):
     """Заявка с сайта: категория, подкатегория, ответы на вопросы."""
     STATUS_CHOICES = [
         ('new', 'Новая'),
-        ('in_progress', 'В процессе'),
-        ('closed', 'Закрыта'),
+        ('in_progress', 'В обработке'),
+        ('approved', 'Одобрена'),
+        ('rejected', 'Отклонена'),
+        ('closed', 'Закрыта'),  # для обратной совместимости
     ]
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -515,6 +517,7 @@ class Request(models.Model):
     extra_answers = models.JSONField('Ответы на вопросы', default=dict, blank=True, help_text='JSON: поле -> ответ')
     created_at = models.DateTimeField('Дата создания', auto_now_add=True)
     status = models.CharField('Статус', max_length=20, choices=STATUS_CHOICES, default='new')
+    amount = models.DecimalField('Сумма', max_digits=12, decimal_places=2, null=True, blank=True, help_text='Для аналитики')
     message_admin = models.TextField('Ответ администратора', blank=True)
     admin_id = models.IntegerField('ID администратора', null=True, blank=True)
 
@@ -598,3 +601,30 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return f'{self.user.get_full_name() or self.user.email} ({self.get_user_type_display()})'
+
+
+class UserTwoFA(models.Model):
+    """2FA: SMS или Telegram (заготовка, отправка кодов — внешние сервисы)."""
+    METHOD_CHOICES = [
+        ('sms', 'SMS'),
+        ('telegram', 'Telegram'),
+    ]
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='two_fa',
+        verbose_name='Пользователь',
+    )
+    method = models.CharField('Метод', max_length=20, choices=METHOD_CHOICES, default='sms')
+    phone_or_username = models.CharField('Телефон или @username', max_length=100, blank=True)
+    is_enabled = models.BooleanField('Включено', default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = '2FA пользователя'
+        verbose_name_plural = '2FA пользователей'
+        db_table = 'user_two_fa'
+
+    def __str__(self):
+        return f'{self.user.email} ({self.get_method_display()})'

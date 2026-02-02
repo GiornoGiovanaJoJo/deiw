@@ -134,6 +134,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = '/adminka/login/'
 LOGIN_REDIRECT_URL = '/cabinet/'
 
+# Email (для восстановления пароля: в development письма в консоль)
+EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'noreply@empire-premium-bau.de')
+
 # За прокси (Railway, Heroku и т.д.): доверять X-Forwarded-Proto для корректной проверки CSRF/Referer
 # Без этого Django видит запрос как HTTP и проверка Referer/Origin даёт 403
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
