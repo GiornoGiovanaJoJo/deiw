@@ -132,8 +132,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Без этого Django видит запрос как HTTP и проверка Referer/Origin даёт 403
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-# CSRF: хранить токен в сессии вместо отдельной куки — надёжнее за прокси (Railway/Heroku)
-CSRF_USE_SESSIONS = True
+# CSRF: кука (не сессия) — на Railway/Heroku сессия может не совпадать между запросами,
+# из-за чего смена языка даёт 403. С кукой токен отправляется с каждым запросом.
+CSRF_USE_SESSIONS = False
 
 # Production: безопасные заголовки (если не DEBUG)
 if not DEBUG:

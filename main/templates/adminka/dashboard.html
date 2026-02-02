@@ -33,40 +33,74 @@
       <p data-i18n="index.stats.in_progress">В работе</p>
     </div>
     <div class="stat-card">
-      <h2>{{ stats.new_requests }}</h2>
-      <p data-i18n="index.stats.new_requests">Новых заявок</p>
+      <h2>{{ stats.new_applications }}</h2>
+      <p>Новых заявок</p>
+    </div>
+    <div class="stat-card">
+      <h2>{{ stats.new_support }}</h2>
+      <p>В поддержке</p>
     </div>
   </div>
 
-  <div class="card orders-card" data-aos="fade-up" data-aos-delay="500">
-    <h2 data-i18n="index.requests.title">Последние заявки</h2>
-    {% if recent_requests %}
+  <div class="card orders-card" data-aos="fade-up" data-aos-delay="300">
+    <h2>Последние заявки <a href="{% url 'main:adminka_requests' %}" style="font-size: 0.85rem; font-weight: 500;">→ все</a></h2>
+    {% if recent_applications %}
     <table class="orders-table">
       <thead>
         <tr>
-          <th data-i18n="index.requests.id">ID</th>
-          <th data-i18n="index.requests.name">Имя</th>
-          <th data-i18n="index.requests.email">Email</th>
-          <th data-i18n="index.requests.status">Статус</th>
-          <th data-i18n="index.requests.date">Дата</th>
+          <th>ID</th>
+          <th>Имя</th>
+          <th>Email</th>
+          <th>Категория</th>
+          <th>Статус</th>
+          <th>Дата</th>
         </tr>
       </thead>
       <tbody>
-        {% for request in recent_requests %}
+        {% for req in recent_applications %}
         <tr>
-          <td>{{ request.id }}</td>
-          <td>{{ request.name }}</td>
-          <td>{{ request.email }}</td>
-          <td class="status-{% if request.status == 'new' %}warning{% elif request.status == 'closed' %}success{% else %}info{% endif %}" data-i18n="support.status.{{ request.status }}">
-            {{ request.get_status_display }}
-          </td>
-          <td>{{ request.created_at|date:"d.m.Y H:i" }}</td>
+          <td>{{ req.id }}</td>
+          <td>{{ req.name }}</td>
+          <td>{{ req.email }}</td>
+          <td>{{ req.category|default:"—" }}</td>
+          <td class="status-{% if req.status == 'new' %}warning{% elif req.status == 'closed' %}success{% else %}info{% endif %}">{{ req.get_status_display }}</td>
+          <td>{{ req.created_at|date:"d.m.Y H:i" }}</td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
     {% else %}
-    <p style="text-align: center; padding: 2rem; color: var(--color-text-muted);">Нет новых заявок</p>
+    <p style="text-align: center; padding: 2rem; color: var(--color-text-muted);">Нет заявок</p>
+    {% endif %}
+  </div>
+
+  <div class="card orders-card" data-aos="fade-up" data-aos-delay="500">
+    <h2>Поддержка <a href="{% url 'main:adminka_support' %}" style="font-size: 0.85rem; font-weight: 500;">→ все</a></h2>
+    {% if recent_support %}
+    <table class="orders-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Имя</th>
+          <th>Email</th>
+          <th>Статус</th>
+          <th>Дата</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for req in recent_support %}
+        <tr>
+          <td>{{ req.id }}</td>
+          <td>{{ req.name }}</td>
+          <td>{{ req.email }}</td>
+          <td class="status-{% if req.status == 'new' %}warning{% elif req.status == 'closed' %}success{% else %}info{% endif %}">{{ req.get_status_display }}</td>
+          <td>{{ req.created_at|date:"d.m.Y H:i" }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p style="text-align: center; padding: 2rem; color: var(--color-text-muted);">Нет обращений</p>
     {% endif %}
   </div>
 </main>

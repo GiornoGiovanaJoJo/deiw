@@ -2,9 +2,10 @@ from django.contrib import admin
 from django.utils.safestring import mark_safe
 from django.urls import reverse
 from .models import (
-    SiteSettings, HeroCarouselImage, Service, Project, 
+    SiteSettings, HeroCarouselImage, Service, Project,
     DesignSettings, ElementSettings,
-    Category, AdminProject, ContactRequest
+    Category, AdminProject, ContactRequest,
+    RequestCategory, RequestSubcategory, RequestQuestion, Request,
 )
 from .forms import SiteSettingsForm, HeroCarouselImageForm, ServiceForm, ProjectForm, DesignSettingsForm, ElementSettingsForm
 
@@ -317,3 +318,63 @@ class ContactRequestAdmin(admin.ModelAdmin):
         if obj.message_admin and not obj.admin_id:
             obj.admin_id = request.user.id
         super().save_model(request, obj, form, change)
+
+
+# ---------- Заявки с сайта: категории, подкатегории, вопросы, заявки ----------
+
+class RequestQuestionInline(admin.TabularInline):
+    model = RequestQuestion
+    extra = 0
+    ordering = ['order', 'question_text']
+
+
+class RequestSubcategoryInline(admin.TabularInline):
+    model = RequestSubcategory
+    extra = 0
+    ordering = ['order', 'name']
+    show_change_link = True
+
+
+@admin.register(RequestCategory)
+class RequestCategoryAdmin(admin.ModelAdmin):
+    list_display = ['name', 'slug', 'order', 'created_at']
+    list_editable = ['order']
+    prepopulated_fields = {'slug': ('name',)}
+    inlines = [RequestSubcategoryInline]
+    ordering = ['order', 'name']
+
+
+@admin.register(RequestSubcategory)
+class RequestSubcategoryAdmin(admin.ModelAdmin):
+    list_display = ['name', 'category', 'slug', 'order', 'created_at']
+    list_filter = ['category']
+    list_editable = ['order']
+    prepopulated_fields = {'slug': ('name',)}
+    inlines = [RequestQuestionInline]
+    ordering = ['order', 'name']
+
+
+@admin.register(RequestQuestion)
+class RequestQuestionAdmin(admin.ModelAdmin):
+    list_display = ['question_text', 'subcategory', 'field_name', 'order', 'created_at']
+    list_filter = ['subcategory__category']
+    list_editable = ['order']
+    ordering = ['order', 'question_text']
+
+
+@admin.register(Request)
+class RequestAdmin(admin.ModelAdmin):
+    list_display = ['id', 'name', 'email', 'phone', 'category', 'subcategory', 'status', 'created_at']
+    list_filter = ['status', 'category', 'created_at']
+    search_fields = ['name', 'email', 'phone', 'message']
+    list_editable = ['status']
+    ordering = ['-created_at']
+    date_hierarchy = 'created_at'
+    readonly_fields = ['created_at']
+    fieldsets = (
+        ('Клиент', {'fields': ('name', 'email', 'phone', 'message')}),
+        ('Категория', {'fields': ('category', 'subcategory')}),
+        ('Ответы на вопросы', {'fields': ('extra_answers',), 'classes': ('collapse',)}),
+        ('Статус', {'fields': ('status', 'created_at')}),
+        ('Ответ администратора', {'fields': ('message_admin', 'admin_id'), 'classes': ('collapse',)}),
+    )

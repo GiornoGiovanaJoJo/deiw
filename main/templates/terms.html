@@ -1,0 +1,44 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:'ru' }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% trans 'Условия использования' %} — Empire Premium</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='.9em' font-size='24'>👑</text></svg>">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', -apple-system, sans-serif; line-height: 1.6; color: #0F172A; background: #F8FAFC; min-height: 100vh; display: flex; flex-direction: column; }
+    .header { background: #fff; padding: 1rem 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .header a { color: #7C3AED; font-weight: 600; text-decoration: none; }
+    .header a:hover { text-decoration: underline; }
+    .container { max-width: 720px; margin: 0 auto; padding: 2rem 1.5rem; flex: 1; }
+    h1 { font-size: 1.75rem; margin-bottom: 1.5rem; color: #1A1A1A; }
+    h2 { font-size: 1.15rem; margin: 1.5rem 0 0.5rem; color: #334155; }
+    p { margin-bottom: 0.75rem; color: #475569; }
+    .footer { text-align: center; padding: 1.5rem; color: #64748B; font-size: 0.9rem; }
+    .footer a { color: #7C3AED; text-decoration: none; }
+    .footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <a href="{% url 'main:home' %}">← {% trans 'На главную' %}</a>
+  </header>
+  <main class="container">
+    <h1>{% trans 'Условия использования' %}</h1>
+    <p>{% trans 'Используя сайт Empire Premium, вы соглашаетесь с приведёнными ниже условиями.' %}</p>
+    <h2>1. {% trans 'Использование сайта' %}</h2>
+    <p>{% trans 'Материалы сайта предназначены для ознакомления с услугами и проектами компании. Запрещается копирование контента в коммерческих целях без письменного согласия.' %}</p>
+    <h2>2. {% trans 'Заявки и обратная связь' %}</h2>
+    <p>{% trans 'Отправляя заявку или сообщение через формы на сайте, вы даёте согласие на обработку указанных данных для связи и выполнения запроса.' %}</p>
+    <h2>3. {% trans 'Ссылки' %}</h2>
+    <p>{% trans 'Сайт может содержать ссылки на внешние ресурсы. Мы не несём ответственности за содержание сторонних сайтов.' %}</p>
+    <h2>4. {% trans 'Изменения' %}</h2>
+    <p>{% trans 'Мы оставляем за собой право обновлять условия использования. Актуальная версия всегда доступна на этой странице.' %}</p>
+  </main>
+  <footer class="footer">
+    <a href="{% url 'main:home' %}">Empire Premium</a> · © 2026
+  </footer>
+</body>
+</html>

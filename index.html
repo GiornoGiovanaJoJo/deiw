@@ -1128,6 +1128,8 @@
     }
     .footer__form .footer__input:focus { outline: none; border-color: var(--accent-purple); }
     .footer__form textarea.footer__input { min-height: 80px; padding: var(--spacing-sm); resize: vertical; }
+    .footer__form .footer__label { display: block; font-size: 14px; font-weight: 500; color: var(--text-dark); margin-bottom: 4px; }
+    .footer__form-request-fields .footer__input { margin-bottom: var(--spacing-sm); }
     .footer__form .btn--primary { width: 100%; margin-top: var(--spacing-xs); }
     #footerFormMessage.success { color: #16a34a; }
     #footerFormMessage.error { color: #dc2626; }
@@ -1336,7 +1338,7 @@
       </nav>
       <div class="header__cta">
         <a href="#contact" class="btn btn--primary">{% trans 'Оставить заявку' %} <i data-feather="arrow-right"></i></a>
-        <a href="#" class="btn btn--outline-purple">{% trans 'Войти' %}</a>
+        <a href="{% url 'main:adminka_login' %}" class="btn btn--outline-purple">{% trans 'Войти' %}</a>
         <div class="header__lang-switcher">
           <button type="button" class="btn btn--ghost" id="headerLangBtn" aria-label="{% trans 'Язык' %}" aria-haspopup="true" aria-expanded="false"><i data-feather="globe"></i> {% trans 'Язык' %}</button>
           <div class="header__lang-dropdown" id="headerLangDropdown" role="menu" aria-hidden="true">
@@ -1362,7 +1364,7 @@
     </nav>
     <div class="header__cta">
       <a href="#contact" class="btn btn--primary">{% trans 'Оставить заявку' %}</a>
-      <a href="#" class="btn btn--outline-purple">{% trans 'Войти' %}</a>
+      <a href="{% url 'main:adminka_login' %}" class="btn btn--outline-purple">{% trans 'Войти' %}</a>
     </div>
   </div>
 
@@ -1508,7 +1510,7 @@
             <div class="project-card__body">
               <h3 class="project-card__title">{{ project.title }}</h3>
               <p class="project-card__desc">{{ project.description }}</p>
-              {% if project.link %}<a href="{{ project.link }}" class="project-card__link">{% trans 'Подробнее узнать' %} <i data-feather="arrow-right"></i></a>{% endif %}
+              <a href="{% if project.link %}{{ project.link }}{% else %}#contact{% endif %}" class="project-card__link" {% if project.link %}target="_blank" rel="noopener noreferrer"{% endif %}>{% trans 'Подробнее узнать' %} <i data-feather="arrow-right"></i></a>
             </div>
           </article>
           {% empty %}
@@ -1517,7 +1519,7 @@
             <div class="project-card__body">
               <h3 class="project-card__title">{% trans 'Установка солнечных панелей' %}</h3>
               <p class="project-card__desc">{% trans 'Энергоэффективный дом с автономным электроснабжением. Современные панели и инверторы.' %}</p>
-              <a href="#" class="project-card__link">{% trans 'Подробнее узнать' %} <i data-feather="arrow-right"></i></a>
+              <a href="#contact" class="project-card__link">{% trans 'Подробнее узнать' %} <i data-feather="arrow-right"></i></a>
             </div>
           </article>
           {% endfor %}
@@ -1561,22 +1563,40 @@
           <h3 class="footer__form-title">{% trans 'Заполните форму, и мы свяжемся с вами в течение 15 минут' %}</h3>
           <div class="footer__form-tabs" role="tablist">
             <button type="button" class="footer__form-tab is-active" data-tab="request" role="tab" aria-selected="true">{% trans 'Заявка' %}</button>
-            <button type="button" class="footer__form-tab" data-tab="catalog" role="tab" aria-selected="false">{% trans 'Каталог' %}</button>
+            <button type="button" class="footer__form-tab" data-tab="support" role="tab" aria-selected="false">{% trans 'Поддержка' %}</button>
             <button type="button" class="footer__form-tab" data-tab="review" role="tab" aria-selected="false">{% trans 'Отзыв' %}</button>
           </div>
-          <form class="footer__form" id="footerForm" novalidate 
-                data-msg-name="{% trans 'Введите имя.' %}"
-                data-msg-phone="{% trans 'Введите телефон.' %}"
-                data-msg-email="{% trans 'Введите корректный email.' %}"
-                data-msg-success="{% trans 'Спасибо! Мы свяжемся с вами в течение 15 минут.' %}">
-            {% csrf_token %}
-            <input type="text" class="footer__input" name="name" placeholder="{% trans 'Имя' %}" required aria-label="{% trans 'Имя' %}">
-            <input type="tel" class="footer__input" name="phone" placeholder="{% trans 'Телефон' %}" required aria-label="{% trans 'Телефон' %}">
-            <input type="email" class="footer__input" name="email" placeholder="Email" required aria-label="Email">
-            <textarea class="footer__input" name="message" placeholder="{% trans 'Сообщение' %}" aria-label="{% trans 'Сообщение' %}"></textarea>
-            <button type="submit" class="btn btn--primary">{% trans 'Оставить заявку' %}</button>
-            <p class="cta-section__message" id="footerFormMessage" aria-live="polite" style="margin-top:8px;font-size:14px;"></p>
-          </form>
+          <div id="footerFormPanel" class="footer__form-panel">
+            <form class="footer__form" id="footerForm" novalidate
+                  data-msg-name="{% trans 'Введите имя.' %}"
+                  data-msg-phone="{% trans 'Введите телефон.' %}"
+                  data-msg-email="{% trans 'Введите корректный email.' %}"
+                  data-msg-success="{% trans 'Спасибо! Мы свяжемся с вами в течение 15 минут.' %}">
+              {% csrf_token %}
+              <input type="hidden" name="form_type" id="footerFormType" value="request">
+              <div id="footerRequestFields" class="footer__form-request-fields">
+                <label class="footer__label">{% trans 'Категория' %}</label>
+                <select class="footer__input" id="footerCategory" name="category_id" aria-label="{% trans 'Категория' %}">
+                  <option value="">— {% trans 'выберите' %} —</option>
+                </select>
+                <label class="footer__label">{% trans 'Подкатегория' %}</label>
+                <select class="footer__input" id="footerSubcategory" name="subcategory_id" aria-label="{% trans 'Подкатегория' %}">
+                  <option value="">— {% trans 'выберите' %} —</option>
+                </select>
+                <div id="footerQuestions"></div>
+              </div>
+              <input type="text" class="footer__input" name="name" placeholder="{% trans 'Имя' %}" required aria-label="{% trans 'Имя' %}">
+              <input type="tel" class="footer__input" name="phone" placeholder="{% trans 'Телефон' %}" required aria-label="{% trans 'Телефон' %}">
+              <input type="email" class="footer__input" name="email" placeholder="Email" required aria-label="Email">
+              <textarea class="footer__input" name="message" placeholder="{% trans 'Сообщение' %}" aria-label="{% trans 'Сообщение' %}"></textarea>
+              <button type="submit" class="btn btn--primary" id="footerFormSubmitBtn">{% trans 'Оставить заявку' %}</button>
+              <p class="cta-section__message" id="footerFormMessage" aria-live="polite" style="margin-top:8px;font-size:14px;"></p>
+            </form>
+          </div>
+          <div id="footerReviewPanel" class="footer__form-panel" style="display:none;">
+            <p class="footer__form-title" style="font-size:0.95rem; margin-bottom:12px;">{% trans 'Оставьте отзыв в Google' %}</p>
+            <a href="https://search.google.com/local/writereview?placeid=ChIJN1t_tDeuEmsRUsoyG83frY4" target="_blank" rel="noopener noreferrer" class="btn btn--primary">{% trans 'Написать отзыв в Google' %}</a>
+          </div>
         </div>
       </div>
       <div class="footer__bottom-wrap">
@@ -1586,8 +1606,8 @@
               <a href="#" class="footer__logo">Empire <span>Premium</span></a>
               <p>{% trans 'С 2024 года мы создаем исключительные строительные проекты, отличающиеся высочайшим качеством и инновационным подходом.' %}</p>
               <div class="footer__social footer__social--top">
-                <a href="#" aria-label="Instagram"><svg class="icon-sprite" aria-hidden="true"><use href="#icon-instagram"/></svg></a>
-                <a href="#" aria-label="TikTok"><svg class="icon-sprite" aria-hidden="true"><use href="#icon-tiktok"/></svg></a>
+                <a href="https://www.instagram.com/empire_premium_bau?igsh=MTRvbGtwZGNtZHp2Zg==" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg class="icon-sprite" aria-hidden="true"><use href="#icon-instagram"/></svg></a>
+                <a href="https://www.tiktok.com/@empire.premium.bau?_r=1&_t=ZG-93aeXaQ15yi" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><svg class="icon-sprite" aria-hidden="true"><use href="#icon-tiktok"/></svg></a>
               </div>
               <p class="footer__lang-label">{% trans 'Доступные языки:' %}</p>
               <div class="footer__lang">
@@ -1624,12 +1644,10 @@
           </div>
           <div class="footer__bottom">
             <div class="footer__social">
-              <a href="#" aria-label="Instagram"><i data-feather="instagram"></i></a>
-              <a href="#" aria-label="Facebook"><i data-feather="facebook"></i></a>
-              <a href="#" aria-label="LinkedIn"><i data-feather="linkedin"></i></a>
-              <a href="#" aria-label="Twitter"><i data-feather="twitter"></i></a>
+              <a href="https://www.instagram.com/empire_premium_bau?igsh=MTRvbGtwZGNtZHp2Zg==" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i data-feather="instagram"></i></a>
+              <a href="https://www.tiktok.com/@empire.premium.bau?_r=1&_t=ZG-93aeXaQ15yi" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><i data-feather="tiktok"></i></a>
             </div>
-            <p class="footer__copy">© 2026 Empire Premium. {% trans 'Все права защищены.' %} <a href="#" style="color:inherit;">{% trans 'Политика конфиденциальности' %}</a> · <a href="#" style="color:inherit;">{% trans 'Условия использования' %}</a></p>
+            <p class="footer__copy">© 2026 Empire Premium. {% trans 'Все права защищены.' %} <a href="{% url 'main:privacy' %}" style="color:inherit;">{% trans 'Политика конфиденциальности' %}</a> · <a href="{% url 'main:terms' %}" style="color:inherit;">{% trans 'Условия использования' %}</a></p>
           </div>
         </div>
       </div>
@@ -1781,17 +1799,102 @@
       }
       if (servicesTrack && serviceCards.length) goToService(0);
 
-      // ----- Табы формы в футере -----
+      // ----- Табы формы: Заявка / Поддержка / Отзыв -----
       var formTabs = document.querySelectorAll('.footer__form-tab');
+      var footerFormPanel = document.getElementById('footerFormPanel');
+      var footerReviewPanel = document.getElementById('footerReviewPanel');
+      var footerRequestFields = document.getElementById('footerRequestFields');
+      var footerFormTypeInput = document.getElementById('footerFormType');
+      var footerFormSubmitBtn = document.getElementById('footerFormSubmitBtn');
+      var submitBtnTextRequest = '{% trans "Оставить заявку" %}';
+      var submitBtnTextSupport = '{% trans "Отправить в поддержку" %}';
+      function setActiveTab(tabName) {
+        formTabs.forEach(function(t) {
+          var isActive = t.getAttribute('data-tab') === tabName;
+          t.classList.toggle('is-active', isActive);
+          t.setAttribute('aria-selected', isActive);
+        });
+        if (tabName === 'review') {
+          if (footerFormPanel) footerFormPanel.style.display = 'none';
+          if (footerReviewPanel) footerReviewPanel.style.display = 'block';
+        } else {
+          if (footerFormPanel) footerFormPanel.style.display = 'block';
+          if (footerReviewPanel) footerReviewPanel.style.display = 'none';
+          if (footerFormTypeInput) footerFormTypeInput.value = tabName;
+          if (footerRequestFields) footerRequestFields.style.display = tabName === 'request' ? 'block' : 'none';
+          if (footerFormSubmitBtn) footerFormSubmitBtn.textContent = tabName === 'request' ? submitBtnTextRequest : submitBtnTextSupport;
+        }
+      }
       formTabs.forEach(function(tab) {
         tab.addEventListener('click', function() {
-          formTabs.forEach(function(t) { t.classList.remove('is-active'); t.setAttribute('aria-selected', 'false'); });
-          this.classList.add('is-active');
-          this.setAttribute('aria-selected', 'true');
+          setActiveTab(this.getAttribute('data-tab'));
         });
       });
+      setActiveTab('request');
 
-      // ----- Форма в футере с анимацией -----
+      // ----- Категории / подкатегории / вопросы для заявки -----
+      var footerCategory = document.getElementById('footerCategory');
+      var footerSubcategory = document.getElementById('footerSubcategory');
+      var footerQuestions = document.getElementById('footerQuestions');
+      function loadCategories() {
+        fetch('/api/request-categories/').then(function(r) { return r.json(); }).then(function(data) {
+          if (!footerCategory) return;
+          footerCategory.innerHTML = '<option value="">— {% trans "выберите" %} —</option>';
+          (data.categories || []).forEach(function(c) {
+            var opt = document.createElement('option');
+            opt.value = c.id;
+            opt.textContent = c.name;
+            footerCategory.appendChild(opt);
+          });
+        }).catch(function() {});
+      }
+      function loadSubcategories(categoryId) {
+        if (!footerSubcategory) return;
+        footerSubcategory.innerHTML = '<option value="">— {% trans "выберите" %} —</option>';
+        footerQuestions.innerHTML = '';
+        if (!categoryId) return;
+        fetch('/api/request-subcategories/?category_id=' + encodeURIComponent(categoryId)).then(function(r) { return r.json(); }).then(function(data) {
+          (data.subcategories || []).forEach(function(s) {
+            var opt = document.createElement('option');
+            opt.value = s.id;
+            opt.textContent = s.name;
+            footerSubcategory.appendChild(opt);
+          });
+        }).catch(function() {});
+      }
+      function loadQuestions(subcategoryId) {
+        if (!footerQuestions) return;
+        footerQuestions.innerHTML = '';
+        if (!subcategoryId) return;
+        fetch('/api/request-questions/?subcategory_id=' + encodeURIComponent(subcategoryId)).then(function(r) { return r.json(); }).then(function(data) {
+          (data.questions || []).forEach(function(q) {
+            var wrap = document.createElement('div');
+            wrap.className = 'footer__form-q';
+            var label = document.createElement('label');
+            label.className = 'footer__label';
+            label.textContent = q.text;
+            label.setAttribute('for', 'q_' + q.field_name);
+            var input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'footer__input';
+            input.name = 'extra_' + q.field_name;
+            input.id = 'q_' + q.field_name;
+            input.setAttribute('aria-label', q.text);
+            wrap.appendChild(label);
+            wrap.appendChild(input);
+            footerQuestions.appendChild(wrap);
+          });
+        }).catch(function() {});
+      }
+      loadCategories();
+      if (footerCategory) footerCategory.addEventListener('change', function() {
+        loadSubcategories(this.value);
+      });
+      if (footerSubcategory) footerSubcategory.addEventListener('change', function() {
+        loadQuestions(this.value);
+      });
+
+      // ----- Отправка формы заявки/поддержки -----
       var footerForm = document.getElementById('footerForm');
       var footerFormMessage = document.getElementById('footerFormMessage');
       if (footerForm && footerFormMessage) {
@@ -1806,43 +1909,48 @@
           var email = emailEl && emailEl.value ? emailEl.value.trim() : '';
           footerFormMessage.textContent = '';
           footerFormMessage.classList.remove('success', 'error');
-          
-          // Анимация кнопки
-          if (submitBtn) {
-            submitBtn.style.transform = 'scale(0.95)';
-            setTimeout(function() { submitBtn.style.transform = ''; }, 200);
-          }
-          
+          if (submitBtn) { submitBtn.style.transform = 'scale(0.95)'; setTimeout(function() { submitBtn.style.transform = ''; }, 200); }
           if (!name) {
             footerFormMessage.textContent = footerForm.getAttribute('data-msg-name') || 'Введите имя.';
             footerFormMessage.classList.add('error');
-            footerFormMessage.style.animation = 'fadeIn 0.3s ease-out';
             return;
           }
           if (!phone) {
             footerFormMessage.textContent = footerForm.getAttribute('data-msg-phone') || 'Введите телефон.';
             footerFormMessage.classList.add('error');
-            footerFormMessage.style.animation = 'fadeIn 0.3s ease-out';
             return;
           }
           if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
             footerFormMessage.textContent = footerForm.getAttribute('data-msg-email') || 'Введите корректный email.';
             footerFormMessage.classList.add('error');
-            footerFormMessage.style.animation = 'fadeIn 0.3s ease-out';
             return;
           }
-          footerFormMessage.textContent = footerForm.getAttribute('data-msg-success') || 'Спасибо! Мы свяжемся с вами в течение 15 минут.';
-          footerFormMessage.classList.add('success');
-          footerFormMessage.style.animation = 'scaleIn 0.4s ease-out';
-          footerForm.reset();
-          
-          // Анимация успешной отправки
-          if (submitBtn) {
-            submitBtn.style.background = '#16a34a';
-            setTimeout(function() {
-              submitBtn.style.background = '';
-            }, 2000);
+          var formType = footerFormTypeInput ? footerFormTypeInput.value : 'request';
+          var url = formType === 'support' ? '/api/submit-support/' : '/api/submit-request/';
+          var formData = new FormData(footerForm);
+          var csrfInput = footerForm.querySelector('[name=csrfmiddlewaretoken]');
+          if (csrfInput) formData.set('csrfmiddlewaretoken', csrfInput.value);
+          if (formType === 'support') {
+            formData.delete('category_id');
+            formData.delete('subcategory_id');
+            footerForm.querySelectorAll('[name^="extra_"]').forEach(function(el) { formData.delete(el.name); });
           }
+          fetch(url, { method: 'POST', body: formData, headers: { 'X-CSRFToken': csrfInput ? csrfInput.value : '' }, credentials: 'same-origin' })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+              footerFormMessage.textContent = data.message || footerForm.getAttribute('data-msg-success') || 'Спасибо!';
+              footerFormMessage.classList.add('success');
+              footerForm.reset();
+              loadSubcategories('');
+              loadQuestions('');
+              if (footerCategory) footerCategory.selectedIndex = 0;
+              if (footerSubcategory) footerSubcategory.innerHTML = '<option value="">— {% trans "выберите" %} —</option>';
+              if (submitBtn) { submitBtn.style.background = '#16a34a'; setTimeout(function() { submitBtn.style.background = ''; }, 2000); }
+            })
+            .catch(function() {
+              footerFormMessage.textContent = 'Ошибка отправки. Попробуйте позже.';
+              footerFormMessage.classList.add('error');
+            });
         });
       }
 

@@ -412,34 +412,125 @@ class AdminProject(models.Model):
 
 
 class ContactRequest(models.Model):
-    """Заявки в поддержку"""
+    """Сообщения в поддержку (вкладка «Поддержка» на сайте)."""
     REASON_CHOICES = [
+        ('support', 'Поддержка'),
         ('project', 'Проект'),
         ('consult', 'Консультация'),
         ('other', 'Другое'),
     ]
-    
     STATUS_CHOICES = [
         ('new', 'Новая'),
         ('in_progress', 'В процессе'),
         ('closed', 'Закрыта'),
     ]
-    
     name = models.CharField('Имя', max_length=100)
     phone = models.CharField('Телефон', max_length=20)
     email = models.EmailField('Email', max_length=100)
-    reason = models.CharField('Причина обращения', max_length=20, choices=REASON_CHOICES)
+    reason = models.CharField('Причина', max_length=20, choices=REASON_CHOICES, default='support', blank=True)
     message = models.TextField('Сообщение', blank=True)
     created_at = models.DateTimeField('Дата создания', auto_now_add=True)
     status = models.CharField('Статус', max_length=20, choices=STATUS_CHOICES, default='new')
     message_admin = models.TextField('Ответ администратора', blank=True)
     admin_id = models.IntegerField('ID администратора', null=True, blank=True)
-    
+
     class Meta:
-        verbose_name = 'Заявка в поддержку'
-        verbose_name_plural = 'Заявки в поддержку'
+        verbose_name = 'Сообщение в поддержку'
+        verbose_name_plural = 'Поддержка'
         db_table = 'contact_requests'
         ordering = ['-created_at']
-    
+
     def __str__(self):
         return f'{self.name} - {self.email} ({self.get_status_display()})'
+
+
+# ---------- Заявки (вкладка «Заявка»): категория → подкатегория → вопросы ----------
+
+class RequestCategory(models.Model):
+    """Категория заявки (например: Строительство, IT)."""
+    name = models.CharField('Название (RU)', max_length=100)
+    name_en = models.CharField('Название (EN)', max_length=100, blank=True)
+    name_de = models.CharField('Название (DE)', max_length=100, blank=True)
+    slug = models.SlugField('Код', max_length=50, unique=True, help_text='например: it, bau')
+    order = models.PositiveSmallIntegerField('Порядок', default=0)
+    created_at = models.DateTimeField('Дата создания', auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Категория заявки'
+        verbose_name_plural = 'Категории заявок'
+        db_table = 'request_categories'
+        ordering = ['order', 'name']
+
+    def __str__(self):
+        return self.name_de or self.name_en or self.name
+
+
+class RequestSubcategory(models.Model):
+    """Подкатегория заявки (например для IT: Регистрация, IT-профиль)."""
+    category = models.ForeignKey(RequestCategory, on_delete=models.CASCADE, related_name='subcategories')
+    name = models.CharField('Название (RU)', max_length=100)
+    name_en = models.CharField('Название (EN)', max_length=100, blank=True)
+    name_de = models.CharField('Название (DE)', max_length=100, blank=True)
+    slug = models.SlugField('Код', max_length=50, help_text='например: registration, it_profile')
+    order = models.PositiveSmallIntegerField('Порядок', default=0)
+    created_at = models.DateTimeField('Дата создания', auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Подкатегория заявки'
+        verbose_name_plural = 'Подкатегории заявок'
+        db_table = 'request_subcategories'
+        ordering = ['order', 'name']
+        unique_together = [['category', 'slug']]
+
+    def __str__(self):
+        return f'{self.category} / {self.name_de or self.name_en or self.name}'
+
+
+class RequestQuestion(models.Model):
+    """Вопрос для подкатегории заявки (динамические поля)."""
+    subcategory = models.ForeignKey(RequestSubcategory, on_delete=models.CASCADE, related_name='questions')
+    question_text = models.CharField('Текст вопроса', max_length=255)
+    question_text_en = models.CharField('Текст (EN)', max_length=255, blank=True)
+    question_text_de = models.CharField('Текст (DE)', max_length=255, blank=True)
+    field_name = models.SlugField('Имя поля', max_length=50, help_text='например: company_name')
+    order = models.PositiveSmallIntegerField('Порядок', default=0)
+    created_at = models.DateTimeField('Дата создания', auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Вопрос заявки'
+        verbose_name_plural = 'Вопросы заявок'
+        db_table = 'request_questions'
+        ordering = ['order', 'question_text']
+
+    def __str__(self):
+        return self.question_text
+
+
+class Request(models.Model):
+    """Заявка с сайта: категория, подкатегория, ответы на вопросы."""
+    STATUS_CHOICES = [
+        ('new', 'Новая'),
+        ('in_progress', 'В процессе'),
+        ('closed', 'Закрыта'),
+    ]
+    name = models.CharField('Имя', max_length=100)
+    phone = models.CharField('Телефон', max_length=20)
+    email = models.EmailField('Email', max_length=100)
+    message = models.TextField('Сообщение', blank=True)
+    category = models.ForeignKey(RequestCategory, on_delete=models.SET_NULL, null=True, related_name='requests')
+    subcategory = models.ForeignKey(RequestSubcategory, on_delete=models.SET_NULL, null=True, blank=True, related_name='requests')
+    extra_answers = models.JSONField('Ответы на вопросы', default=dict, blank=True, help_text='JSON: поле -> ответ')
+    created_at = models.DateTimeField('Дата создания', auto_now_add=True)
+    status = models.CharField('Статус', max_length=20, choices=STATUS_CHOICES, default='new')
+    message_admin = models.TextField('Ответ администратора', blank=True)
+    admin_id = models.IntegerField('ID администратора', null=True, blank=True)
+
+    class Meta:
+        verbose_name = 'Заявка'
+        verbose_name_plural = 'Заявки'
+        db_table = 'requests'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        cat = self.category_id and self.category or '-'
+        return f'{self.name} - {self.email} ({cat})'

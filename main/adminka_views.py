@@ -9,7 +9,7 @@ from django.http import JsonResponse, HttpResponseForbidden
 from django.db.models import Q, Count
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import ensure_csrf_cookie
-from .models import AdminProject, Category, ContactRequest
+from .models import AdminProject, Category, ContactRequest, Request
 from django.contrib.auth.models import User
 
 
@@ -57,16 +57,57 @@ def adminka_logout(request):
 
 @login_required(login_url='/adminka/login/')
 @user_passes_test(is_staff_user, login_url='/adminka/login/')
+def adminka_profile(request):
+    """Профиль администратора: данные и смена пароля."""
+    user = request.user
+    if request.method == 'POST':
+        action = request.POST.get('action', '')
+        if action == 'profile':
+            user.first_name = (request.POST.get('first_name') or '').strip()
+            user.last_name = (request.POST.get('last_name') or '').strip()
+            email = (request.POST.get('email') or '').strip()
+            if email and '@' in email:
+                user.email = email
+            user.save()
+            messages.success(request, 'Данные профиля обновлены')
+            return redirect('main:adminka_profile')
+        if action == 'password':
+            old = request.POST.get('old_password', '')
+            new1 = request.POST.get('new_password1', '')
+            new2 = request.POST.get('new_password2', '')
+            if not user.check_password(old):
+                messages.error(request, 'Неверный текущий пароль')
+            elif not new1 or len(new1) < 8:
+                messages.error(request, 'Новый пароль должен быть не менее 8 символов')
+            elif new1 != new2:
+                messages.error(request, 'Пароли не совпадают')
+            else:
+                user.set_password(new1)
+                user.save()
+                login(request, user)  # перелогинить после смены пароля
+                messages.success(request, 'Пароль успешно изменён')
+                return redirect('main:adminka_profile')
+    context = {
+        'admin_name': user.get_full_name() or user.username,
+        'profile_user': user,
+    }
+    return render(request, 'adminka/profile.html', context)
+
+
+@login_required(login_url='/adminka/login/')
+@user_passes_test(is_staff_user, login_url='/adminka/login/')
 def adminka_dashboard(request):
     """Главная страница админки"""
     # Статистика
     total_projects = AdminProject.objects.count()
     completed_projects = AdminProject.objects.filter(status='completed').count()
     in_progress_projects = AdminProject.objects.filter(status='in_progress').count()
-    new_requests = ContactRequest.objects.filter(status='new').count()
+    new_support = ContactRequest.objects.filter(status='new').count()
+    new_applications = Request.objects.filter(status='new').count()
     
-    # Последние заявки
-    recent_requests = ContactRequest.objects.order_by('-created_at')[:5]
+    # Последние заявки (Request) и сообщения в поддержку (ContactRequest)
+    recent_applications = Request.objects.select_related('category').order_by('-created_at')[:5]
+    recent_support = ContactRequest.objects.order_by('-created_at')[:5]
     
     context = {
         'admin_name': request.user.get_full_name() or request.user.username,
@@ -74,9 +115,11 @@ def adminka_dashboard(request):
             'total_projects': total_projects,
             'completed_projects': completed_projects,
             'in_progress_projects': in_progress_projects,
-            'new_requests': new_requests,
+            'new_support': new_support,
+            'new_applications': new_applications,
         },
-        'recent_requests': recent_requests,
+        'recent_applications': recent_applications,
+        'recent_support': recent_support,
     }
     return render(request, 'adminka/dashboard.html', context)
 
@@ -238,6 +281,54 @@ def adminka_support_delete(request, pk):
     try:
         contact_request = get_object_or_404(ContactRequest, pk=pk)
         contact_request.delete()
+        return JsonResponse({'success': True, 'message': 'Заявка удалена'})
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)}, status=400)
+
+
+# ---------- Заявки (таблица заявок с сайта) ----------
+
+@login_required(login_url='/adminka/login/')
+@user_passes_test(is_staff_user, login_url='/adminka/login/')
+def adminka_requests(request):
+    """Список заявок с сайта (вкладка «Заявка»)."""
+    requests_list = Request.objects.select_related('category', 'subcategory').order_by('-created_at')
+    context = {
+        'admin_name': request.user.get_full_name() or request.user.username,
+        'requests': requests_list,
+    }
+    return render(request, 'adminka/requests.html', context)
+
+
+@login_required(login_url='/adminka/login/')
+@user_passes_test(is_staff_user, login_url='/adminka/login/')
+def adminka_request_edit(request, pk):
+    """Редактирование заявки."""
+    req = get_object_or_404(Request, pk=pk)
+    if request.method == 'POST':
+        try:
+            req.status = request.POST.get('status', 'new')
+            req.message_admin = request.POST.get('message_admin', '')
+            req.admin_id = request.user.id
+            req.save()
+            messages.success(request, 'Заявка обновлена')
+            return redirect('main:adminka_requests')
+        except Exception as e:
+            messages.error(request, str(e))
+    context = {
+        'admin_name': request.user.get_full_name() or request.user.username,
+        'request': req,
+    }
+    return render(request, 'adminka/request_edit.html', context)
+
+
+@login_required(login_url='/adminka/login/')
+@user_passes_test(is_staff_user, login_url='/adminka/login/')
+@require_POST
+def adminka_request_delete(request, pk):
+    try:
+        req = get_object_or_404(Request, pk=pk)
+        req.delete()
         return JsonResponse({'success': True, 'message': 'Заявка удалена'})
     except Exception as e:
         return JsonResponse({'success': False, 'message': str(e)}, status=400)

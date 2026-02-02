@@ -10,7 +10,7 @@
 {% block content %}
 <main class="dashboard">
     <div class="page-actions" data-aos="fade-up">
-        <h1 data-i18n="support.title">Заявки в поддержку</h1>
+        <h1 data-i18n="support.title">Поддержка</h1>
         <div class="search-box">
             <input type="search" id="requestSearchInput" data-i18n-placeholder="support.search" placeholder="Поиск заявок..." />
             <select id="roleFilter">
@@ -45,7 +45,6 @@
                         <th data-i18n="support.table.name">Имя</th>
                         <th data-i18n="support.table.email">Email</th>
                         <th data-i18n="support.table.phone">Телефон</th>
-                        <th data-i18n="support.table.reason">Причина</th>
                         <th data-i18n="support.table.status">Статус</th>
                         <th data-i18n="support.table.created_at">Дата создания</th>
                         <th data-i18n="support.table.actions">Действия</th>
@@ -63,7 +62,6 @@
                             <td>{{ req.name }}</td>
                             <td>{{ req.email }}</td>
                             <td>{{ req.phone }}</td>
-                            <td data-i18n="support.reason.{{ req.reason }}">{{ req.get_reason_display }}</td>                        
                             <td class="status-{{ req.status }}" data-i18n="support.status.{{ req.status }}">{{ req.get_status_display }}</td>
                             <td>{{ req.created_at|date:"d.m.Y H:i" }}</td>
                             <td>   

@@ -1,0 +1,95 @@
+{% extends 'adminka/base.html' %}
+{% load static %}
+
+{% block title %}Профиль — Empire Premium{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'adminka/css/pages/profile.css' %}" />
+{% endblock %}
+
+{% block content %}
+<main class="dashboard profile-page">
+  <div class="page-actions" data-aos="fade-up">
+    <h1>Профиль</h1>
+    <a href="{% url 'main:adminka_dashboard' %}" class="btn-secondary">
+      <span><i class="fa-solid fa-arrow-left"></i></span>
+      <span>На главную</span>
+    </a>
+  </div>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="form-message {% if message.tags %}{{ message.tags }}{% endif %}" style="margin-bottom: 1rem;">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <div class="profile-header" data-aos="fade-up" data-aos-delay="100">
+    <div class="profile-avatar" aria-hidden="true">
+      {% firstof profile_user.get_full_name profile_user.username as display_name %}
+      <span>{{ display_name|slice:":1"|upper }}</span>
+    </div>
+    <div>
+      <h2 class="profile-title">{% firstof profile_user.get_full_name profile_user.username %}</h2>
+      <p class="profile-subtitle">{{ profile_user.email|default:"Email не указан" }} · {{ profile_user.username }}</p>
+    </div>
+  </div>
+
+  <div class="card" data-aos="fade-up" data-aos-delay="200">
+    <h3>Данные профиля</h3>
+    <form method="post" class="profile-form">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="profile">
+      <div class="form-group">
+        <label for="username">Логин</label>
+        <input type="text" id="username" value="{{ profile_user.username }}" readonly>
+      </div>
+      <div class="form-group">
+        <label for="first_name">Имя</label>
+        <input type="text" id="first_name" name="first_name" value="{{ profile_user.first_name|default:'' }}" placeholder="Имя">
+      </div>
+      <div class="form-group">
+        <label for="last_name">Фамилия</label>
+        <input type="text" id="last_name" name="last_name" value="{{ profile_user.last_name|default:'' }}" placeholder="Фамилия">
+      </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" value="{{ profile_user.email|default:'' }}" placeholder="email@example.com">
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn-primary">
+          <span><i class="fa-solid fa-save"></i></span>
+          <span>Сохранить</span>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="card" data-aos="fade-up" data-aos-delay="300">
+    <h3>Сменить пароль</h3>
+    <form method="post" class="profile-form">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="password">
+      <div class="form-group">
+        <label for="old_password">Текущий пароль</label>
+        <input type="password" id="old_password" name="old_password" autocomplete="current-password" placeholder="Введите текущий пароль">
+      </div>
+      <div class="form-group">
+        <label for="new_password1">Новый пароль</label>
+        <input type="password" id="new_password1" name="new_password1" autocomplete="new-password" placeholder="Не менее 8 символов">
+      </div>
+      <div class="form-group">
+        <label for="new_password2">Повторите новый пароль</label>
+        <input type="password" id="new_password2" name="new_password2" autocomplete="new-password" placeholder="Повторите пароль">
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn-primary">
+          <span><i class="fa-solid fa-key"></i></span>
+          <span>Изменить пароль</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</main>
+{% endblock %}
