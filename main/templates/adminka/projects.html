@@ -176,18 +176,15 @@
 {% block extra_js %}
 <script src="{% static 'adminka/js/pages/projects.js' %}"></script>
 <script>
-// Функция удаления проекта через AJAX
+function getCsrfToken() {
+    var m = document.querySelector('meta[name="csrf-token"]');
+    return m ? m.getAttribute('content') : '';
+}
 function deleteProjectAjax(projectId) {
-    if (!confirm('Вы уверены, что хотите удалить этот проект?')) {
-        return;
-    }
-    
-    fetch(`/adminka/projects/${projectId}/delete/`, {
+    if (!confirm('Вы уверены, что хотите удалить этот проект?')) return;
+    fetch('/adminka/projects/' + projectId + '/delete/', {
         method: 'POST',
-        headers: {
-            'X-CSRFToken': '{{ csrf_token }}',
-            'Content-Type': 'application/json',
-        },
+        headers: { 'X-CSRFToken': getCsrfToken(), 'Content-Type': 'application/json' },
     })
     .then(response => response.json())
     .then(data => {

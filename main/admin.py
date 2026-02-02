@@ -6,6 +6,7 @@ from .models import (
     DesignSettings, ElementSettings,
     Category, AdminProject, ContactRequest,
     RequestCategory, RequestSubcategory, RequestQuestion, Request,
+    UserProfile,
 )
 from .forms import SiteSettingsForm, HeroCarouselImageForm, ServiceForm, ProjectForm, DesignSettingsForm, ElementSettingsForm
 
@@ -360,6 +361,15 @@ class RequestQuestionAdmin(admin.ModelAdmin):
     list_filter = ['subcategory__category']
     list_editable = ['order']
     ordering = ['order', 'question_text']
+
+
+@admin.register(UserProfile)
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ['user', 'user_type', 'company_name', 'phone', 'created_at']
+    list_filter = ['user_type', 'created_at']
+    search_fields = ['user__email', 'user__first_name', 'user__last_name', 'company_name', 'phone']
+    ordering = ['-created_at']
+    readonly_fields = ['created_at', 'updated_at']
 
 
 @admin.register(Request)

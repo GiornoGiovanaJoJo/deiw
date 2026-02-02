@@ -10,7 +10,7 @@
 {% block content %}
 <main class="dashboard">
     <div class="page-actions" data-aos="fade-up">
-        <h1>Редактировать заявку #{{ request.id }}</h1>
+        <h1>Редактировать заявку #{{ req_obj.id }}</h1>
         <a href="{% url 'main:adminka_requests' %}" class="btn-secondary">
             <span><i class="fa-solid fa-arrow-left"></i></span>
             <span>Назад к списку</span>
@@ -31,42 +31,42 @@
             <div class="info-grid">
                 <div class="info-item">
                     <span class="info-label">Имя:</span>
-                    <span class="info-value">{{ request.name }}</span>
+                    <span class="info-value">{{ req_obj.name }}</span>
                 </div>
                 <div class="info-item">
                     <span class="info-label">Email:</span>
-                    <span class="info-value">{{ request.email }}</span>
+                    <span class="info-value">{{ req_obj.email }}</span>
                 </div>
                 <div class="info-item">
                     <span class="info-label">Телефон:</span>
-                    <span class="info-value">{{ request.phone }}</span>
+                    <span class="info-value">{{ req_obj.phone }}</span>
                 </div>
                 <div class="info-item">
                     <span class="info-label">Категория:</span>
-                    <span class="info-value">{{ request.category|default:"—" }}</span>
+                    <span class="info-value">{{ req_obj.category|default:"—" }}</span>
                 </div>
                 <div class="info-item">
                     <span class="info-label">Подкатегория:</span>
-                    <span class="info-value">{{ request.subcategory|default:"—" }}</span>
+                    <span class="info-value">{{ req_obj.subcategory|default:"—" }}</span>
                 </div>
                 <div class="info-item">
                     <span class="info-label">Дата создания:</span>
-                    <span class="info-value">{{ request.created_at|date:"d.m.Y H:i" }}</span>
+                    <span class="info-value">{{ req_obj.created_at|date:"d.m.Y H:i" }}</span>
                 </div>
             </div>
 
-            {% if request.message %}
+            {% if req_obj.message %}
             <div class="message-section">
                 <h4>Сообщение клиента:</h4>
-                <p>{{ request.message|linebreaks }}</p>
+                <p>{{ req_obj.message|linebreaks }}</p>
             </div>
             {% endif %}
 
-            {% if request.extra_answers %}
+            {% if req_obj.extra_answers %}
             <div class="message-section">
                 <h4>Ответы на вопросы:</h4>
                 <ul>
-                    {% for key, value in request.extra_answers.items %}
+                    {% for key, value in req_obj.extra_answers.items %}
                     <li><strong>{{ key }}:</strong> {{ value }}</li>
                     {% endfor %}
                 </ul>
@@ -79,14 +79,14 @@
             <div class="form-group">
                 <label for="status">Статус *</label>
                 <select id="status" name="status" required>
-                    <option value="new" {% if request.status == 'new' %}selected{% endif %}>Новая</option>
-                    <option value="in_progress" {% if request.status == 'in_progress' %}selected{% endif %}>В процессе</option>
-                    <option value="closed" {% if request.status == 'closed' %}selected{% endif %}>Закрыта</option>
+                <option value="new" {% if req_obj.status == 'new' %}selected{% endif %}>Новая</option>
+                <option value="in_progress" {% if req_obj.status == 'in_progress' %}selected{% endif %}>В процессе</option>
+                <option value="closed" {% if req_obj.status == 'closed' %}selected{% endif %}>Закрыта</option>
                 </select>
             </div>
             <div class="form-group">
                 <label for="message_admin">Ответ администратора</label>
-                <textarea id="message_admin" name="message_admin" rows="6" placeholder="Введите ваш ответ...">{{ request.message_admin }}</textarea>
+                <textarea id="message_admin" name="message_admin" rows="6" placeholder="Введите ваш ответ...">{{ req_obj.message_admin }}</textarea>
             </div>
             <div class="form-actions">
                 <button type="submit" class="btn-primary">

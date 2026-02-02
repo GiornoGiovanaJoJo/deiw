@@ -1,76 +1,126 @@
-body {
+/* Страница входа — как на макете: хедер + карточка с выбором Клиент/Компания */
+
+body.login-page {
     margin: 0;
     padding: 0;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-family-primary);
     background: var(--color-background);
-}
-
-/* Логотип */
-
-  /* волна  */
-  .logo {
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    width: 185px;
-}
-.logo:hover {
-    text-decoration: none;
-}
-.logo-text {
-    font-size: 1.5rem;
-    font-weight: 800;
     color: var(--color-text-primary);
 }
 
-.logo-premium {
-    font-size: 1.5rem;
-    font-weight: 300;
+/* ========== Хедер страницы входа ========== */
+.login-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.login-page-logo {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    text-decoration: none;
+}
+.login-page-logo span {
+    font-weight: 400;
+    color: var(--color-text-primary);
+}
+
+.login-page-nav {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+.login-page-nav a {
+    color: var(--color-text-primary);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+.login-page-nav a:hover {
     color: var(--color-primary);
+}
+
+.login-page-cta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.login-page-phone {
     display: inline-flex;
-    align-items: center; /* Выравнивание по центру */
-    height: 2.1rem; /* Фиксированная высота, равная максимальному размеру шрифта */
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: var(--color-primary);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+.login-page-phone:hover {
+    background: var(--color-secondary);
+    color: #fff;
 }
 
-.wave-letter {
-    display: inline-block;
-    font-size: 1.5rem;
-    transition: font-size 0.35s cubic-bezier(.4,2,.6,1);
-    will-change: font-size;
-    line-height: 1;
-    transform-origin: center; /* Центр трансформации */
+.login-page-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background: var(--color-primary);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+.login-page-btn-primary:hover {
+    background: var(--color-secondary);
+    color: #fff;
 }
 
-/* Анимация волны с сохранением позиции */
-@keyframes fontWave {
-    0%, 100% { 
-        font-size: 1.5rem;
-        transform: translateY(0);
+.login-page-btn-login,
+.login-page-btn-login-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background: transparent;
+    color: var(--color-primary);
+    border: 1px solid var(--color-primary);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+}
+.login-page-btn-login-link:hover {
+    background: rgba(108, 99, 255, 0.08);
+    color: var(--color-primary);
+}
+
+@media (max-width: 768px) {
+    .login-page-header {
+        padding: 0.75rem 1rem;
     }
-    50% { 
-        font-size: 2.1rem;
-        transform: translateY(calc((1.5rem - 2.1rem) / 2)); /* Компенсация смещения */
+    .login-page-nav {
+        display: none;
+    }
+    .login-page-cta {
+        gap: 0.5rem;
     }
 }
 
-/* Задержки для каждой буквы */
-.logo-premium .wave-letter:nth-child(1) { animation-delay: 0.00s; }
-.logo-premium .wave-letter:nth-child(2) { animation-delay: 0.07s; }
-.logo-premium .wave-letter:nth-child(3) { animation-delay: 0.14s; }
-.logo-premium .wave-letter:nth-child(4) { animation-delay: 0.21s; }
-.logo-premium .wave-letter:nth-child(5) { animation-delay: 0.28s; }
-.logo-premium .wave-letter:nth-child(6) { animation-delay: 0.35s; }
-.logo-premium .wave-letter:nth-child(7) { animation-delay: 0.42s; }
-
-.wave-letter.animate {
-    animation: fontWave 0.7s cubic-bezier(.4,2,.6,1) 1;
-}
-/* волна закончилась */
-  
-
+/* ========== Контейнер и карточка ========== */
 .auth-container {
-    min-height: 100vh;
+    min-height: calc(100vh - 65px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -81,140 +131,165 @@ body {
 .auth-card {
     width: 100%;
     max-width: 480px;
-    background: var(--color-surface);
+    background: var(--color-surface-alt);
     border-radius: 16px;
     padding: 2.5rem;
     box-shadow: 0 4px 24px var(--color-shadow);
 }
 
-.auth-header {
-    text-align: center;
-    margin-bottom: 2rem;
-}
-
-.auth-logo {
-    display: inline-block;
-    text-decoration: none;
-    margin-bottom: 1.5rem;
-}
-
-.logo-main {
-    color: var(--color-text-primary);
-    font-size: 1.5rem;
-    font-weight: 700;
-}
-
-
-
 .auth-title {
     font-size: 1.75rem;
+    font-weight: 700;
     color: var(--color-text-primary);
-    margin-bottom: 0.5rem;
+    margin: 0 0 1.5rem 0;
 }
 
-.auth-subtitle {
-    color: var(--color-text-secondary);
-    font-size: 1rem;
+/* ========== Переключатель Клиент / Компания ========== */
+.auth-type-toggle {
+    display: flex;
+    gap: 0;
+    margin-bottom: 1.5rem;
+    border-radius: 10px;
+    overflow: hidden;
 }
 
+.auth-type-btn {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--color-primary);
+    background: var(--color-surface);
+    color: var(--color-primary);
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+.auth-type-btn:first-child {
+    border-radius: 10px 0 0 10px;
+}
+.auth-type-btn:last-child {
+    border-radius: 0 10px 10px 0;
+    border-left-width: 0;
+}
+.auth-type-toggle .auth-type-btn.active {
+    background: var(--color-primary);
+    color: #fff;
+    border-color: var(--color-primary);
+}
+.auth-type-btn:not(.active):hover {
+    background: rgba(108, 99, 255, 0.08);
+}
+
+/* ========== Форма ========== */
 .auth-form {
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
 }
 
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+.auth-input-group {
+    margin: 0;
 }
 
-.form-group label {
-    color: var(--color-text-primary);
-    font-weight: 500;
-}
-
-.password-input {
+/* Поля с подчёркиванием (без рамки, только нижняя линия) */
+.auth-input-underline-wrap {
     position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.auth-input-underline {
+    width: 100%;
+    padding: 0.75rem 0;
+    padding-right: 2.5rem;
+    border: none;
+    border-bottom: 1px solid var(--color-border);
+    background: transparent;
+    color: var(--color-text-primary);
+    font-size: 1rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+}
+.auth-input-underline::placeholder {
+    color: var(--color-text-muted);
+}
+.auth-input-underline:focus {
+    border-bottom-color: var(--color-primary);
+}
+
+.auth-input-underline-wrap .auth-input-underline {
+    padding-right: 2.75rem;
 }
 
 .toggle-password {
     position: absolute;
-    right: 1rem;
+    right: 0;
     top: 50%;
     transform: translateY(-50%);
     background: none;
     border: none;
-    padding: 0;
+    padding: 0.25rem;
     cursor: pointer;
     color: var(--color-text-muted);
 }
-
 .toggle-password:hover {
-    color: var(--color-text-primary);
-}
-
-.checkbox-group {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.checkbox-label {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    cursor: pointer;
-}
-
-.checkbox-label input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    border-radius: 4px;
-    border: 2px solid var(--color-border);
-    cursor: pointer;
-}
-
-.forgot-password {
     color: var(--color-primary);
-    text-decoration: none;
-    font-weight: 500;
 }
 
-.forgot-password:hover {
-    text-decoration: underline;
+/* Кнопка ВОЙТИ ========== */
+.auth-submit-btn {
+    width: 100%;
+    padding: 0.9rem 1.5rem;
+    margin-top: 0.25rem;
+    background: var(--color-primary);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.auth-submit-btn:hover {
+    background: var(--color-secondary);
 }
 
-
+/* Ссылки под формой ========== */
 .auth-links {
     text-align: center;
-    margin-top: 1.5rem;
+    margin-top: 1rem;
+}
+.auth-links p {
+    margin: 0.4rem 0;
+    font-size: 0.95rem;
     color: var(--color-text-secondary);
 }
-
 .auth-links a {
     color: var(--color-primary);
-    text-decoration: none;
+    text-decoration: underline;
     font-weight: 500;
-    margin-left: 0.5rem;
+}
+.auth-links a:hover {
+    color: var(--color-secondary);
 }
 
-.auth-links a:hover {
-    text-decoration: underline;
+.auth-field-error {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--color-danger);
+    margin-top: 0.25rem;
 }
 
 @media (max-width: 480px) {
     .auth-card {
         padding: 1.5rem;
     }
-
     .auth-title {
         font-size: 1.5rem;
-    }
-
-    .checkbox-group {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1rem;
     }
 }

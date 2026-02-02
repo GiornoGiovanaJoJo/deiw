@@ -19,7 +19,34 @@ header.admin-header {
     display: flex;
     align-items: center;
     gap: 1rem;
-}
+  }
+
+  /* Кнопка телефона — фиолетовый блок с иконкой и номером (только для авторизованных) */
+  .header-phone {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: var(--color-primary);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 999px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: background-color 0.2s;
+    white-space: nowrap;
+  }
+  .header-phone:hover {
+    background-color: var(--color-secondary);
+    color: #fff;
+  }
+  .header-phone-icon {
+    flex-shrink: 0;
+  }
+  .header-phone-number {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
   header.admin-header h1 {
     margin: 0;
     font-weight: 700;

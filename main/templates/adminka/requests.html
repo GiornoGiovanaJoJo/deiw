@@ -12,10 +12,10 @@
     <div class="page-actions" data-aos="fade-up">
         <h1>Заявки</h1>
         <div class="search-box">
-            <input type="search" id="requestSearchInput" placeholder="Поиск заявок..." />
+            <input type="search" id="requestSearchInput" placeholder="Поиск по имени, email, телефону..." />
             <select id="roleFilter">
                 <option value="">Все статусы</option>
-                <option value="new">Новые</option>
+                <option value="new">Новая</option>
                 <option value="in_progress">В процессе</option>
                 <option value="closed">Закрыта</option>
             </select>
@@ -37,7 +37,7 @@
         </div>
     {% else %}
         <div class="card requests-card" data-aos="fade-up" data-aos-delay="500">
-            <h2>Последние заявки</h2>
+            <h2>Заявки с сайта</h2>
             <table class="requests-table">
                 <thead>
                     <tr>
@@ -64,12 +64,12 @@
                             <td class="status-{{ req.status }}">{{ req.get_status_display }}</td>
                             <td>{{ req.created_at|date:"d.m.Y H:i" }}</td>
                             <td>
-                                <a href="{% url 'main:adminka_request_edit' req.id %}" class="btn-primary actions" style="padding: 0.25rem 0.5rem; font-weight: 500;">
+                                <a href="{% url 'main:adminka_request_edit' req.id %}" class="btn-primary actions" style="padding: 0.25rem 0.5rem; font-weight: 500;" title="Редактировать">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
-                                <a class="btn-primary danger actions" onclick="deleteRequest({{ req.id }})" style="padding: 0.25rem 0.5rem; font-weight: 500; cursor: pointer;">
+                                <button type="button" class="btn-primary danger actions" onclick="deleteRequest({{ req.id }})" style="padding: 0.25rem 0.5rem; font-weight: 500; cursor: pointer; border: none;" title="Удалить">
                                     <i class="fa-solid fa-trash"></i>
-                                </a>
+                                </button>
                             </td>
                         </tr>
                     {% endfor %}
@@ -83,13 +83,15 @@
 {% block extra_js %}
 <script src="{% static 'adminka/js/pages/support.js' %}"></script>
 <script>
+function getCsrfToken() {
+    var m = document.querySelector('meta[name="csrf-token"]');
+    return m ? m.getAttribute('content') : '';
+}
 function deleteRequest(requestId) {
     if (!confirm('Удалить эту заявку?')) return;
-    var csrf = document.querySelector('[name=csrfmiddlewaretoken]');
-    var token = csrf ? csrf.value : '';
     fetch('/adminka/requests/' + requestId + '/delete/', {
         method: 'POST',
-        headers: { 'X-CSRFToken': token, 'Content-Type': 'application/json' },
+        headers: { 'X-CSRFToken': getCsrfToken(), 'Content-Type': 'application/json' },
     })
     .then(function(r) { return r.json(); })
     .then(function(data) {

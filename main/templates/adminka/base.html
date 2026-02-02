@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
     <title>{% block title %}Empire Premium - Админка{% endblock %}</title>
     
     <!-- Font Awesome -->
@@ -24,6 +25,7 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body>
+    {% comment %}Хедер и сайдбар только для авторизованного пользователя (не на странице входа){% endcomment %}
     {% if user.is_authenticated and user.is_staff %}
         {% include 'adminka/components/header.html' %}
         {% include 'adminka/components/sidebar.html' %}

@@ -11,6 +11,9 @@
 <main class="dashboard">
     <div class="page-actions" data-aos="fade-up">
         <h1 data-i18n="categories.title">Категории</h1>
+        <div class="search-box">
+            <input type="text" id="categoriesSearchInput" placeholder="Поиск по названию..." />
+        </div>
     </div>
 
     {% if messages %}
@@ -64,7 +67,7 @@
             </thead>
             <tbody>
                 {% for cat in categories %}
-                <tr id="category-row-{{ cat.id }}">
+                <tr id="category-row-{{ cat.id }}" data-id="{{ cat.id }}" data-name="{{ cat.name|default:''|lower }}" data-name-en="{{ cat.name_en|default:''|lower }}" data-name-de="{{ cat.name_de|default:''|lower }}">
                     <td>{{ cat.id }}</td>
                     <td>{{ cat.name|default:"-" }}</td>
                     <td>{{ cat.name_en|default:"-" }}</td>
@@ -92,18 +95,15 @@
 {% block extra_js %}
 <script src="{% static 'adminka/js/pages/categories.js' %}"></script>
 <script>
-// Функция удаления категории через AJAX
+function getCsrfToken() {
+    var m = document.querySelector('meta[name="csrf-token"]');
+    return m ? m.getAttribute('content') : '';
+}
 function deleteCategory(categoryId) {
-    if (!confirm('Вы уверены, что хотите удалить эту категорию?')) {
-        return;
-    }
-    
-    fetch(`/adminka/categories/${categoryId}/delete/`, {
+    if (!confirm('Вы уверены, что хотите удалить эту категорию?')) return;
+    fetch('/adminka/categories/' + categoryId + '/delete/', {
         method: 'POST',
-        headers: {
-            'X-CSRFToken': '{{ csrf_token }}',
-            'Content-Type': 'application/json',
-        },
+        headers: { 'X-CSRFToken': getCsrfToken(), 'Content-Type': 'application/json' },
     })
     .then(response => response.json())
     .then(data => {

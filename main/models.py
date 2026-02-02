@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 from django.urls import reverse
 
@@ -534,3 +535,35 @@ class Request(models.Model):
     def __str__(self):
         cat = self.category_id and self.category or '-'
         return f'{self.name} - {self.email} ({cat})'
+
+
+class UserProfile(models.Model):
+    """Профиль пользователя сайта: тип (клиент/компания) и название компании."""
+    USER_TYPE_CHOICES = [
+        ('client', 'Клиент'),
+        ('company', 'Компания'),
+    ]
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='site_profile',
+        verbose_name='Пользователь',
+    )
+    user_type = models.CharField(
+        'Тип',
+        max_length=20,
+        choices=USER_TYPE_CHOICES,
+        default='client',
+    )
+    company_name = models.CharField('Название компании', max_length=255, blank=True)
+    phone = models.CharField('Телефон', max_length=20, blank=True)
+    created_at = models.DateTimeField('Дата регистрации', auto_now_add=True)
+    updated_at = models.DateTimeField('Дата обновления', auto_now=True)
+
+    class Meta:
+        verbose_name = 'Профиль пользователя'
+        verbose_name_plural = 'Профили пользователей'
+        db_table = 'user_profiles'
+
+    def __str__(self):
+        return f'{self.user.get_full_name() or self.user.email} ({self.get_user_type_display()})'

@@ -18,6 +18,7 @@ urlpatterns = [
     
     # Админка /adminka
     path('adminka/login/', adminka_views.adminka_login, name='adminka_login'),
+    path('register/', adminka_views.register_view, name='register'),
     path('adminka/logout/', adminka_views.adminka_logout, name='adminka_logout'),
     path('adminka/', adminka_views.adminka_dashboard, name='adminka_dashboard'),
     path('adminka/profile/', adminka_views.adminka_profile, name='adminka_profile'),

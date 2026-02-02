@@ -1,7 +1,7 @@
 {% extends 'adminka/base.html' %}
 {% load static %}
 
-{% block title %}Заявки в поддержку - Empire Premium{% endblock %}
+{% block title %}Поддержка - Empire Premium{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'adminka/css/pages/support.css' %}" />
@@ -10,7 +10,7 @@
 {% block content %}
 <main class="dashboard">
     <div class="page-actions" data-aos="fade-up">
-        <h1 data-i18n="support.title">Поддержка</h1>
+        <h1>Поддержка</h1>
         <div class="search-box">
             <input type="search" id="requestSearchInput" data-i18n-placeholder="support.search" placeholder="Поиск заявок..." />
             <select id="roleFilter">
@@ -64,13 +64,13 @@
                             <td>{{ req.phone }}</td>
                             <td class="status-{{ req.status }}" data-i18n="support.status.{{ req.status }}">{{ req.get_status_display }}</td>
                             <td>{{ req.created_at|date:"d.m.Y H:i" }}</td>
-                            <td>   
-                                <a href="{% url 'main:adminka_support_edit' req.id %}" class="btn-primary actions" style="padding: 0.25rem 0.5rem; font-weight: 500;">
+                            <td>
+                                <a href="{% url 'main:adminka_support_edit' req.id %}" class="btn-primary actions" style="padding: 0.25rem 0.5rem; font-weight: 500;" title="Редактировать">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
-                                <a class="btn-primary danger actions" onclick="deleteRequest({{ req.id }})" style="padding: 0.25rem 0.5rem; font-weight: 500; cursor: pointer;">
+                                <button type="button" class="btn-primary danger actions" onclick="deleteRequest({{ req.id }})" style="padding: 0.25rem 0.5rem; font-weight: 500; cursor: pointer; border: none;" title="Удалить">
                                     <i class="fa-solid fa-trash"></i>
-                                </a>
+                                </button>
                             </td>
                         </tr>
                     {% endfor %}
@@ -84,32 +84,27 @@
 {% block extra_js %}
 <script src="{% static 'adminka/js/pages/support.js' %}"></script>
 <script>
-// Функция удаления заявки через AJAX
+function getCsrfToken() {
+    var m = document.querySelector('meta[name="csrf-token"]');
+    return m ? m.getAttribute('content') : '';
+}
 function deleteRequest(requestId) {
-    if (!confirm('Вы уверены, что хотите удалить эту заявку?')) {
-        return;
-    }
-    
-    fetch(`/adminka/support/${requestId}/delete/`, {
+    if (!confirm('Вы уверены, что хотите удалить это обращение?')) return;
+    fetch('/adminka/support/' + requestId + '/delete/', {
         method: 'POST',
-        headers: {
-            'X-CSRFToken': '{{ csrf_token }}',
-            'Content-Type': 'application/json',
-        },
+        headers: { 'X-CSRFToken': getCsrfToken(), 'Content-Type': 'application/json' },
     })
     .then(response => response.json())
-    .then(data => {
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
         if (data.success) {
-            alert(data.message);
-            document.getElementById(`request-row-${requestId}`).remove();
+            var row = document.getElementById('request-row-' + requestId);
+            if (row) row.remove();
         } else {
-            alert('Ошибка: ' + data.message);
+            alert('Ошибка: ' + (data.message || ''));
         }
     })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Произошла ошибка при удалении заявки');
-    });
+    .catch(function() { alert('Ошибка при удалении'); });
 }
 </script>
 {% endblock %}

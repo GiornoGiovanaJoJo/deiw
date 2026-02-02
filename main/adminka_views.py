@@ -9,7 +9,7 @@ from django.http import JsonResponse, HttpResponseForbidden
 from django.db.models import Q, Count
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import ensure_csrf_cookie
-from .models import AdminProject, Category, ContactRequest, Request
+from .models import AdminProject, Category, ContactRequest, Request, UserProfile
 from django.contrib.auth.models import User
 
 
@@ -44,6 +44,86 @@ def adminka_login(request):
             messages.error(request, 'Неверный email или пароль, либо у вас нет прав администратора')
     
     return render(request, 'adminka/login.html')
+
+
+def _make_username_from_email(email):
+    """Уникальный username из email (Django требует уникальный username)."""
+    base = email.lower().replace('@', '_').replace('.', '_')[:30]
+    username = base
+    n = 0
+    while User.objects.filter(username=username).exists():
+        n += 1
+        suffix = str(n)
+        username = (base[: 30 - len(suffix)] + suffix) if len(base) + len(suffix) > 30 else base + suffix
+    return username
+
+
+@ensure_csrf_cookie
+def register_view(request):
+    """Регистрация: клиент или компания."""
+    if request.user.is_authenticated:
+        return redirect('main:home')
+
+    errors = {}
+    if request.method == 'POST':
+        full_name = (request.POST.get('full_name') or '').strip()
+        email = (request.POST.get('email') or '').strip().lower()
+        phone = (request.POST.get('phone') or '').strip()
+        password1 = request.POST.get('password1', '')
+        password2 = request.POST.get('password2', '')
+        user_type = request.POST.get('user_type', 'client')
+        company_name = (request.POST.get('company_name') or '').strip() if user_type == 'company' else ''
+
+        if not full_name:
+            errors['full_name'] = 'Укажите имя.'
+        if not email:
+            errors['email'] = 'Укажите email.'
+        elif '@' not in email:
+            errors['email'] = 'Некорректный email.'
+        elif User.objects.filter(email=email).exists():
+            errors['email'] = 'Пользователь с таким email уже зарегистрирован.'
+        if not password1:
+            errors['password1'] = 'Введите пароль.'
+        elif len(password1) < 8:
+            errors['password1'] = 'Пароль должен быть не короче 8 символов.'
+        if password1 != password2:
+            errors['password2'] = 'Пароли не совпадают.'
+        if user_type == 'company' and not company_name:
+            errors['company_name'] = 'Укажите название компании.'
+
+        if not errors:
+            parts = full_name.split(None, 1)
+            first_name = parts[0] if parts else full_name
+            last_name = parts[1] if len(parts) > 1 else ''
+            username = _make_username_from_email(email)
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                password=password1,
+                first_name=first_name,
+                last_name=last_name,
+                is_staff=False,
+                is_active=True,
+            )
+            UserProfile.objects.create(
+                user=user,
+                user_type=user_type,
+                company_name=company_name,
+                phone=phone,
+            )
+            messages.success(request, 'Регистрация прошла успешно. Войдите в систему.')
+            return redirect('main:adminka_login')
+        form_data = {
+            'full_name': full_name,
+            'email': email,
+            'phone': phone,
+            'user_type': user_type,
+            'company_name': company_name,
+        }
+    else:
+        form_data = {}
+
+    return render(request, 'adminka/register.html', {'errors': errors, 'form_data': form_data})
 
 
 @login_required(login_url='/adminka/login/')
@@ -268,7 +348,7 @@ def adminka_support_edit(request, pk):
     
     context = {
         'admin_name': request.user.get_full_name() or request.user.username,
-        'request': contact_request,
+        'support_request': contact_request,
     }
     return render(request, 'adminka/support_edit.html', context)
 
@@ -317,7 +397,7 @@ def adminka_request_edit(request, pk):
             messages.error(request, str(e))
     context = {
         'admin_name': request.user.get_full_name() or request.user.username,
-        'request': req,
+        'req_obj': req,
     }
     return render(request, 'adminka/request_edit.html', context)
 
