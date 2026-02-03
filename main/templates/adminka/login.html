@@ -9,69 +9,10 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'cabinet/css/cabinet.css' %}">
-    <style>
-        /* Specific overrides for auth pages layout */
-        body {
-            background: #F8FAFC;
-            display: block;
-        }
-
-        .wrapper {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        .header-top {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1.5rem 4rem;
-            background: white;
-        }
-
-        .header-nav {
-            display: flex;
-            gap: 2rem;
-            font-weight: 500;
-            font-size: 0.95rem;
-        }
-
-        .header-nav a {
-            color: var(--text-primary);
-            text-decoration: none;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-
-        .btn-purple-gradient {
-            background: #8B5CF6;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn-outline {
-            border: 1px solid #E5E7EB;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            color: var(--text-primary);
-            text-decoration: none;
-        }
-    </style>
 </head>
 
 <body>
-    <div class="wrapper">
+    <div class="auth-wrapper">
         <header class="header-top">
             <div style="font-weight: 800; font-size: 1.2rem;">
                 <a href="{% url 'main:home' %}" style="text-decoration:none; color:inherit;">
@@ -94,7 +35,7 @@
                 <a href="{% url 'main:home' %}#contact" class="btn-purple-gradient">
                     Оставить заявку <i class="fa-solid fa-arrow-right"></i>
                 </a>
-                <span class="btn-outline">Вход</span>
+                <a href="{% url 'main:register' %}" class="btn-outline">Регистрация</a>
             </div>
         </header>
 
@@ -114,7 +55,8 @@
                 {% for message in messages %}
                 <div
                     style="margin-bottom: 1rem; color: #EF4444; background: #FEF2F2; padding: 0.5rem; border-radius: 0.25rem;">
-                    {{ message }}</div>
+                    {{ message }}
+                </div>
                 {% endfor %}
                 {% endif %}
 
@@ -138,16 +80,13 @@
             </form>
         </div>
 
-        <footer
-            style="margin-top: auto; padding: 1.5rem 4rem; border-top: 1px solid #E5E7EB; font-size: 0.875rem; color: var(--text-secondary); display: flex; justify-content: space-between;">
+        <footer class="site-footer">
             <div>© 2026 Empire Premium. Все права защищены.</div>
             <div style="display: flex; gap: 2rem;">
-                <a href="{% url 'main:privacy' %}" style="color: inherit; text-decoration: underline;">Политика
-                    конфиденциальности</a>
-                <a href="{% url 'main:terms' %}" style="color: inherit; text-decoration: underline;">Условия
-                    использования</a>
-                <a href="#" style="color: inherit; text-decoration: underline;">Импрессум</a>
-                <a href="#" style="color: inherit; text-decoration: underline;">Cookies</a>
+                <a href="{% url 'main:privacy' %}">Политика конфиденциальности</a>
+                <a href="{% url 'main:terms' %}">Условия использования</a>
+                <a href="#">Импрессум</a>
+                <a href="#">Cookies</a>
             </div>
         </footer>
     </div>

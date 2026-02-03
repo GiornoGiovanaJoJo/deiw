@@ -9,69 +9,10 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'cabinet/css/cabinet.css' %}">
-    <style>
-        /* Specific overrides for auth pages layout */
-        body {
-            background: #F8FAFC;
-            display: block;
-        }
-
-        .wrapper {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        .header-top {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1.5rem 4rem;
-            background: white;
-        }
-
-        .header-nav {
-            display: flex;
-            gap: 2rem;
-            font-weight: 500;
-            font-size: 0.95rem;
-        }
-
-        .header-nav a {
-            color: var(--text-primary);
-            text-decoration: none;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-
-        .btn-purple-gradient {
-            background: #8B5CF6;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn-outline {
-            border: 1px solid #E5E7EB;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            color: var(--text-primary);
-            text-decoration: none;
-        }
-    </style>
 </head>
 
 <body>
-    <div class="wrapper">
+    <div class="auth-wrapper">
         <header class="header-top">
             <div style="font-weight: 800; font-size: 1.2rem;">
                 <a href="{% url 'main:home' %}" style="text-decoration:none; color:inherit;">
@@ -119,18 +60,20 @@
 
                 <input type="text" name="full_name" class="form-input" placeholder="Полное имя" required
                     value="{{ form.full_name.value|default:'' }}">
-                {% if form.full_name.errors %}<div
-                    style="color:#EF4444; font-size:0.8rem; margin-top:-0.8rem; margin-bottom:1rem;">{{
-                    form.full_name.errors.0 }}</div>{% endif %}
+                {% if form.full_name.errors %}
+                <div style="color:#EF4444; font-size:0.8rem; margin-top:-0.8rem; margin-bottom:1rem;">{{
+                    form.full_name.errors.0 }}</div>
+                {% endif %}
 
                 <input type="tel" name="phone" class="form-input" placeholder="Номер телефона"
                     value="{{ form.phone.value|default:'' }}">
 
                 <input type="email" name="email" class="form-input" placeholder="Адрес эл. почты" required
                     value="{{ form.email.value|default:'' }}">
-                {% if form.email.errors %}<div
-                    style="color:#EF4444; font-size:0.8rem; margin-top:-0.8rem; margin-bottom:1rem;">{{
-                    form.email.errors.0 }}</div>{% endif %}
+                {% if form.email.errors %}
+                <div style="color:#EF4444; font-size:0.8rem; margin-top:-0.8rem; margin-bottom:1rem;">{{
+                    form.email.errors.0 }}</div>
+                {% endif %}
 
                 <div style="position: relative;">
                     <input type="password" name="password1" id="password" class="form-input"
@@ -140,9 +83,10 @@
                         <i class="fa-regular fa-eye"></i>
                     </button>
                 </div>
-                {% if form.password1.errors %}<div
-                    style="color:#EF4444; font-size:0.8rem; margin-top:-0.8rem; margin-bottom:1rem;">{{
-                    form.password1.errors.0 }}</div>{% endif %}
+                {% if form.password1.errors %}
+                <div style="color:#EF4444; font-size:0.8rem; margin-top:-0.8rem; margin-bottom:1rem;">{{
+                    form.password1.errors.0 }}</div>
+                {% endif %}
 
                 <div style="position: relative;">
                     <input type="password" name="password2" id="password2_field" class="form-input"
@@ -152,36 +96,34 @@
                         <i class="fa-regular fa-eye"></i>
                     </button>
                 </div>
-                {% if form.password2.errors %}<div
-                    style="color:#EF4444; font-size:0.8rem; margin-top:-0.8rem; margin-bottom:1rem;">{{
-                    form.password2.errors.0 }}</div>{% endif %}
+                {% if form.password2.errors %}
+                <div style="color:#EF4444; font-size:0.8rem; margin-top:-0.8rem; margin-bottom:1rem;">{{
+                    form.password2.errors.0 }}</div>
+                {% endif %}
 
                 <label
                     style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 1.5rem; font-size: 0.9rem; color: var(--text-secondary);">
                     <input type="checkbox" name="accept_terms" required {% if form.accept_terms.value %}checked{% endif
                         %}>
-                    <span>Я принимаю <a href="{% url 'main:privacy' %}" style="color: var(--primary-color);">политику
+                    <span>Я принимаю <a href="{% url 'main:privacy' %}" class="text-purple">политику
                             конфиденциальности</a></span>
                 </label>
 
                 <button type="submit" class="btn-primary-purple">СОЗДАТЬ АККАУНТ</button>
 
                 <div class="auth-links">
-                    <p>У вас еще есть аккаунт? <a href="{% url 'main:adminka_login' %}">Войти</a></p>
+                    <p>У вас уже есть аккаунт? <a href="{% url 'main:adminka_login' %}">Войти</a></p>
                 </div>
             </form>
         </div>
 
-        <footer
-            style="margin-top: auto; padding: 1.5rem 4rem; border-top: 1px solid #E5E7EB; font-size: 0.875rem; color: var(--text-secondary); display: flex; justify-content: space-between;">
+        <footer class="site-footer">
             <div>© 2026 Empire Premium. Все права защищены.</div>
             <div style="display: flex; gap: 2rem;">
-                <a href="{% url 'main:privacy' %}" style="color: inherit; text-decoration: underline;">Политика
-                    конфиденциальности</a>
-                <a href="{% url 'main:terms' %}" style="color: inherit; text-decoration: underline;">Условия
-                    использования</a>
-                <a href="#" style="color: inherit; text-decoration: underline;">Импрессум</a>
-                <a href="#" style="color: inherit; text-decoration: underline;">Cookies</a>
+                <a href="{% url 'main:privacy' %}">Политика конфиденциальности</a>
+                <a href="{% url 'main:terms' %}">Условия использования</a>
+                <a href="#">Импрессум</a>
+                <a href="#">Cookies</a>
             </div>
         </footer>
     </div>

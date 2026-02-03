@@ -1,6 +1,7 @@
 /* Cabinet Design Styles */
 :root {
-    --primary-color: #8B5CF6; /* Purple accent */
+    --primary-color: #8B5CF6;
+    /* Purple accent */
     --primary-hover: #7C3AED;
     --bg-color: #F8FAFC;
     --sidebar-width: 280px;
@@ -81,12 +82,14 @@ body {
     border-radius: 0.5rem;
 }
 
-.nav-item:hover, .nav-item.active {
+.nav-item:hover,
+.nav-item.active {
     color: var(--primary-color);
 }
 
 .nav-item.active {
-    box-shadow: inset 2px 0 0 0 var(--primary-color); /* Left border indicator style */
+    box-shadow: inset 2px 0 0 0 var(--primary-color);
+    /* Left border indicator style */
     padding-left: 1rem;
     margin-left: -1rem;
 }
@@ -111,7 +114,8 @@ body {
     margin-bottom: 2rem;
 }
 
-.filter-select, .search-input {
+.filter-select,
+.search-input {
     padding: 0.75rem 1rem;
     border: 1px solid var(--border-color);
     border-radius: 0.5rem;
@@ -125,7 +129,8 @@ body {
     max-width: 400px;
 }
 
-.filter-select:focus, .search-input:focus {
+.filter-select:focus,
+.search-input:focus {
     border-color: var(--primary-color);
     box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.1);
 }
@@ -138,7 +143,8 @@ body {
 }
 
 .item-card {
-    background: #F3F4F6; /* Light gray background as in design */
+    background: #F3F4F6;
+    /* Light gray background as in design */
     padding: 1.5rem;
     border-radius: 0.75rem;
     display: flex;
@@ -177,7 +183,8 @@ body {
 .card-action {
     width: 80px;
     height: 60px;
-    background: #D1D5DB; /* Placeholder gray box */
+    background: #D1D5DB;
+    /* Placeholder gray box */
     border-radius: 0.5rem;
 }
 
@@ -294,4 +301,86 @@ body {
 }
 
 /* Utilities */
-.text-purple { color: var(--primary-color); }
+.text-purple {
+    color: var(--primary-color);
+}
+
+/* Auth Page Specifics */
+.auth-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem 4rem;
+    background: white;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.header-nav {
+    display: flex;
+    gap: 2rem;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.header-nav a {
+    color: var(--text-primary);
+    text-decoration: none;
+}
+
+.header-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.btn-purple-gradient {
+    background: #8B5CF6;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: opacity 0.2s;
+}
+
+.btn-purple-gradient:hover {
+    opacity: 0.9;
+}
+
+.btn-outline {
+    border: 1px solid #E5E7EB;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    color: var(--text-primary);
+    text-decoration: none;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.btn-outline:hover {
+    background: #F3F4F6;
+}
+
+.site-footer {
+    margin-top: auto;
+    padding: 1.5rem 4rem;
+    border-top: 1px solid var(--border-color);
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    display: flex;
+    justify-content: space-between;
+}
+
+.site-footer a {
+    color: inherit;
+    text-decoration: underline;
+}
