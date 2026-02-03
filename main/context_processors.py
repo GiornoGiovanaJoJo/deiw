@@ -20,7 +20,7 @@ def cabinet_profile(request):
     if not url_name.startswith('cabinet_'):
         return context
     try:
-        context['profile'] = UserProfile.objects.get(user=request.user)
+        context['user_profile'] = UserProfile.objects.get(user=request.user)
     except UserProfile.DoesNotExist:
-        context['profile'] = None
+        context['user_profile'] = None
     return context

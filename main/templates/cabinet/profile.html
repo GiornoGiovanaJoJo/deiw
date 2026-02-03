@@ -3,131 +3,131 @@
 
 {% block title %}Управление профилем - Empire Premium{% endblock %}
 
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'adminka/css/pages/profile.css' %}" />
-{% endblock %}
+<div class="page-title">Управление профилем</div>
 
-{% block content %}
-<div class="profile-page">
-<div class="page-actions" data-aos="fade-up">
-    <h1>Управление профилем</h1>
-    <button type="button" class="btn-primary" id="btnEditProfileModal" title="Редактировать имя, телефон и почту">
-        <i class="fa-solid fa-pen"></i> Редактировать данные
-    </button>
-</div>
-
-<div class="card" data-aos="fade-up">
-    <div class="cabinet-profile-layout">
-        <div class="cabinet-profile-avatar-block">
-            <form method="post" action="{% url 'main:cabinet_profile' %}" enctype="multipart/form-data" class="cabinet-avatar-form">
+<div class="cards-list">
+    <!-- Profile Info Card -->
+    <div class="item-card" style="align-items: flex-start;">
+        <div style="flex: 0 0 auto; margin-right: 2rem; position: relative;">
+            <form method="post" action="{% url 'main:cabinet_profile' %}" enctype="multipart/form-data" id="avatarForm">
                 {% csrf_token %}
                 <input type="hidden" name="action" value="avatar">
-                <label class="cabinet-avatar-label">
-                    {% if profile.avatar %}
-                    <div class="cabinet-avatar cabinet-avatar-large cabinet-avatar-img" style="background-image: url('{{ profile.avatar.url }}');"></div>
+
+                <div class="user-avatar-large"
+                    style="width: 120px; height: 120px; font-size: 3rem; position: relative; overflow: hidden; cursor: pointer;"
+                    onclick="document.getElementById('avatarInput').click()">
+                    {% if user_profile.avatar_data %}
+                    <img src="{% url 'main:serve_db_image' 'userprofile' user_profile.pk %}" alt="Avatar"
+                        style="width:100%; height:100%; object-fit:cover;">
                     {% else %}
-                    <div class="cabinet-avatar cabinet-avatar-large">
-                        <span>{% with name=profile_user.get_full_name|default:profile_user.username %}{{ name|slice:":1"|upper }}{% endwith %}</span>
-                    </div>
+                    <i class="fa-regular fa-user"></i>
                     {% endif %}
-                    <input type="file" name="avatar" accept="image/jpeg,image/png,image/gif,image/webp" class="cabinet-avatar-input">
-                    <span class="cabinet-change-photo">Изменить фото</span>
-                </label>
+
+                    <div
+                        style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.6); color: white; font-size: 0.8rem; text-align: center; padding: 0.25rem;">
+                        <i class="fa-solid fa-camera"></i>
+                    </div>
+                </div>
+                <input type="file" name="avatar" id="avatarInput" style="display: none;" accept="image/*"
+                    onchange="document.getElementById('avatarForm').submit()">
             </form>
-            <p class="cabinet-change-photo-hint">JPG, PNG до 5 МБ</p>
         </div>
-        <div class="cabinet-profile-fields">
-            <p class="cabinet-profile-id">ID {{ profile_user.pk|stringformat:"011d" }}</p>
-            <p style="color: var(--color-text-secondary); margin-top: 0.5rem;">Имя: {% firstof profile_user.get_full_name "—" %}</p>
-            <p style="color: var(--color-text-secondary);">Телефон: {{ profile.phone|default:"—" }}</p>
-            <p style="color: var(--color-text-secondary);">Почта: {{ profile_user.email|default:"—" }}</p>
+
+        <div style="flex: 1;">
+            <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">{% firstof
+                profile_user.get_full_name profile_user.username %}</h2>
+            <div style="color: var(--text-secondary); margin-bottom: 1.5rem;">ID {{ profile_user.pk|stringformat:"010d"
+                }}</div>
+
+            <div style="display: grid; grid-template-columns: auto 1fr; gap: 0.5rem 2rem; align-items: center;">
+                <div style="color: var(--text-secondary);">Телефон:</div>
+                <div>{{ user_profile.phone|default:"—" }}</div>
+
+                <div style="color: var(--text-secondary);">Email:</div>
+                <div>{{ profile_user.email|default:"—" }}</div>
+            </div>
+
+            <button class="btn-primary-purple" style="margin-top: 1.5rem;" onclick="openProfileModal()">
+                <i class="fa-solid fa-pen"></i> Редактировать данные
+            </button>
         </div>
+    </div>
+
+    <!-- Password Change Card -->
+    <div class="item-card" style="display: block;">
+        <h3 style="margin-bottom: 1.5rem; font-weight: 700; font-size: 1.25rem;">Сменить пароль</h3>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="password">
+
+            <div style="margin-bottom: 1rem;">
+                <input type="password" name="old_password" class="search-input" placeholder="Текущий пароль"
+                    style="width: 100%; background: #F9FAFB;">
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <input type="password" name="new_password1" class="search-input" placeholder="Новый пароль"
+                    style="width: 100%; background: #F9FAFB;">
+            </div>
+            <div style="margin-bottom: 1.5rem;">
+                <input type="password" name="new_password2" class="search-input" placeholder="Повторите новый пароль"
+                    style="width: 100%; background: #F9FAFB;">
+            </div>
+
+            <button type="submit" class="btn-secondary">Изменить пароль</button>
+        </form>
+    </div>
+
+    <!-- 2FA Placeholder -->
+    <div class="item-card" style="display: block; opacity: 0.7;">
+        <h3
+            style="margin-bottom: 1rem; font-weight: 700; font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fa-solid fa-shield-halved"></i> Двухфакторная аутентификация
+        </h3>
+        <p>Функция в разработке. Скоро будет доступна настройка 2FA через SMS и Telegram.</p>
     </div>
 </div>
 
-<!-- Модальное окно: Редактирование профиля -->
-<div class="cabinet-modal" id="modalEditProfile" role="dialog" aria-labelledby="modalEditProfileTitle" aria-modal="true" hidden>
-    <div class="cabinet-modal-backdrop"></div>
-    <div class="cabinet-modal-content cabinet-modal-animate">
+<!-- Modal: Edit Profile -->
+<div class="cabinet-modal" id="modalEditProfile" hidden>
+    <div class="cabinet-modal-backdrop" onclick="closeProfileModal()"></div>
+    <div class="cabinet-modal-content">
         <div class="cabinet-modal-header">
-            <h2 id="modalEditProfileTitle">Редактировать данные</h2>
-            <button type="button" class="cabinet-modal-close" aria-label="Закрыть">&times;</button>
+            <h2>Редактировать данные</h2>
+            <button type="button" class="cabinet-modal-close" onclick="closeProfileModal()">&times;</button>
         </div>
-        <form method="post" action="{% url 'main:cabinet_profile' %}" class="cabinet-modal-form" id="formEditProfile">
+        <form method="post" class="cabinet-modal-form">
             {% csrf_token %}
             <input type="hidden" name="action" value="profile">
-            <div class="form-group">
-                <label for="modal_first_name">Имя</label>
-                <input type="text" id="modal_first_name" name="first_name" value="{% if profile_form.first_name.value %}{{ profile_form.first_name.value }}{% else %}{{ profile_user.first_name|default:'' }}{% endif %}" placeholder="Имя">
-                <input type="text" name="last_name" value="{% if profile_form.last_name.value != None %}{{ profile_form.last_name.value }}{% else %}{{ profile_user.last_name|default:'' }}{% endif %}" placeholder="Фамилия">
-                {% if profile_form.first_name.errors or profile_form.last_name.errors %}<span class="auth-field-error">{% for e in profile_form.first_name.errors %}{{ e }}{% endfor %}{% for e in profile_form.last_name.errors %}{{ e }}{% endfor %}</span>{% endif %}
-            </div>
-            <div class="form-group">
-                <label for="modal_phone">Номер телефона</label>
-                <input type="tel" id="modal_phone" name="phone" value="{% if profile_form.phone.value != None %}{{ profile_form.phone.value }}{% else %}{{ profile.phone|default:'' }}{% endif %}" placeholder="+49 (900) 000 000 000">
-                {% if profile_form.phone.errors %}<span class="auth-field-error">{% for e in profile_form.phone.errors %}{{ e }}{% endfor %}</span>{% endif %}
-            </div>
-            <div class="form-group">
-                <label for="modal_email">Почта *</label>
-                <input type="email" id="modal_email" name="email" value="{% if profile_form.email.value != None %}{{ profile_form.email.value }}{% else %}{{ profile_user.email|default:'' }}{% endif %}" placeholder="Почта" required>
-                {% if profile_form.email.errors %}<span class="auth-field-error">{% for e in profile_form.email.errors %}{{ e }}{% endfor %}</span>{% endif %}
-            </div>
-            <div class="cabinet-modal-footer">
-                <button type="button" class="btn-secondary cabinet-modal-close-btn">Отмена</button>
-                <button type="submit" class="btn-primary">Готово</button>
+
+            <label>Имя</label>
+            <input type="text" name="first_name" value="{{ profile_user.first_name|default:'' }}" class="search-input"
+                style="width: 100%; margin-bottom: 1rem; background: #F9FAFB;">
+
+            <label>Фамилия</label>
+            <input type="text" name="last_name" value="{{ profile_user.last_name|default:'' }}" class="search-input"
+                style="width: 100%; margin-bottom: 1rem; background: #F9FAFB;">
+
+            <label>Телефон</label>
+            <input type="tel" name="phone" value="{{ user_profile.phone|default:'' }}" class="search-input"
+                style="width: 100%; margin-bottom: 1rem; background: #F9FAFB;">
+
+            <label>Email</label>
+            <input type="email" name="email" value="{{ profile_user.email|default:'' }}" class="search-input"
+                style="width: 100%; margin-bottom: 1.5rem; background: #F9FAFB;" required>
+
+            <div style="display: flex; justify-content: flex-end; gap: 1rem;">
+                <button type="button" class="btn-secondary" onclick="closeProfileModal()">Отмена</button>
+                <button type="submit" class="btn-primary-purple">Сохранить</button>
             </div>
         </form>
     </div>
 </div>
 
-<div class="card" data-aos="fade-up">
-    <h3>Двухфакторная аутентификация (2FA)</h3>
-    <p style="color: var(--color-text-secondary); margin-bottom: 0.75rem;">Подтверждение входа по SMS или Telegram повышает безопасность аккаунта.</p>
-    <p class="cabinet-2fa-placeholder"><i class="fa-solid fa-lock" title="В разработке"></i> Функция в разработке. Скоро будет доступна настройка 2FA через SMS и Telegram.</p>
-</div>
-
-<div class="card" data-aos="fade-up">
-    <h3>Сменить пароль</h3>
-    <form method="post" class="profile-form">
-        {% csrf_token %}
-        <input type="hidden" name="action" value="password">
-        <div class="form-group">
-            <label for="old_password">Текущий пароль</label>
-            <input type="password" id="old_password" name="old_password" autocomplete="current-password" placeholder="Введите текущий пароль">
-        </div>
-        <div class="form-group">
-            <label for="new_password1">Новый пароль</label>
-            <input type="password" id="new_password1" name="new_password1" autocomplete="new-password" placeholder="Не менее 8 символов">
-        </div>
-        <div class="form-group">
-            <label for="new_password2">Повторите новый пароль</label>
-            <input type="password" id="new_password2" name="new_password2" autocomplete="new-password" placeholder="Повторите пароль">
-        </div>
-        <button type="submit" class="btn-primary">Изменить пароль</button>
-    </form>
-</div>
-</div>
-{% endblock %}
-
-{% block extra_js %}
 <script>
-(function() {
-    var form = document.querySelector('.cabinet-avatar-form');
-    var input = form && form.querySelector('input[name="avatar"]');
-    if (input) input.addEventListener('change', function() { if (this.files.length) form.submit(); });
-
-    var modal = document.getElementById('modalEditProfile');
-    var btnOpen = document.getElementById('btnEditProfileModal');
     function openProfileModal() {
-        if (modal) { modal.removeAttribute('hidden'); document.body.style.overflow = 'hidden'; }
+        document.getElementById('modalEditProfile').removeAttribute('hidden');
     }
     function closeProfileModal() {
-        if (modal) { modal.setAttribute('hidden', ''); document.body.style.overflow = ''; }
+        document.getElementById('modalEditProfile').setAttribute('hidden', '');
     }
-    if (btnOpen) btnOpen.addEventListener('click', openProfileModal);
-    if (modal) modal.querySelectorAll('.cabinet-modal-close, .cabinet-modal-close-btn, .cabinet-modal-backdrop').forEach(function(el) {
-        el.addEventListener('click', closeProfileModal);
-    });
-})();
 </script>
-{% endblock %}

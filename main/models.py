@@ -590,7 +590,9 @@ class UserProfile(models.Model):
     )
     company_name = models.CharField('Название компании', max_length=255, blank=True)
     phone = models.CharField('Телефон', max_length=20, blank=True)
-    avatar = models.ImageField('Аватар', upload_to='avatars/', null=True, blank=True)
+    avatar_data = models.BinaryField('Файл аватара', null=True, blank=True)
+    avatar_type = models.CharField('MIME-тип', max_length=100, blank=True)
+    avatar_name = models.CharField('Имя файла', max_length=255, blank=True)
     created_at = models.DateTimeField('Дата регистрации', auto_now_add=True)
     updated_at = models.DateTimeField('Дата обновления', auto_now=True)
 
@@ -601,6 +603,11 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return f'{self.user.get_full_name() or self.user.email} ({self.get_user_type_display()})'
+
+    def get_avatar_url(self):
+        if self.avatar_data:
+            return reverse('main:serve_db_image', args=['userprofile', self.pk])
+        return None
 
 
 class UserTwoFA(models.Model):

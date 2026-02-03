@@ -9,7 +9,7 @@ from django.views.decorators.http import require_GET, require_POST
 from .models import (
     SiteSettings, HeroCarouselImage, Service, Project, DesignSettings, ElementSettings,
     RequestCategory, RequestSubcategory, RequestQuestion, Request, ContactRequest,
-    HERO_CAROUSEL_MAX_IMAGES,
+    HERO_CAROUSEL_MAX_IMAGES, UserProfile,
 )
 
 _MODEL_MAP = {
@@ -17,6 +17,7 @@ _MODEL_MAP = {
     'herocarouselimage': (HeroCarouselImage, 'image_data', 'image_type'),
     'service': (Service, 'image_data', 'image_type'),
     'project': (Project, 'image_data', 'image_type'),
+    'userprofile': (UserProfile, 'avatar_data', 'avatar_type'),
 }
 
 

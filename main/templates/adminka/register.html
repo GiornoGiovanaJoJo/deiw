@@ -1,201 +1,213 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="{{ LANGUAGE_CODE }}">
+
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Регистрация - Empire Premium</title>
-    <link href="https://use.fontawesome.com/releases/v6.5.1/css/all.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
-    <link rel="stylesheet" href="{% static 'adminka/css/themes/light.css' %}" />
-    <link rel="stylesheet" href="{% static 'adminka/css/themes/dark.css' %}" />
-    <link rel="stylesheet" href="{% static 'adminka/css/forms.css' %}" />
-    <link rel="stylesheet" href="{% static 'adminka/css/pages/login.css' %}" />
-    <link rel="stylesheet" href="{% static 'adminka/css/components/site-footer.css' %}" />
+    <title>Регистрация — Empire Premium</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'cabinet/css/cabinet.css' %}">
+    <style>
+        /* Specific overrides for auth pages layout */
+        body {
+            background: #F8FAFC;
+            display: block;
+        }
+
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem 4rem;
+            background: white;
+        }
+
+        .header-nav {
+            display: flex;
+            gap: 2rem;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .header-nav a {
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn-purple-gradient {
+            background: #8B5CF6;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-outline {
+            border: 1px solid #E5E7EB;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+    </style>
 </head>
-<body class="login-page">
 
-    <header class="login-page-header">
-        <a href="{% url 'main:home' %}" class="login-page-logo">EXP <span>Empire Premium</span></a>
-        <nav class="login-page-nav">
-            <a href="{% url 'main:home' %}#about">О нас</a>
-            <a href="{% url 'main:home' %}#services">Услуги</a>
-            <a href="{% url 'main:home' %}#projects">Проекты</a>
-            <a href="{% url 'main:home' %}#contact">Карьера</a>
-        </nav>
-        <div class="login-page-cta">
-            <a href="tel:+4917661951823" class="login-page-phone">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-                </svg>
-                +49 17661951823
-            </a>
-            <a href="{% url 'main:home' %}#contact" class="login-page-btn-primary">Оставить заявку →</a>
-            <a href="{% url 'main:adminka_login' %}" class="login-page-btn-login-link">Вход</a>
-        </div>
-    </header>
-
-    <div class="auth-container">
-        <div class="auth-card auth-card-register" data-aos="zoom-in">
-            <h1 class="auth-title">Регистрация</h1>
-
-            <div class="auth-type-toggle" role="group" aria-label="Тип учётной записи">
-                <button type="button" class="auth-type-btn active" data-type="client">КЛИЕНТ</button>
-                <button type="button" class="auth-type-btn" data-type="worker">РАБОТНИК</button>
-                <button type="button" class="auth-type-btn" data-type="company">КОМПАНИЯ</button>
+<body>
+    <div class="wrapper">
+        <header class="header-top">
+            <div style="font-weight: 800; font-size: 1.2rem;">
+                <a href="{% url 'main:home' %}" style="text-decoration:none; color:inherit;">
+                    EXP <span style="font-weight: 400; font-size: 0.8rem; display:block; line-height:1;">Empire
+                        Premium</span>
+                </a>
             </div>
 
-            <form class="auth-form" method="POST" action="{% url 'main:register' %}" data-aos="fade-up" data-aos-delay="100" novalidate>
+            <nav class="header-nav">
+                <a href="{% url 'main:home' %}#about">О нас</a>
+                <a href="{% url 'main:home' %}#services">Услуги</a>
+                <a href="{% url 'main:home' %}#projects">Проекты</a>
+                <a href="{% url 'main:home' %}#contact">Карьера</a>
+            </nav>
+
+            <div class="header-actions">
+                <a href="tel:+4917661951823" class="btn-purple-gradient">
+                    <i class="fa-solid fa-phone"></i> +49 17661951823
+                </a>
+                <a href="{% url 'main:home' %}#contact" class="btn-purple-gradient">
+                    Оставить заявку <i class="fa-solid fa-arrow-right"></i>
+                </a>
+                <a href="{% url 'main:adminka_login' %}" class="btn-outline">Вход</a>
+            </div>
+        </header>
+
+        <div class="auth-container">
+            <h1 class="auth-title">Регистрация</h1>
+
+            <div class="auth-tabs" id="authTabs">
+                <button type="button" class="auth-tab active" data-type="client">КЛИЕНТ</button>
+                <button type="button" class="auth-tab" data-type="worker">РАБОТНИК</button>
+            </div>
+
+            <form method="POST" action="{% url 'main:register' %}">
                 {% csrf_token %}
-                <input type="hidden" name="user_type" id="user_type" value="{{ form.user_type.value|default:'client' }}">
+                <input type="hidden" name="user_type" id="user_type" value="client">
 
                 {% if form.non_field_errors %}
-                    <div class="form-message error" role="alert">
-                        {% for error in form.non_field_errors %}{{ error }}{% endfor %}
-                    </div>
+                <div
+                    style="margin-bottom: 1rem; color: #EF4444; background: #FEF2F2; padding: 0.5rem; border-radius: 0.25rem;">
+                    {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+                </div>
                 {% endif %}
 
-                <div class="form-group auth-input-group">
-                    <label for="id_full_name" class="sr-only">Полное имя</label>
-                    <input type="text" name="full_name" id="id_full_name" value="{{ form.full_name.value|default:'' }}"
-                           placeholder="Полное имя" class="auth-input-underline {% if form.full_name.errors %}is-invalid{% endif %}"
-                           autocomplete="name" required
-                           aria-describedby="{% if form.full_name.errors %}id_full_name_errors{% endif %}"
-                           aria-invalid="{% if form.full_name.errors %}true{% else %}false{% endif %}">
-                    {% if form.full_name.errors %}
-                        <span id="id_full_name_errors" class="auth-field-error" role="alert">{% for e in form.full_name.errors %}{{ e }}{% endfor %}</span>
-                    {% endif %}
-                </div>
+                <input type="text" name="full_name" class="form-input" placeholder="Полное имя" required
+                    value="{{ form.full_name.value|default:'' }}">
+                {% if form.full_name.errors %}<div
+                    style="color:#EF4444; font-size:0.8rem; margin-top:-0.8rem; margin-bottom:1rem;">{{
+                    form.full_name.errors.0 }}</div>{% endif %}
 
-                <div class="form-group auth-input-group">
-                    <label for="id_phone" class="sr-only">Номер телефона</label>
-                    <input type="tel" name="phone" id="id_phone" value="{{ form.phone.value|default:'' }}"
-                           placeholder="Номер телефона" class="auth-input-underline"
-                           autocomplete="tel">
-                </div>
+                <input type="tel" name="phone" class="form-input" placeholder="Номер телефона"
+                    value="{{ form.phone.value|default:'' }}">
 
-                <div class="form-group auth-input-group">
-                    <label for="id_email" class="sr-only">Адрес эл. почты</label>
-                    <input type="email" name="email" id="id_email" value="{{ form.email.value|default:'' }}"
-                           placeholder="Адрес эл. почты" class="auth-input-underline {% if form.email.errors %}is-invalid{% endif %}"
-                           autocomplete="email" required
-                           aria-describedby="{% if form.email.errors %}id_email_errors{% endif %}"
-                           aria-invalid="{% if form.email.errors %}true{% else %}false{% endif %}">
-                    {% if form.email.errors %}
-                        <span id="id_email_errors" class="auth-field-error" role="alert">{% for e in form.email.errors %}{{ e }}{% endfor %}</span>
-                    {% endif %}
-                </div>
+                <input type="email" name="email" class="form-input" placeholder="Адрес эл. почты" required
+                    value="{{ form.email.value|default:'' }}">
+                {% if form.email.errors %}<div
+                    style="color:#EF4444; font-size:0.8rem; margin-top:-0.8rem; margin-bottom:1rem;">{{
+                    form.email.errors.0 }}</div>{% endif %}
 
-                <div class="form-group auth-input-group auth-company-field" id="company_name_group" style="display: none;">
-                    <label for="id_company_name" class="sr-only">Название компании</label>
-                    <input type="text" name="company_name" id="id_company_name" value="{{ form.company_name.value|default:'' }}"
-                           placeholder="Название компании" class="auth-input-underline {% if form.company_name.errors %}is-invalid{% endif %}"
-                           autocomplete="organization"
-                           aria-describedby="{% if form.company_name.errors %}id_company_name_errors{% endif %}">
-                    {% if form.company_name.errors %}
-                        <span id="id_company_name_errors" class="auth-field-error" role="alert">{% for e in form.company_name.errors %}{{ e }}{% endfor %}</span>
-                    {% endif %}
+                <div style="position: relative;">
+                    <input type="password" name="password1" id="password" class="form-input"
+                        placeholder="Введите пароль" required minlength="8">
+                    <button type="button" class="toggle-password" data-target="password"
+                        style="position: absolute; right: 10px; top: 12px; background: none; border: none; cursor: pointer; color: #9CA3AF;">
+                        <i class="fa-regular fa-eye"></i>
+                    </button>
                 </div>
+                {% if form.password1.errors %}<div
+                    style="color:#EF4444; font-size:0.8rem; margin-top:-0.8rem; margin-bottom:1rem;">{{
+                    form.password1.errors.0 }}</div>{% endif %}
 
-                <div class="form-group auth-checkbox-group">
-                    <label class="auth-checkbox-label">
-                        <input type="checkbox" name="accept_terms" id="id_accept_terms" {% if form.accept_terms.value %}checked{% endif %}
-                               aria-describedby="{% if form.accept_terms.errors %}id_accept_terms_errors{% endif %}"
-                               aria-invalid="{% if form.accept_terms.errors %}true{% else %}false{% endif %}">
-                        <span>Я принимаю <a href="{% url 'main:privacy' %}" target="_blank" rel="noopener">политику конфиденциальности</a></span>
-                    </label>
-                    {% if form.accept_terms.errors %}
-                        <span id="id_accept_terms_errors" class="auth-field-error" role="alert">{% for e in form.accept_terms.errors %}{{ e }}{% endfor %}</span>
-                    {% endif %}
+                <div style="position: relative;">
+                    <input type="password" name="password2" id="password2_field" class="form-input"
+                        placeholder="Повторите пароль" required>
+                    <button type="button" class="toggle-password" data-target="password2_field"
+                        style="position: absolute; right: 10px; top: 12px; background: none; border: none; cursor: pointer; color: #9CA3AF;">
+                        <i class="fa-regular fa-eye"></i>
+                    </button>
                 </div>
+                {% if form.password2.errors %}<div
+                    style="color:#EF4444; font-size:0.8rem; margin-top:-0.8rem; margin-bottom:1rem;">{{
+                    form.password2.errors.0 }}</div>{% endif %}
 
-                <div class="form-group auth-input-group">
-                    <label for="id_password1" class="sr-only">Пароль</label>
-                    <div class="password-input auth-input-underline-wrap">
-                        <input type="password" name="password1" id="id_password1" placeholder="Введите пароль"
-                               class="auth-input-underline {% if form.password1.errors %}is-invalid{% endif %}"
-                               autocomplete="new-password" minlength="8" required
-                               aria-describedby="{% if form.password1.errors %}id_password1_errors{% endif %}"
-                               aria-invalid="{% if form.password1.errors %}true{% else %}false{% endif %}">
-                        <button type="button" class="toggle-password" aria-label="Показать пароль" data-target="id_password1">
-                            <i class="fa-solid fa-eye eye-open"></i>
-                            <i class="fa-solid fa-eye-slash eye-closed" style="display:none"></i>
-                        </button>
-                    </div>
-                    {% if form.password1.errors %}
-                        <span id="id_password1_errors" class="auth-field-error" role="alert">{% for e in form.password1.errors %}{{ e }}{% endfor %}</span>
-                    {% endif %}
-                </div>
+                <label
+                    style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 1.5rem; font-size: 0.9rem; color: var(--text-secondary);">
+                    <input type="checkbox" name="accept_terms" required {% if form.accept_terms.value %}checked{% endif
+                        %}>
+                    <span>Я принимаю <a href="{% url 'main:privacy' %}" style="color: var(--primary-color);">политику
+                            конфиденциальности</a></span>
+                </label>
 
-                <div class="form-group auth-input-group">
-                    <label for="id_password2" class="sr-only">Повторите пароль</label>
-                    <div class="password-input auth-input-underline-wrap">
-                        <input type="password" name="password2" id="id_password2" placeholder="Повторите пароль"
-                               class="auth-input-underline {% if form.password2.errors %}is-invalid{% endif %}"
-                               autocomplete="new-password" required
-                               aria-describedby="{% if form.password2.errors %}id_password2_errors{% endif %}"
-                               aria-invalid="{% if form.password2.errors %}true{% else %}false{% endif %}">
-                        <button type="button" class="toggle-password" aria-label="Показать пароль" data-target="id_password2">
-                            <i class="fa-solid fa-eye eye-open"></i>
-                            <i class="fa-solid fa-eye-slash eye-closed" style="display:none"></i>
-                        </button>
-                    </div>
-                    {% if form.password2.errors %}
-                        <span id="id_password2_errors" class="auth-field-error" role="alert">{% for e in form.password2.errors %}{{ e }}{% endfor %}</span>
-                    {% endif %}
-                </div>
-
-                <button type="submit" class="auth-submit-btn">СОЗДАТЬ АККАУНТ</button>
+                <button type="submit" class="btn-primary-purple">СОЗДАТЬ АККАУНТ</button>
 
                 <div class="auth-links">
-                    <p>У вас уже есть аккаунт? <a href="{% url 'main:adminka_login' %}">Войти</a></p>
+                    <p>У вас еще есть аккаунт? <a href="{% url 'main:adminka_login' %}">Войти</a></p>
                 </div>
             </form>
         </div>
+
+        <footer
+            style="margin-top: auto; padding: 1.5rem 4rem; border-top: 1px solid #E5E7EB; font-size: 0.875rem; color: var(--text-secondary); display: flex; justify-content: space-between;">
+            <div>© 2026 Empire Premium. Все права защищены.</div>
+            <div style="display: flex; gap: 2rem;">
+                <a href="{% url 'main:privacy' %}" style="color: inherit; text-decoration: underline;">Политика
+                    конфиденциальности</a>
+                <a href="{% url 'main:terms' %}" style="color: inherit; text-decoration: underline;">Условия
+                    использования</a>
+                <a href="#" style="color: inherit; text-decoration: underline;">Импрессум</a>
+                <a href="#" style="color: inherit; text-decoration: underline;">Cookies</a>
+            </div>
+        </footer>
     </div>
 
-    {% include 'components/site_footer.html' %}
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
     <script>
-        (function() {
-            var toggle = document.querySelector('.auth-type-toggle');
-            var hidden = document.getElementById('user_type');
-            var companyGroup = document.getElementById('company_name_group');
-            var companyInput = document.querySelector('input[name="company_name"]');
-            function updateType(type) {
-                if (hidden) hidden.value = type;
-                if (companyGroup) companyGroup.style.display = type === 'company' ? 'block' : 'none';
-                if (companyInput) companyInput.required = (type === 'company');
-            }
-            if (toggle && hidden) {
-                toggle.querySelectorAll('.auth-type-btn').forEach(function(btn) {
-                    btn.addEventListener('click', function() {
-                        toggle.querySelectorAll('.auth-type-btn').forEach(function(b) { b.classList.remove('active'); });
-                        btn.classList.add('active');
-                        updateType(btn.getAttribute('data-type'));
-                    });
-                });
-            }
-            var initialType = (hidden && hidden.value) ? hidden.value : 'client';
-            updateType(initialType);
-            if (toggle && (initialType === 'company' || initialType === 'worker')) {
-                toggle.querySelectorAll('.auth-type-btn').forEach(function(b) {
-                    b.classList.toggle('active', b.getAttribute('data-type') === initialType);
-                });
-            }
-            document.querySelectorAll('.toggle-password').forEach(function(btn) {
-                var targetId = btn.getAttribute('data-target');
-                var input = targetId ? document.getElementById(targetId) : null;
-                if (!input || !btn) return;
-                btn.addEventListener('click', function() {
-                    var isPw = input.type === 'password';
-                    input.type = isPw ? 'text' : 'password';
-                    btn.querySelector('.eye-open').style.display = isPw ? 'none' : 'inline-block';
-                    btn.querySelector('.eye-closed').style.display = isPw ? 'inline-block' : 'none';
-                });
+        const tabs = document.querySelectorAll('.auth-tab');
+        const userTypeInput = document.getElementById('user_type');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                userTypeInput.value = tab.getAttribute('data-type');
             });
-        })();
+        });
+
+        document.querySelectorAll('.toggle-password').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetId = btn.getAttribute('data-target');
+                const pwInput = document.getElementById(targetId);
+                const type = pwInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                pwInput.setAttribute('type', type);
+                btn.querySelector('i').classList.toggle('fa-eye');
+                btn.querySelector('i').classList.toggle('fa-eye-slash');
+            });
+        });
     </script>
 </body>
+
 </html>

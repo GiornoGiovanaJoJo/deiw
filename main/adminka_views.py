@@ -115,6 +115,8 @@ def adminka_logout(request):
 def adminka_profile(request):
     """Профиль администратора: данные и смена пароля."""
     user = request.user
+    user_profile, created = UserProfile.objects.get_or_create(user=user)
+
     if request.method == 'POST':
         action = request.POST.get('action', '')
         if action == 'profile':
@@ -124,6 +126,20 @@ def adminka_profile(request):
             if email and '@' in email:
                 user.email = email
             user.save()
+
+            # Обновление профиля
+            user_profile.phone = (request.POST.get('phone') or '').strip()
+            user_profile.company_name = (request.POST.get('company_name') or '').strip()
+            
+            # Сохранение аватара (SQLite)
+            avatar_file = request.FILES.get('avatar')
+            if avatar_file:
+                user_profile.avatar_data = avatar_file.read()
+                user_profile.avatar_name = avatar_file.name
+                user_profile.avatar_type = avatar_file.content_type
+            
+            user_profile.save()
+
             messages.success(request, 'Данные профиля обновлены')
             return redirect('main:adminka_profile')
         if action == 'password':
@@ -145,6 +161,7 @@ def adminka_profile(request):
     context = {
         'admin_name': user.get_full_name() or user.username,
         'profile_user': user,
+        'user_profile': user_profile,
     }
     return render(request, 'adminka/profile.html', context)
 
