@@ -1,14 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '@/lib/AuthContext';
 import { Button } from "@/components/ui/button";
-import { LogOut, User, Mail, Briefcase, Phone } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { LogOut, User, Search, Settings, FileText, HelpCircle, ChevronRight, Check } from "lucide-react";
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from "../utils";
 import './Home.css';
 
+const MOCK_ORDERS = [
+    { id: 1, title: "Название заказа", category: "Сантехника", number: "001 100 0001", status: "Завершен", date: "05.01.2026" },
+    { id: 2, title: "Название заказа", category: "Малярные работы", number: "001 100 0002", status: "Активен", date: "12.01.2026" },
+    { id: 3, title: "Название заказа", category: "Электрика", number: "001 100 0003", status: "Активен", date: "20.01.2026" },
+];
+
 export default function Profile() {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
+    const [activeTab, setActiveTab] = useState('orders');
 
     if (!user) {
         return (
@@ -18,166 +26,175 @@ export default function Profile() {
         );
     }
 
-    const isClient = !user.is_superuser;
-
-    return (
-        <div className={`min-h-screen ${isClient ? 'bg-slate-900 text-white' : 'landing-page p-6 max-w-4xl mx-auto'}`}>
-            {isClient ? (
-                // --- CLIENT PROFILE VIEW ---
-                <div className="container mx-auto px-4 py-12 max-w-5xl">
-                    <header className="flex justify-between items-center mb-12 border-b border-slate-800 pb-6">
-                        <div>
-                            <h1 className="text-3xl font-bold text-[#D4AF37]">Личный Кабинет</h1>
-                            <p className="text-slate-400 mt-1">Добро пожаловать в Empire Premium</p>
-                        </div>
-                        <Button
-                            variant="outline"
-                            onClick={logout}
-                            className="text-[#D4AF37] border-[#D4AF37] hover:bg-[#D4AF37] hover:text-slate-900 bg-transparent transition-colors"
-                        >
-                            <LogOut className="w-4 h-4 mr-2" /> Выйти
+    // Standard Admin Profile Redirect
+    if (user.is_superuser) {
+        return (
+            <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
+                <div className="bg-white p-8 rounded-xl shadow-lg max-w-md w-full text-center">
+                    <User className="w-16 h-16 mx-auto text-slate-400 mb-4" />
+                    <h1 className="text-2xl font-bold text-slate-900 mb-2">{user.vorname} {user.nachname}</h1>
+                    <p className="text-slate-500 mb-6">Администратор</p>
+                    <div className="space-y-3">
+                        <Button onClick={() => navigate(createPageUrl("Dashboard"))} className="w-full btn--primary">
+                            Панель управления
                         </Button>
-                    </header>
-
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        {/* Sidebar / User Card */}
-                        <div className="lg:col-span-1 space-y-6">
-                            <div className="bg-slate-800 rounded-xl p-8 border border-slate-700 text-center shadow-lg">
-                                <div className="w-24 h-24 mx-auto bg-gradient-to-br from-[#D4AF37] to-[#B38F1D] rounded-full flex items-center justify-center text-slate-900 text-3xl font-bold mb-4 shadow-xl">
-                                    {user.username?.charAt(0).toUpperCase()}
-                                </div>
-                                <h2 className="text-xl font-bold text-white mb-1">{user.vorname} {user.nachname}</h2>
-                                <div className="inline-block px-3 py-1 rounded-full bg-slate-900 text-[#D4AF37] text-xs font-medium border border-slate-700 mb-6">
-                                    Premium Client
-                                </div>
-
-                                <div className="space-y-4 text-left border-t border-slate-700 pt-6">
-                                    <div className="flex items-center gap-3 text-slate-300">
-                                        <Mail className="w-4 h-4 text-[#D4AF37]" />
-                                        <span className="text-sm truncate">{user.email}</span>
-                                    </div>
-                                    <div className="flex items-center gap-3 text-slate-300">
-                                        <Phone className="w-4 h-4 text-[#D4AF37]" />
-                                        <span className="text-sm">+49 (0) 123 456 789</span>
-                                    </div>
-                                    <div className="flex items-center gap-3 text-slate-300">
-                                        <User className="w-4 h-4 text-[#D4AF37]" />
-                                        <span className="text-sm">@{user.username}</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="bg-[#D4AF37] rounded-xl p-6 text-slate-900 shadow-lg">
-                                <h3 className="font-bold mb-2 flex items-center gap-2">
-                                    <Phone className="w-5 h-5" /> Личный Менеджер
-                                </h3>
-                                <p className="text-sm opacity-90 mb-4">
-                                    Есть вопросы по вашему проекту? Ваш менеджер всегда на связи.
-                                </p>
-                                <Button className="w-full bg-slate-900 text-white hover:bg-slate-800 border-none">
-                                    Связаться
-                                </Button>
-                            </div>
-                        </div>
-
-                        {/* Main Content Area */}
-                        <div className="lg:col-span-2 space-y-6">
-                            {/* Projects Section Placeholder */}
-                            <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-lg">
-                                <div className="p-6 border-b border-slate-700 flex justify-between items-center">
-                                    <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                                        <Briefcase className="w-5 h-5 text-[#D4AF37]" /> Мои Проекты
-                                    </h3>
-                                    <span className="text-xs font-medium px-2 py-1 bg-green-900/30 text-green-400 rounded border border-green-900/50">
-                                        Активен
-                                    </span>
-                                </div>
-                                <div className="p-8 text-center py-16">
-                                    <div className="w-16 h-16 bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-500">
-                                        <Briefcase className="w-8 h-8" />
-                                    </div>
-                                    <h4 className="text-xl font-medium text-white mb-2">Проект "Вилла Грюнвальд"</h4>
-                                    <p className="text-slate-400 max-w-md mx-auto mb-6">
-                                        Статус: В работе. Этап: Внутренняя отделка и монтаж коммуникаций.
-                                    </p>
-                                    <Button variant="outline" className="text-[#D4AF37] border-[#D4AF37] hover:bg-[#D4AF37] hover:text-slate-900 bg-transparent">
-                                        Подробнее о проекте
-                                    </Button>
-                                </div>
-                            </div>
-                        </div>
+                        <Button variant="outline" onClick={logout} className="w-full">
+                            Выйти
+                        </Button>
                     </div>
                 </div>
-            ) : (
-                // --- ADMIN/STANDARD PROFILE VIEW ---
-                <>
-                    <h1 className="text-3xl font-bold mb-8 text-slate-900">Мой Профиль</h1>
+            </div>
+        );
+    }
 
-                    <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                        <div className="h-32 bg-gradient-to-r from-slate-900 to-slate-800"></div>
-                        <div className="px-8 pb-8">
-                            <div className="relative flex justify-between items-end -mt-12 mb-6">
-                                <div className="flex items-end gap-6">
-                                    <div className="w-24 h-24 rounded-full bg-white p-1 shadow-md">
-                                        <div className="w-full h-full rounded-full bg-accent-purple flex items-center justify-center text-white text-3xl font-bold">
-                                            {user.username?.charAt(0).toUpperCase()}
-                                        </div>
-                                    </div>
-                                    <div className="mb-1">
-                                        <h2 className="text-2xl font-bold text-slate-900">
-                                            {user.vorname} {user.nachname}
-                                        </h2>
-                                        <p className="text-slate-500 flex items-center gap-2">
-                                            @{user.username} <span className="w-1 h-1 rounded-full bg-slate-300"></span> {user.position || "Администратор"}
-                                        </p>
-                                    </div>
-                                </div>
-                                <div className="flex gap-3">
-                                    <Button onClick={() => navigate(createPageUrl("Dashboard"))} className="btn--primary">
-                                        <Briefcase className="w-4 h-4 mr-2" /> Панель управления
-                                    </Button>
-                                    <Button variant="outline" onClick={logout} className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200">
-                                        <LogOut className="w-4 h-4 mr-2" /> Выйти
-                                    </Button>
-                                </div>
-                            </div>
+    // --- CLIENT PROFILE VIEW (Light Components) ---
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-slate-100 pt-8">
-                                <div className="space-y-6">
-                                    <h3 className="text-lg font-semibold text-slate-900 mb-4">Личная информация</h3>
-                                    {/* ... standard admin info ... */}
-                                    <div className="flex items-start gap-4">
-                                        <div className="w-10 h-10 rounded-lg bg-orange-50 flex items-center justify-center text-orange-600 shrink-0">
-                                            <Mail className="w-5 h-5" />
-                                        </div>
-                                        <div>
-                                            <p className="text-sm font-medium text-slate-500">Email Address</p>
-                                            <p className="text-slate-900">{user.email}</p>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-start gap-4">
-                                        <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 shrink-0">
-                                            <Briefcase className="w-5 h-5" />
-                                        </div>
-                                        <div>
-                                            <p className="text-sm font-medium text-slate-500">Должность</p>
-                                            <p className="text-slate-900">{user.position || "Администратор"}</p>
-                                        </div>
-                                    </div>
-                                </div>
+    const SidebarItem = ({ id, icon: Icon, label }) => (
+        <button
+            onClick={() => setActiveTab(id)}
+            className={`w-full text-left px-4 py-3 rounded-xl flex items-center gap-3 transition-all ${activeTab === id
+                    ? 'bg-white border-2 border-[#7C3AED] text-[#7C3AED] shadow-sm font-medium'
+                    : 'text-slate-600 hover:bg-slate-50'
+                }`}
+        >
+            <Icon className="w-5 h-5" />
+            {label}
+        </button>
+    );
 
-                                <div className="bg-slate-50 rounded-xl p-6">
-                                    <h3 className="text-lg font-semibold text-slate-900 mb-4">Управление</h3>
-                                    <p className="text-slate-600 mb-4">Вы имеете доступ к панели администратора.</p>
-                                    <Button onClick={() => navigate(createPageUrl("Dashboard"))} variant="outline" className="w-full">
-                                        Перейти в Dashboard
-                                    </Button>
-                                </div>
+    return (
+        <div className="min-h-screen bg-[#FAFAFA] text-slate-900 font-sans">
+            <div className="container mx-auto px-4 py-8 lg:py-12 flex flex-col lg:flex-row gap-8 lg:gap-12">
+
+                {/* Sidebar */}
+                <aside className="w-full lg:w-80 shrink-0 space-y-8">
+                    <div className="flex flex-col items-center text-center lg:items-start lg:text-left pl-4">
+                        <div className="w-24 h-24 rounded-full bg-slate-200 mb-4 overflow-hidden relative group">
+                            <div className="absolute inset-0 flex items-center justify-center text-slate-400">
+                                <User className="w-10 h-10" />
                             </div>
                         </div>
+                        <h2 className="text-xl font-bold text-slate-900">{user.vorname || "Имя"} {user.nachname || "Фамилия"}</h2>
+                        <p className="text-slate-400 text-sm mt-1">ID {user.id || "0000000000"}</p>
                     </div>
-                </>
-            )}
+
+                    <nav className="space-y-2">
+                        <SidebarItem id="orders" icon={FileText} label="Заказы" />
+                        <SidebarItem id="requests" icon={FileText} label="Заявки" />
+                        <SidebarItem id="profile" icon={Settings} label="Управление профилем" />
+                        <SidebarItem id="support" icon={HelpCircle} label="Поддержка" />
+                    </nav>
+
+                    <div className="pt-8 border-t border-slate-100">
+                        <button onClick={logout} className="text-slate-400 hover:text-red-500 transition-colors flex items-center gap-2 pl-4 text-sm font-medium">
+                            <LogOut className="w-4 h-4" /> Выйти
+                        </button>
+                    </div>
+                </aside>
+
+                {/* Main Content */}
+                <main className="flex-1">
+                    {activeTab === 'orders' && (
+                        <div className="space-y-8">
+                            <h1 className="text-3xl font-bold text-slate-900">Заказы</h1>
+
+                            {/* Filters */}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <select className="h-12 px-4 rounded-lg bg-white border border-slate-200 text-slate-600 focus:outline-none focus:border-[#7C3AED]">
+                                    <option>Статус заказа</option>
+                                    <option>Активен</option>
+                                    <option>Завершен</option>
+                                </select>
+                                <select className="h-12 px-4 rounded-lg bg-white border border-slate-200 text-slate-600 focus:outline-none focus:border-[#7C3AED]">
+                                    <option>Категория услуги</option>
+                                    <option>Сантехника</option>
+                                    <option>Ремонт</option>
+                                </select>
+                                <div className="relative">
+                                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                                    <input
+                                        type="text"
+                                        placeholder="Поиск по номеру заказа"
+                                        className="w-full h-12 pl-12 pr-4 rounded-lg bg-white border border-slate-200 focus:outline-none focus:border-[#7C3AED]"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Order List */}
+                            <div className="space-y-4">
+                                {MOCK_ORDERS.map((order) => (
+                                    <div key={order.id} className="bg-[#F8F7FF] rounded-2xl p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 hover:shadow-md transition-shadow cursor-pointer">
+                                        <div className="space-y-4 flex-1">
+                                            <div className="font-bold text-slate-900 text-lg">{order.status}</div>
+                                            <div>
+                                                <h3 className="font-bold text-xl text-slate-900 mb-2">{order.title}</h3>
+                                                <div className="text-slate-500 text-sm space-y-1">
+                                                    <p>Категория заказа: {order.category}</p>
+                                                    <p>Номер заказа: {order.number}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="w-full md:w-32 h-24 bg-slate-200 rounded-xl shrink-0"></div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {activeTab === 'profile' && (
+                        <div className="space-y-8 max-w-2xl">
+                            <h1 className="text-3xl font-bold text-slate-900">Управление профилем</h1>
+
+                            <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100 space-y-8">
+                                <div className="flex items-center gap-6">
+                                    <div className="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
+                                        <User className="w-10 h-10" />
+                                    </div>
+                                    <button className="text-[#7C3AED] hover:underline text-sm font-medium">
+                                        Изменить фото
+                                    </button>
+                                </div>
+
+                                <div className="space-y-6">
+                                    <div className="flex justify-between items-end border-b border-slate-100 pb-2">
+                                        <span className="font-medium text-slate-900 w-1/3">Изменить имя</span>
+                                        <span className="text-slate-600 text-right flex-1">{user.vorname} {user.nachname}</span>
+                                    </div>
+                                    <div className="flex justify-between items-end border-b border-slate-100 pb-2">
+                                        <span className="font-medium text-slate-900 w-1/3">Изменить номер</span>
+                                        <span className="text-slate-600 text-right flex-1">+49 (900) 000 000 000</span>
+                                    </div>
+                                    <div className="flex justify-between items-end border-b border-slate-100 pb-2">
+                                        <span className="font-medium text-slate-900 w-1/3">Изменить почту</span>
+                                        <span className="text-slate-600 text-right flex-1">{user.email}</span>
+                                    </div>
+                                    <div className="flex justify-between items-end border-b border-slate-100 pb-2">
+                                        <span className="text-slate-400 text-sm">ID {user.id || "000000000"}</span>
+                                    </div>
+                                </div>
+
+                                <button className="w-full h-12 rounded-xl border border-[#7C3AED] text-[#7C3AED] font-medium hover:bg-violet-50 transition-colors">
+                                    Готово
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {activeTab === 'requests' && (
+                        <div className="text-center py-20">
+                            <h2 className="text-2xl font-bold text-slate-900 mb-4">История заявок</h2>
+                            <p className="text-slate-500">У вас пока нет активных заявок.</p>
+                        </div>
+                    )}
+
+                    {activeTab === 'support' && (
+                        <div className="text-center py-20">
+                            <h2 className="text-2xl font-bold text-slate-900 mb-4">Поддержка</h2>
+                            <p className="text-slate-500">Свяжитесь с нами: support@empire-premium.de</p>
+                        </div>
+                    )}
+                </main>
+            </div>
         </div>
     );
 }
