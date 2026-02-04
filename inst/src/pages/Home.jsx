@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
     ThumbsUp,
@@ -13,7 +13,6 @@ import {
     Phone,
     Clock,
 } from 'lucide-react';
-import { Button } from "@/components/ui/button";
 import './Home.css';
 import { createPageUrl } from "../utils";
 import { base44 } from "@/api/base44Client";

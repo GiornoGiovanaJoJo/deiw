@@ -1,5 +1,4 @@
 import React from 'react';
-import { ArrowRight } from 'lucide-react';
 
 export default function ServiceCard({ category }) {
     // Parse description if it's a list (bullet points)

@@ -6,8 +6,7 @@ from .routers import auth, admin, contact, client, public
 from . import models, utils
 import os
 
-# Create Database Tables
-Base.metadata.create_all(bind=engine)
+from contextlib import asynccontextmanager
 
 def create_default_superuser():
     db = SessionLocal()
@@ -30,11 +29,15 @@ def create_default_superuser():
     finally:
         db.close()
 
-app = FastAPI(title="Base44 App Migration")
-
-@app.on_event("startup")
-async def startup_event():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup: Create tables and default user
+    Base.metadata.create_all(bind=engine)
     create_default_superuser()
+    yield
+    # Shutdown: Clean up resources if needed (none here)
+
+app = FastAPI(title="Base44 App Migration", lifespan=lifespan)
 
 # CORS middleware
 app.add_middleware(
