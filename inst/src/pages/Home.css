@@ -412,12 +412,25 @@
   align-items: center;
   padding-top: var(--header-height);
   background: #F3F4F6;
-  /* Light grey bg from screenshot */
   position: relative;
   overflow: hidden;
 }
 
-/* ... existing hero styling ... */
+.landing-page .hero .container {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 40px;
+  align-items: center;
+}
+
+@media (min-width: 1024px) {
+  .landing-page .hero .container {
+    grid-template-columns: 1fr 1fr;
+    /* 2 columns on desktop */
+  }
+}
+
 .landing-page .hero__content {
   max-width: 600px;
   display: flex;
@@ -429,9 +442,9 @@
 
 /* Typography updates */
 .landing-page .hero__title {
-  margin-bottom: var(--spacing-md);
-  font-size: 64px;
-  /* Larger title */
+  margin-bottom: 24px;
+  font-size: clamp(36px, 5vw, 64px);
+  /* Responsive font size */
   font-weight: 700;
   line-height: 1.1;
   color: var(--text-dark);
@@ -457,10 +470,8 @@
   position: absolute;
   left: 0;
   bottom: 8px;
-  /* Adjusted position */
   width: 100%;
   height: 12px;
-  /* Thicker underline */
   background: var(--empire-purple);
   opacity: 0.8;
   z-index: -1;
@@ -468,9 +479,24 @@
 }
 
 /* ... Stats ... */
+.landing-page .hero__stats {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-top: 40px;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .landing-page .hero__stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    /* 3 columns on tablet+ */
+  }
+}
+
 .landing-page .hero__stat {
   background: white;
-  /* White cards */
   padding: 24px;
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
@@ -481,14 +507,18 @@
   color: var(--empire-purple);
   font-size: 36px;
   font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.landing-page .hero__stat-label {
+  font-size: 14px;
+  color: #64748B;
 }
 
 /* ========== CTA SECTION (Lavender) ========== */
 .landing-page .cta-section {
   background: #EDE9FE;
-  /* Lavender background */
   padding: 100px 0 180px;
-  /* Extra bottom padding for overlap */
   text-align: center;
 }
 
@@ -499,10 +529,15 @@
   color: var(--text-dark);
 }
 
+.landing-page .cta-section .section__subtitle {
+  margin-bottom: 32px;
+  font-size: 18px;
+  color: #4B5563;
+}
+
 /* ========== FOOTER ========== */
 .landing-page .footer {
   background: var(--empire-dark);
-  /* Dark background */
   color: white;
   padding-top: 0;
   position: relative;
@@ -512,7 +547,6 @@
 .landing-page .footer__contact-inner {
   position: relative;
   margin-top: -120px;
-  /* Negative margin to pull it up */
   z-index: 10;
   margin-bottom: 60px;
 }
@@ -523,16 +557,15 @@
   padding: 40px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
   max-width: 500px;
-  margin-left: auto;
-  /* Aligned right as in screenshot? Actually centered/right in layout */
   margin: 0 auto;
-  /* Centered in mobile, potentially right in desktop if needed, assuming centered based on design usually */
 }
 
-/* Wait, screenshot 3 shows form floating over dark bg? Or screenshot 3 shows form on white card overlapping? 
-   Image 3 shows form is a white card on the RIGHT (or centered?), overlapping the lavender/dark transition. 
-   Let's assume centered for now as per `Home.jsx` logic, but `Home.jsx` had it in `footer__contact`.
-*/
+@media (min-width: 1024px) {
+  .landing-page .footer__form-box {
+    margin: 0;
+    /* Align left/right based on flex parent */
+  }
+}
 
 .landing-page .footer__form-tabs {
   display: flex;
@@ -547,6 +580,11 @@
   font-weight: 500;
   background: #F1F5F9;
   color: #64748B;
+  transition: all 0.3s;
+}
+
+.landing-page .footer__form-tab:hover {
+  background: #E2E8F0;
 }
 
 .landing-page .footer__form-tab.is-active {
@@ -556,10 +594,41 @@
 
 .landing-page .footer__bottom-wrap {
   background: var(--empire-dark);
-  /* Ensure bottom is dark */
   padding-bottom: 40px;
 }
 
+
+/* ========== FEATURES SECTION ========== */
+.landing-page .features {
+  background: white;
+  padding: 80px 0;
+}
+
+.landing-page .features__wrap {
+  display: grid;
+  gap: 40px;
+}
+
+@media (min-width: 1024px) {
+  .landing-page .features__wrap {
+    grid-template-columns: 1fr 1fr;
+    /* 2 cols on desktop */
+    align-items: start;
+  }
+}
+
+.landing-page .features__grid {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: 1fr;
+}
+
+.landing-page .feature-card {
+  padding: 24px;
+  border-radius: 16px;
+  background: #F8FAFC;
+  /* Light slate bg */
+}
 
 .landing-page .feature-card__icon svg,
 .landing-page .feature-card__icon .icon-sprite {
