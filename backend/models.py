@@ -19,6 +19,7 @@ class User(Base):
     position = Column(String, default="User")
 
     requests = relationship("ContactRequest", back_populates="user")
+    projects = relationship("AdminProject", back_populates="user")
 
 class Category(Base):
     __tablename__ = "categories"
@@ -45,8 +46,10 @@ class AdminProject(Base):
     color = Column(String)
     end_date = Column(Date)
     category_id = Column(Integer, ForeignKey("categories.id"))
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
 
     category = relationship("Category", back_populates="projects")
+    user = relationship("User", back_populates="projects")
 
 class Kunde(Base):
     __tablename__ = "kunden"

@@ -47,6 +47,20 @@ export const base44 = {
       window.location.href = '/login';
     }
   },
+  client: {
+    getMyProjects: async () => {
+      const response = await api.get('/client/projects');
+      return response.data;
+    },
+    getMyRequests: async () => {
+      const response = await api.get('/client/requests');
+      return response.data;
+    },
+    updateProfile: async (data) => {
+      const response = await api.patch('/client/profile', data);
+      return response.data;
+    }
+  },
   entities: {
     Projekt: createEntityClient('/admin/projects'),
     Kunde: createEntityClient('/admin/customers'),

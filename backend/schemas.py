@@ -55,6 +55,7 @@ class ProjectBase(BaseModel):
     color: Optional[str] = None
     end_date: Optional[date] = None
     category_id: Optional[int] = None
+    user_id: Optional[int] = None
 
 class ProjectCreate(ProjectBase):
     pass
