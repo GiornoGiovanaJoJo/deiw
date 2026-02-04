@@ -170,8 +170,8 @@ export default function Layout({ children, currentPageName }) {
         }
       }
 
-      if (!isAuthenticated && currentPageName !== "BenutzerLogin" && currentPageName !== "Home") {
-        navigate(createPageUrl("BenutzerLogin"));
+      if (!isAuthenticated && currentPageName !== "BenutzerLogin" && currentPageName !== "Home" && currentPageName !== "Login" && currentPageName !== "Register") {
+        navigate(createPageUrl("Login"));
       }
     };
 
@@ -179,7 +179,7 @@ export default function Layout({ children, currentPageName }) {
   }, [currentPageName, navigate]);
 
   // Pages without layout (Rendered after hooks to comply with Rules of Hooks)
-  if (currentPageName === "Terminal" || currentPageName === "BenutzerLogin" || currentPageName === "Home") {
+  if (currentPageName === "Terminal" || currentPageName === "BenutzerLogin" || currentPageName === "Home" || currentPageName === "Login" || currentPageName === "Register") {
     return <div className="min-h-screen bg-slate-50">{children}</div>;
   }
 

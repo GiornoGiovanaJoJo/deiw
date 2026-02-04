@@ -69,6 +69,9 @@ import SupportForm from './pages/SupportForm';
 import Terminal from './pages/Terminal';
 import Waren from './pages/Waren';
 import Home from './pages/Home';
+import Login from './pages/Login.jsx';
+import Register from './pages/Register.jsx';
+import Profile from './pages/Profile.jsx';
 import __Layout from './Layout.jsx';
 
 
@@ -95,6 +98,9 @@ export const PAGES = {
     "Terminal": Terminal,
     "Waren": Waren,
     "Home": Home,
+    "Login": Login,
+    "Register": Register,
+    "Profile": Profile,
 }
 
 export const pagesConfig = {
