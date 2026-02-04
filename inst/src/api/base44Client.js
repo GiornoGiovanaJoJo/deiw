@@ -61,6 +61,16 @@ export const base44 = {
       return response.data;
     }
   },
+  public: {
+    getProjects: async (limit = 100) => {
+      const response = await api.get(`/public/projects?limit=${limit}`);
+      return response.data;
+    },
+    getCategories: async (limit = 100) => {
+      const response = await api.get(`/public/categories?limit=${limit}`);
+      return response.data;
+    }
+  },
   entities: {
     Projekt: createEntityClient('/admin/projects'),
     Kunde: createEntityClient('/admin/customers'),

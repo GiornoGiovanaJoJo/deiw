@@ -12,12 +12,13 @@ import {
     Mail,
     Phone,
     Clock,
-    MapPin,
-    CheckCircle2
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import './Home.css';
 import { createPageUrl } from "../utils";
+import { base44 } from "@/api/base44Client";
+import ServiceCard from "@/components/ServiceCard";
+import ProjectCard from "@/components/ProjectCard";
 
 const TikTokIcon = () => (
     <svg viewBox="0 0 18 22" width="20" height="20" fill="currentColor">
@@ -33,8 +34,36 @@ export default function Home() {
     const [visibleServices, setVisibleServices] = useState(1);
     const [formMessage, setFormMessage] = useState({ text: '', type: '' });
 
-    const servicesRef = useRef(null);
+    // Dynamic Data State
+    const [services, setServices] = useState([]);
+    const [projects, setProjects] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    // Project Pagination
+    const [projectPage, setProjectPage] = useState(0);
+    const projectsPerPage = 3;
+
     const navigate = useNavigate();
+
+    // Data Fetching
+    useEffect(() => {
+        const loadPublicData = async () => {
+            try {
+                const [cats, projs] = await Promise.all([
+                    base44.public.getCategories(50),
+                    base44.public.getProjects(50)
+                ]);
+                setServices(cats);
+                // Filter logs or invalid projects if needed, for now use all
+                setProjects(projs);
+            } catch (error) {
+                console.error("Failed to load public data:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadPublicData();
+    }, []);
 
     // Scroll effect for header
     useEffect(() => {
@@ -67,10 +96,13 @@ export default function Home() {
             });
         }, { threshold: 0.1 });
 
-        document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+        // Small delay to allow DOM to populate
+        setTimeout(() => {
+            document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+        }, 500);
 
         return () => observer.disconnect();
-    }, []);
+    }, [services, projects]);
 
     const scrollToSection = (id) => {
         const element = document.getElementById(id);
@@ -89,6 +121,21 @@ export default function Home() {
         setCurrentService(curr => Math.max(curr - 1, 0));
     };
 
+    // Project Pagination Handlers
+    const handleNextProjectPage = () => {
+        const maxPage = Math.ceil(projects.length / projectsPerPage) - 1;
+        setProjectPage(curr => Math.min(curr + 1, maxPage));
+    };
+
+    const handlePrevProjectPage = () => {
+        setProjectPage(curr => Math.max(curr - 1, 0));
+    };
+
+    const visibleProjects = projects.slice(
+        projectPage * projectsPerPage,
+        (projectPage + 1) * projectsPerPage
+    );
+
     const handleFormSubmit = (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
@@ -104,30 +151,6 @@ export default function Home() {
         setFormMessage({ text: 'Спасибо! Мы свяжемся с вами в течение 15 минут.', type: 'success' });
         e.target.reset();
     };
-
-    const services = [
-        {
-            title: "Малярные работы",
-            img: "Малярные работы",
-            items: ["Покраска стен и потолков", "Покраска фасадов", "Покраска дверей и окон", "Шпаклёвка стен", "Грунтовка поверхностей", "Удаление старой краски"]
-        },
-        {
-            title: "Сантехника",
-            img: "Сантехника",
-            items: ["Разводка труб", "Замена труб", "Установка сантехники", "Установка душевой кабины", "Подключение техники", "Устранение протечек"]
-        },
-        {
-            title: "Электрика",
-            img: "Электрика",
-            items: ["Внутренняя электрика", "Наружная электрика", "Прокладка кабеля", "Замена проводки", "Установка розеток", "Монтаж электрощита"]
-        }
-    ];
-
-    const projects = [
-        { title: "Установка солнечных панелей", desc: "Солнечные панели, реализованные с высокими требованиями.", img: "Солнечные панели" },
-        { title: "Строительство под ключ", desc: "Полный цикл: от фундамента до отделки.", img: "Строительство" },
-        { title: "Реконструкция фасада", desc: "Надёжные решения для фасада. Безопасность и вид.", img: "Фасад" }
-    ];
 
     return (
         <div className="landing-page font-sans text-slate-900 bg-white">
@@ -208,12 +231,16 @@ export default function Home() {
                             </div>
                         </div>
                         <div className="hero__visual">
-                            <div className="hero__visual-inner bg-slate-200 h-full w-full flex items-center justify-center text-slate-500">
-                                Image Placeholder
+                            <div className="hero__visual-inner bg-slate-200 h-full w-full flex items-center justify-center text-slate-500 rounded-2xl overflow-hidden">
+                                <img
+                                    src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=1000&auto=format&fit=crop"
+                                    alt="Hero Building"
+                                    className="w-full h-full object-cover"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                             </div>
                         </div>
                     </div>
-                    <div className="hero__bottom-line"></div>
                 </section>
 
                 {/* Features */}
@@ -253,51 +280,94 @@ export default function Home() {
                 {/* Services */}
                 <section className="section services" id="services">
                     <div className="container">
-                        <h2 className="section__title animate-on-scroll">Наши услуги</h2>
-                        <div className="services__slider">
-                            <div
-                                className="services__track"
-                                style={{ transform: `translateX(-${services.length > 0 ? (currentService / services.length) * 100 : 0}%)` }}
-                            >
-                                {services.map((service, idx) => (
-                                    <article key={idx} className="service-card animate-on-scroll">
-                                        <div className="service-card__img">{service.img}</div>
-                                        <div className="service-card__body">
-                                            <h3 className="service-card__title">{service.title}</h3>
-                                            <ul className="service-card__list">
-                                                {service.items.map((item, i) => (
-                                                    <li key={i}>{item}</li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                    </article>
-                                ))}
+                        <h2 className="section__title animate-on-scroll text-[#7C3AED] mb-8">Наши услуги</h2>
+
+                        {loading ? (
+                            <div className="flex justify-center p-12"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#7C3AED]"></div></div>
+                        ) : (
+                            <div className="relative">
+                                <div className="overflow-hidden p-2 -m-2">
+                                    <div
+                                        className="flex transition-transform duration-500 ease-in-out gap-6"
+                                        style={{ transform: `translateX(calc(-${(currentService * (100 / visibleServices))}%)` }}
+                                    >
+                                        {services.map((service, idx) => (
+                                            <div
+                                                key={service.id || idx}
+                                                className="flex-shrink-0 animate-on-scroll"
+                                                style={{ width: `calc((100% - ${(visibleServices - 1) * 24}px) / ${visibleServices})` }}
+                                            >
+                                                <ServiceCard category={service} />
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div className="flex justify-end gap-2 mt-6">
+                                    <button
+                                        onClick={handlePrevService}
+                                        className="p-3 rounded-full border border-[#7C3AED] text-[#7C3AED] hover:bg-[#7C3AED] hover:text-white transition-colors"
+                                        disabled={currentService === 0}
+                                    >
+                                        <ArrowLeft className="w-5 h-5" />
+                                    </button>
+                                    <button
+                                        onClick={handleNextService}
+                                        className="p-3 rounded-full border border-[#7C3AED] text-[#7C3AED] hover:bg-[#7C3AED] hover:text-white transition-colors"
+                                        disabled={currentService >= services.length - visibleServices}
+                                    >
+                                        <ArrowRight className="w-5 h-5" />
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                        <div className="services__arrows">
-                            <button onClick={handlePrevService} className="services__arrow"><ArrowLeft /></button>
-                            <button onClick={handleNextService} className="services__arrow"><ArrowRight /></button>
-                        </div>
+                        )}
+
+                        {services.length === 0 && !loading && (
+                            <p className="text-center text-slate-400 py-12">Услуги скоро появятся</p>
+                        )}
                     </div>
                 </section>
 
                 {/* Projects */}
                 <section className="section projects" id="projects">
                     <div className="container">
-                        <h2 className="section__title animate-on-scroll">Наши проекты</h2>
-                        <div className="projects__grid">
-                            {projects.map((project, idx) => (
-                                <article key={idx} className="project-card animate-on-scroll">
-                                    <div className="project-card__img">{project.img}</div>
-                                    <div className="project-card__body">
-                                        <h3 className="project-card__title">{project.title}</h3>
-                                        <p className="project-card__desc">{project.desc}</p>
-                                        <a href="#" className="project-card__link">Подробнее <ArrowRight className="w-4 h-4" /></a>
-                                        <p className="project-card__address">Hastedter Heerstraße 63</p>
-                                    </div>
-                                </article>
-                            ))}
+                        <div className="flex items-center justify-between mb-8">
+                            <h2 className="section__title animate-on-scroll text-[#7C3AED]">Наши проекты</h2>
+                            {/* Pagination Controls */}
+                            {projects.length > 0 && (
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={handlePrevProjectPage}
+                                        disabled={projectPage === 0}
+                                        className="p-2 rounded-lg border hover:bg-slate-50 disabled:opacity-50"
+                                    >
+                                        <ArrowLeft className="w-5 h-5" />
+                                    </button>
+                                    <button
+                                        onClick={handleNextProjectPage}
+                                        disabled={(projectPage + 1) * projectsPerPage >= projects.length}
+                                        className="p-2 rounded-lg border hover:bg-slate-50 disabled:opacity-50"
+                                    >
+                                        <ArrowRight className="w-5 h-5" />
+                                    </button>
+                                </div>
+                            )}
                         </div>
+
+                        {loading ? (
+                            <div className="flex justify-center p-12"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#7C3AED]"></div></div>
+                        ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {visibleProjects.map((project, idx) => (
+                                    <div key={project.id || idx} className="h-full animate-on-scroll">
+                                        <ProjectCard project={project} />
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        {projects.length === 0 && !loading && (
+                            <p className="text-center text-slate-400 py-12">Проекты скоро появятся</p>
+                        )}
                     </div>
                 </section>
 

@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from .database import engine, Base, SessionLocal
-from .routers import auth, admin, contact, client
+from .routers import auth, admin, contact, client, public
 from . import models, utils
 import os
 
@@ -49,6 +49,7 @@ app.include_router(auth.router)
 app.include_router(admin.router)
 app.include_router(contact.router)
 app.include_router(client.router)
+app.include_router(public.router)
 
 @app.get("/api/health")
 async def health_check():
