@@ -28,10 +28,11 @@ const TikTokIcon = () => (
 export default function Home() {
     const [scrolled, setScrolled] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-    const [activeTab, setActiveTab] = useState('question');
+    const [activeTab, setActiveTab] = useState('Заявка');
     const [currentService, setCurrentService] = useState(0);
     const [visibleServices, setVisibleServices] = useState(1);
     const [formMessage, setFormMessage] = useState({ text: '', type: '' });
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Dynamic Data State
     const [services, setServices] = useState([]);
@@ -135,20 +136,36 @@ export default function Home() {
         (projectPage + 1) * projectsPerPage
     );
 
-    const handleFormSubmit = (e) => {
+    const handleFormSubmit = async (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
-        const name = formData.get('name');
-        const phone = formData.get('phone');
-        const email = formData.get('email');
 
-        if (!name || !phone || !email) {
+        const data = {
+            name: formData.get('name'),
+            phone: formData.get('phone'),
+            email: formData.get('email'),
+            message: formData.get('message'),
+            type: activeTab
+        };
+
+        if (!data.name || !data.phone || !data.email) {
             setFormMessage({ text: 'Пожалуйста, заполните все поля.', type: 'error' });
             return;
         }
 
-        setFormMessage({ text: 'Спасибо! Мы свяжемся с вами в течение 15 минут.', type: 'success' });
-        e.target.reset();
+        setIsSubmitting(true);
+        setFormMessage({ text: '', type: '' });
+
+        try {
+            await base44.public.submitInquiry(data);
+            setFormMessage({ text: 'Спасибо! Мы свяжемся с вами в течение 15 минут.', type: 'success' });
+            e.target.reset();
+        } catch (error) {
+            console.error("Form submission error:", error);
+            setFormMessage({ text: 'Произошла ошибка при отправке. Попробуйте позже.', type: 'error' });
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -397,11 +414,12 @@ export default function Home() {
                                 <div className="footer__form-box w-full lg:w-auto lg:min-w-[480px]" id="footer-form">
                                     <h3 className="footer__form-title">Заполните форму, и мы свяжемся с вами в течение 15 минут</h3>
                                     <div className="footer__form-tabs">
-                                        {['Заявка', 'Каталог', 'Отзыв'].map((tab, idx) => (
+                                        {['Заявка', 'Каталог', 'Отзыв'].map((tab) => (
                                             <button
-                                                key={idx}
+                                                key={tab}
                                                 type="button"
-                                                className={`footer__form-tab ${idx === 0 ? 'is-active' : ''}`}
+                                                onClick={() => setActiveTab(tab)}
+                                                className={`footer__form-tab ${activeTab === tab ? 'is-active' : ''}`}
                                             >
                                                 {tab}
                                             </button>
@@ -412,7 +430,13 @@ export default function Home() {
                                         <input type="tel" className="footer__input" name="phone" placeholder="Телефон" required />
                                         <input type="email" className="footer__input" name="email" placeholder="Email" required />
                                         <textarea className="footer__input" name="message" placeholder="Сообщение" rows="3"></textarea>
-                                        <button type="submit" className="footer__form-submit btn--primary w-full justify-center">Оставить заявку</button>
+                                        <button
+                                            type="submit"
+                                            className="footer__form-submit btn--primary w-full justify-center"
+                                            disabled={isSubmitting}
+                                        >
+                                            {isSubmitting ? 'Отправка...' : 'Оставить заявку'}
+                                        </button>
                                         {formMessage.text && (
                                             <p className={`mt-2 text-sm ${formMessage.type === 'error' ? 'text-red-600' : 'text-green-600'}`}>
                                                 {formMessage.text}
@@ -431,8 +455,8 @@ export default function Home() {
                                     <a href="#" className="footer__logo">Empire <span>Premium</span></a>
                                     <p className="mb-4 text-slate-500">С 2024 года мы создаем исключительные строительные проекты.</p>
                                     <div className="footer__social">
-                                        <a href="#" aria-label="Instagram"><Instagram /></a>
-                                        <a href="#" aria-label="TikTok"><TikTokIcon /></a>
+                                        <a href="#" aria-label="Instagram" target="_blank" rel="noreferrer"><Instagram /></a>
+                                        <a href="#" aria-label="TikTok" target="_blank" rel="noreferrer"><TikTokIcon /></a>
                                     </div>
                                 </div>
 

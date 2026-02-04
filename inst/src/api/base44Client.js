@@ -69,6 +69,10 @@ export const base44 = {
     getCategories: async (limit = 100) => {
       const response = await api.get(`/public/categories?limit=${limit}`);
       return response.data;
+    },
+    submitInquiry: async (data) => {
+      const response = await api.post('/public/inquiries', data);
+      return response.data;
     }
   },
   entities: {
