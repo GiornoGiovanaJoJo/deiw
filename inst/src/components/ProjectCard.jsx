@@ -13,7 +13,7 @@ export default function ProjectCard({ project }) {
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                 ) : (
-                    <div className="w-full h-full flex items-center justify-center text-white/70 font-medium">
+                    <div className="w-full h-full flex items-center justify-center text-white/70 font-medium h-full w-full">
                         {project.name}
                     </div>
                 )}

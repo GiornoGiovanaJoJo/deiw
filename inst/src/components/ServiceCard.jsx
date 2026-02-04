@@ -14,7 +14,7 @@ export default function ServiceCard({ category }) {
                 </h3>
             </div>
 
-            <div className="service-card__body flex-1 bg-slate-50">
+            <div className="service-card__body flex-1">
                 <h4 className="service-card__title">{category.name}</h4>
 
                 {features.length > 0 ? (
