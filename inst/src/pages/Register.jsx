@@ -8,8 +8,11 @@ import { createPageUrl } from "../utils";
 import api from '@/lib/api';
 import './Home.css';
 
+import { useAuth } from '@/lib/AuthContext';
+
 export default function Register() {
     const navigate = useNavigate();
+    const { login } = useAuth();
     const [formData, setFormData] = useState({
         username: '',
         email: '',
@@ -41,8 +44,14 @@ export default function Register() {
                 is_active: true,
                 is_superuser: false
             });
-            // Auto login or redirect to login? Redirect for safety.
-            navigate(createPageUrl("Login"));
+
+            // Auto login
+            const success = await login(formData.username, formData.password);
+            if (success) {
+                navigate(createPageUrl("Profile"));
+            } else {
+                navigate(createPageUrl("Login"));
+            }
         } catch (err) {
             setError(err.response?.data?.detail || 'Ошибка регистрации');
         } finally {

@@ -22,7 +22,7 @@ export default function Login() {
         const success = await login(formData.username, formData.password);
         setLoading(false);
         if (success) {
-            navigate(createPageUrl("Dashboard")); // Or Profile
+            navigate(createPageUrl("Profile"));
         } else {
             setError('Неверное имя пользователя или пароль');
         }

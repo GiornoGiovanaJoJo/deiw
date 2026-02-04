@@ -147,7 +147,7 @@ export default function Home() {
                     </nav>
 
                     <div className="header__cta">
-                        <Link to={createPageUrl("BenutzerLogin")} className="btn btn--gold">
+                        <Link to={createPageUrl("Login")} className="btn btn--gold">
                             Войти
                         </Link>
                         <button onClick={() => scrollToSection('footer-form')} className="btn btn--outline-purple">
@@ -170,7 +170,7 @@ export default function Home() {
                     <button onClick={() => scrollToSection('contact')} className="nav__link text-left">Карьера</button>
                 </nav>
                 <div className="mt-8 flex flex-col gap-4">
-                    <Link to={createPageUrl("BenutzerLogin")} className="btn btn--gold w-full">
+                    <Link to={createPageUrl("Login")} className="btn btn--gold w-full">
                         Войти
                     </Link>
                 </div>
