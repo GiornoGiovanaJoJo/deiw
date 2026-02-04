@@ -411,55 +411,13 @@
   display: flex;
   align-items: center;
   padding-top: var(--header-height);
-  background: #FFFFFF;
+  background: #F3F4F6;
+  /* Light grey bg from screenshot */
   position: relative;
   overflow: hidden;
 }
 
-.landing-page .hero::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  right: -20%;
-  width: 80%;
-  height: 150%;
-  background: radial-gradient(ellipse at center, rgba(212, 175, 55, 0.15) 0%, transparent 70%);
-  pointer-events: none;
-  filter: blur(60px);
-}
-
-.landing-page .hero::after {
-  content: '';
-  position: absolute;
-  bottom: -30%;
-  left: -10%;
-  width: 60%;
-  height: 80%;
-  background: radial-gradient(ellipse at center, rgba(124, 58, 237, 0.12) 0%, transparent 70%);
-  pointer-events: none;
-  filter: blur(60px);
-}
-
-.landing-page .hero .container {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  gap: var(--spacing-xl);
-  align-items: center;
-  padding-top: var(--spacing-xl);
-  padding-bottom: var(--spacing-xl);
-}
-
-@media (min-width: 1024px) {
-  .landing-page .hero .container {
-    position: static;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--spacing-xl);
-    padding-top: var(--spacing-xl);
-    padding-bottom: var(--spacing-xl);
-  }
-}
-
+/* ... existing hero styling ... */
 .landing-page .hero__content {
   max-width: 600px;
   display: flex;
@@ -469,297 +427,139 @@
   z-index: 2;
 }
 
+/* Typography updates */
 .landing-page .hero__title {
   margin-bottom: var(--spacing-md);
-  font-size: clamp(36px, 4.5vw, 44px);
+  font-size: 64px;
+  /* Larger title */
   font-weight: 700;
-  line-height: 52px;
-  color: var(--accent-purple);
+  line-height: 1.1;
+  color: var(--text-dark);
 }
 
-.landing-page .hero__content .hero__subtitle:last-of-type {
-  margin-bottom: 0;
+.landing-page .hero__brand {
+  color: var(--text-dark);
 }
 
-.landing-page .hero__title .hero__brand,
-.landing-page .hero__title .underline {
-  color: var(--accent-purple);
+.landing-page .hero__brand+span {
+  color: var(--empire-purple);
 }
 
 .landing-page .hero__title .underline {
   position: relative;
   display: inline-block;
+  color: var(--text-dark);
+  z-index: 1;
 }
 
 .landing-page .hero__title .underline::after {
   content: '';
   position: absolute;
   left: 0;
-  bottom: 4px;
+  bottom: 8px;
+  /* Adjusted position */
   width: 100%;
-  height: 8px;
-  background: #F0EFFF;
-  border-radius: 4px;
+  height: 12px;
+  /* Thicker underline */
+  background: var(--empire-purple);
+  opacity: 0.8;
   z-index: -1;
+  border-radius: 2px;
 }
 
-.landing-page .hero__title .hero__title-small {
-  font-size: 0.6em;
-  font-weight: 600;
-}
-
-.landing-page .hero__stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 28px;
-  margin-top: var(--spacing-lg);
-  max-width: 100%;
-}
-
-@media (min-width: 480px) {
-  .landing-page .hero__stats {
-    max-width: 400px;
-  }
-}
-
+/* ... Stats ... */
 .landing-page .hero__stat {
-  background: var(--bg-lavender);
-  padding: var(--spacing-md);
-  border-radius: var(--radius);
-  box-shadow: none;
+  background: white;
+  /* White cards */
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
   text-align: center;
 }
 
 .landing-page .hero__stat-num {
-  font-size: 48px;
-  font-weight: 400;
-  line-height: 80px;
-  color: black;
-  margin-bottom: 6px;
-}
-
-.landing-page .hero__stat-label {
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 20px;
-  color: black;
-  opacity: 0.65;
-}
-
-.landing-page .hero__stat:last-child .hero__stat-label {
-  color: #5E6064;
-  opacity: 1;
-}
-
-.landing-page .hero__subtitle {
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 22px;
-  color: black;
-  margin-bottom: var(--spacing-sm);
-  max-width: 604px;
-}
-
-.landing-page .hero__subtitle:first-of-type .hero__brand-inline {
-  color: var(--accent-purple);
-}
-
-.landing-page .hero__buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-sm);
-  margin-top: var(--spacing-md);
-}
-
-.landing-page .hero__buttons .btn {
-  min-width: 160px;
-  font-size: 18px;
-  font-weight: 500;
-  line-height: 24px;
-  color: white;
-}
-
-.landing-page .hero__visual {
-  position: relative;
-  display: none;
-}
-
-@media (min-width: 1024px) {
-  .landing-page .hero__visual {
-    display: block;
-    position: absolute;
-    right: -24px;
-    top: var(--header-height);
-    bottom: 41px;
-    width: 50%;
-    height: auto;
-  }
-
-  .landing-page .hero__visual-inner {
-    height: 100%;
-    min-height: 100%;
-  }
-}
-
-.landing-page .hero__visual-inner {
-  position: relative;
-  border-radius: 0;
-  overflow: hidden;
-  box-shadow: none;
-  height: 100%;
-}
-
-.landing-page .hero__visual-placeholder {
-  width: 100%;
-  height: 100%;
-  min-height: 400px;
-  background: linear-gradient(160deg, #94a3b8 0%, #64748b 50%, #475569 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--white);
-  font-size: 0.9rem;
-  font-weight: 500;
-  object-fit: cover;
-}
-
-@media (min-width: 1024px) {
-  .landing-page .hero__visual-placeholder {
-    min-height: 100%;
-    aspect-ratio: auto;
-  }
-}
-
-.landing-page .hero__visual-placeholder img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.landing-page .hero__bottom-line {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100%;
-  height: 41px;
-  background: #F0EFFF;
-  border-bottom-left-radius: 20px;
-  border-bottom-right-radius: 20px;
-  z-index: 1;
-}
-
-/* ========== SECTION COMMON ========== */
-.landing-page .section {
-  padding: var(--spacing-xl) 0;
-}
-
-@media (min-width: 768px) {
-  .landing-page .section {
-    padding: calc(var(--spacing-xl) * 1.25) 0;
-  }
-}
-
-.landing-page .section__title {
-  text-align: center;
-  margin-bottom: var(--spacing-lg);
-  color: var(--primary-dark);
-}
-
-.landing-page .section__subtitle {
-  text-align: center;
-  color: var(--text-light);
-  max-width: 560px;
-  margin: 0 auto var(--spacing-lg);
-}
-
-/* ========== FEATURES ========== */
-.landing-page .features {
-  background: #FFFFFF;
-}
-
-.landing-page .features .section__title {
-  text-align: left;
-  margin-bottom: var(--spacing-md);
-  font-size: 44px;
+  color: var(--empire-purple);
+  font-size: 36px;
   font-weight: 700;
-  line-height: 52px;
 }
 
-.landing-page .features .section__title--split .section__title-accent {
-  color: var(--accent-purple);
+/* ========== CTA SECTION (Lavender) ========== */
+.landing-page .cta-section {
+  background: #EDE9FE;
+  /* Lavender background */
+  padding: 100px 0 180px;
+  /* Extra bottom padding for overlap */
+  text-align: center;
 }
 
-.landing-page .features .section__title--split .section__title-base {
-  color: black;
+.landing-page .cta-section .section__title {
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: var(--text-dark);
 }
 
-.landing-page .features .section__subtitle {
-  text-align: left;
-  margin: 0 0 var(--spacing-md);
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 22px;
-  color: black;
-  opacity: 0.65;
+/* ========== FOOTER ========== */
+.landing-page .footer {
+  background: var(--empire-dark);
+  /* Dark background */
+  color: white;
+  padding-top: 0;
+  position: relative;
 }
 
-.landing-page .features__text .btn {
-  margin-top: var(--spacing-sm);
-  font-size: 18px;
+/* Overlapping Form */
+.landing-page .footer__contact-inner {
+  position: relative;
+  margin-top: -120px;
+  /* Negative margin to pull it up */
+  z-index: 10;
+  margin-bottom: 60px;
+}
+
+.landing-page .footer__form-box {
+  background: white;
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  margin-left: auto;
+  /* Aligned right as in screenshot? Actually centered/right in layout */
+  margin: 0 auto;
+  /* Centered in mobile, potentially right in desktop if needed, assuming centered based on design usually */
+}
+
+/* Wait, screenshot 3 shows form floating over dark bg? Or screenshot 3 shows form on white card overlapping? 
+   Image 3 shows form is a white card on the RIGHT (or centered?), overlapping the lavender/dark transition. 
+   Let's assume centered for now as per `Home.jsx` logic, but `Home.jsx` had it in `footer__contact`.
+*/
+
+.landing-page .footer__form-tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.landing-page .footer__form-tab {
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
   font-weight: 500;
-  line-height: 24px;
+  background: #F1F5F9;
+  color: #64748B;
+}
+
+.landing-page .footer__form-tab.is-active {
+  background: var(--empire-purple);
   color: white;
 }
 
-.landing-page .features__wrap {
-  display: grid;
-  gap: var(--spacing-xl);
-  align-items: start;
+.landing-page .footer__bottom-wrap {
+  background: var(--empire-dark);
+  /* Ensure bottom is dark */
+  padding-bottom: 40px;
 }
 
-@media (min-width: 1024px) {
-  .landing-page .features__wrap {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-.landing-page .features__text {
-  max-width: 560px;
-}
-
-.landing-page .features__grid {
-  display: grid;
-  gap: var(--spacing-md);
-  grid-template-columns: 1fr;
-}
-
-.landing-page .feature-card {
-  padding: var(--spacing-lg);
-  background: var(--bg-lavender);
-  border-radius: var(--radius);
-  transition: transform var(--transition), box-shadow var(--transition);
-  border: 1px solid rgba(105, 94, 249, 0.12);
-}
-
-.landing-page .feature-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-md);
-  border-color: var(--accent-purple);
-}
-
-.landing-page .feature-card__icon {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: var(--spacing-md);
-  color: var(--accent-purple);
-  padding: 12px;
-}
 
 .landing-page .feature-card__icon svg,
 .landing-page .feature-card__icon .icon-sprite {

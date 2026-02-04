@@ -373,8 +373,8 @@ export default function Home() {
                 {/* CTA */}
                 <section className="cta-section" id="contact">
                     <div className="container">
-                        <h2 className="section__title animate-on-scroll">У вас есть вопросы или нужна помощь?</h2>
-                        <p className="section__subtitle animate-on-scroll">Команда Empire Premium всегда готова прийти на помощь.</p>
+                        <h2 className="section__title animate-on-scroll">У вас есть вопросы, предложения или<br />нужна помощь с вашим проектом?</h2>
+                        <p className="section__subtitle animate-on-scroll mb-8">Свяжитесь с нами — ответим в течение 15 минут и обсудим вашу задачу.</p>
                         <button onClick={() => scrollToSection('footer-form')} className="btn btn--primary animate-on-scroll">
                             Связаться с нами <ArrowRight className="w-4 h-4 ml-2" />
                         </button>
@@ -384,35 +384,42 @@ export default function Home() {
                 {/* Footer */}
                 <footer className="footer">
                     <section className="footer__contact">
-                        <div className="footer__contact-bg"></div>
+                        {/* Removed duplicate slogan here, it's now in CTA section effectively or implied */}
                         <div className="container footer__contact-inner">
-                            <h2 className="footer__slogan">Empire Premium — Ваш партнёр по строительству</h2>
-                            <div className="footer__form-box" id="footer-form">
-                                <h3 className="footer__form-title">Заполните форму, и мы ответим на вопросы.</h3>
-                                <div className="footer__form-tabs">
-                                    {['question', 'career', 'review'].map(tab => (
-                                        <button
-                                            key={tab}
-                                            type="button"
-                                            className={`footer__form-tab ${activeTab === tab ? 'is-active' : ''}`}
-                                            onClick={() => setActiveTab(tab)}
-                                        >
-                                            {tab === 'question' ? 'ЗАДАТЬ ВОПРОС' : tab === 'career' ? 'КАРЬЕРА' : 'ОТЗЫВ'}
-                                        </button>
-                                    ))}
+                            <div className="hidden lg:block absolute left-0 top-10 text-white opacity-20 text-9xl font-bold -z-10">EMPIRE</div> {/* Decorative */}
+
+                            {/* Two column layout for footer top if needed, or just the form floating */}
+                            <div className="flex flex-col lg:flex-row items-end justify-between gap-12">
+                                <div className="text-white pt-20 pb-12 hidden lg:block">
+                                    <h2 className="text-4xl font-bold mb-4">Empire Premium — Ваш<br />партнёр по строительству</h2>
                                 </div>
-                                <form className="footer__form" onSubmit={handleFormSubmit}>
-                                    <input type="text" className="footer__input" name="name" placeholder="Ваше имя" required />
-                                    <input type="tel" className="footer__input" name="phone" placeholder="Номер телефона" required />
-                                    <input type="email" className="footer__input" name="email" placeholder="Email" required />
-                                    <textarea className="footer__input" name="message" placeholder="Ваше сообщение"></textarea>
-                                    <button type="submit" className="footer__form-submit btn--primary">ОТПРАВИТЬ ЗАЯВКУ</button>
-                                    {formMessage.text && (
-                                        <p className={`mt-2 text-sm ${formMessage.type === 'error' ? 'text-red-600' : 'text-green-600'}`}>
-                                            {formMessage.text}
-                                        </p>
-                                    )}
-                                </form>
+
+                                <div className="footer__form-box w-full lg:w-auto lg:min-w-[480px]" id="footer-form">
+                                    <h3 className="footer__form-title">Заполните форму, и мы свяжемся с вами в течение 15 минут</h3>
+                                    <div className="footer__form-tabs">
+                                        {['Заявка', 'Каталог', 'Отзыв'].map((tab, idx) => (
+                                            <button
+                                                key={idx}
+                                                type="button"
+                                                className={`footer__form-tab ${idx === 0 ? 'is-active' : ''}`}
+                                            >
+                                                {tab}
+                                            </button>
+                                        ))}
+                                    </div>
+                                    <form className="footer__form" onSubmit={handleFormSubmit}>
+                                        <input type="text" className="footer__input" name="name" placeholder="Имя" required />
+                                        <input type="tel" className="footer__input" name="phone" placeholder="Телефон" required />
+                                        <input type="email" className="footer__input" name="email" placeholder="Email" required />
+                                        <textarea className="footer__input" name="message" placeholder="Сообщение" rows="3"></textarea>
+                                        <button type="submit" className="footer__form-submit btn--primary w-full justify-center">Оставить заявку</button>
+                                        {formMessage.text && (
+                                            <p className={`mt-2 text-sm ${formMessage.type === 'error' ? 'text-red-600' : 'text-green-600'}`}>
+                                                {formMessage.text}
+                                            </p>
+                                        )}
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </section>
