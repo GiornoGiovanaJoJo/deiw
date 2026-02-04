@@ -3,28 +3,28 @@ import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "./utils";
 import { base44 } from "@/api/base44Client";
 import {
-        LayoutDashboard,
-        Users,
-        FolderKanban,
-        ClipboardList,
-        Tags,
-        MessageSquare,
-        Warehouse,
-        Package,
-        Terminal,
-        FileText,
-        ChevronDown,
-        ChevronRight,
-        Menu,
-        X,
-        LogOut,
-        User,
-        Building2,
-        Mail
-      } from "lucide-react";
+  LayoutDashboard,
+  Users,
+  FolderKanban,
+  ClipboardList,
+  Tags,
+  MessageSquare,
+  Warehouse,
+  Package,
+  Terminal,
+  FileText,
+  ChevronDown,
+  ChevronRight,
+  Menu,
+  X,
+  LogOut,
+  User,
+  Building2,
+  Mail
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import PWAInstallPrompt from "@/components/PWAInstallPrompt";
+
 
 // Register service worker
 if ("serviceWorker" in navigator) {
@@ -126,9 +126,9 @@ export default function Layout({ children, currentPageName }) {
 
   const canAccessPage = (pagePath) => {
     if (!benutzer) return false;
-    
+
     const position = benutzer.position;
-    
+
     const accessMap = {
       "Admin": ["Dashboard", "Aufgaben", "Benutzer", "Subunternehmer", "Kunden", "Projekte", "Kategorien", "Anfragen", "Support", "LagerDashboard", "Waren", "Terminal", "LagerKassa", "Protokoll", "LagerBenutzer"],
       "Projektleiter": ["Dashboard", "Aufgaben", "Benutzer", "Subunternehmer", "Kunden", "Projekte", "Kategorien", "Waren", "Terminal"],
@@ -137,7 +137,7 @@ export default function Layout({ children, currentPageName }) {
       "Büro": ["Dashboard", "Aufgaben", "Benutzer", "Kunden", "Projekte", "Support", "Kategorien", "Anfragen", "LagerDashboard", "Protokoll", "LagerBenutzer"],
       "Warehouse": ["Dashboard", "Aufgaben", "Benutzer", "Kategorien", "LagerDashboard", "Waren", "Terminal", "Protokoll", "LagerBenutzer"]
     };
-    
+
     const allowedPages = accessMap[position] || [];
     return allowedPages.includes(pagePath);
   };
@@ -182,7 +182,7 @@ export default function Layout({ children, currentPageName }) {
 
   return (
     <div className="min-h-screen bg-slate-50 flex pb-16 sm:pb-0">
-      <PWAInstallPrompt />
+
       <style>{`
         :root {
           --primary: #1e40af;
@@ -198,7 +198,7 @@ export default function Layout({ children, currentPageName }) {
 
       {/* Mobile Overlay */}
       {mobileOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/50 z-40 lg:hidden"
           onClick={() => setMobileOpen(false)}
         />
@@ -259,21 +259,21 @@ export default function Layout({ children, currentPageName }) {
                     </>
                   )}
                 </button>
-                
+
                 {(expandedSections[key] || !sidebarOpen) && (
                   <div className={cn("mt-1 space-y-1", sidebarOpen && "ml-2")}>
                     {section.items.map((item) => {
                       if (!canAccessPage(item.path)) return null;
                       const isActive = currentPageName === item.path;
-                      
+
                       return (
                         <Link
                           key={item.path}
                           to={createPageUrl(item.path)}
                           className={cn(
                             "flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200",
-                            isActive 
-                              ? "bg-blue-50 text-blue-700 font-medium" 
+                            isActive
+                              ? "bg-blue-50 text-blue-700 font-medium"
                               : "text-slate-600 hover:bg-slate-50 hover:text-slate-900",
                             !sidebarOpen && "justify-center"
                           )}
@@ -349,7 +349,7 @@ export default function Layout({ children, currentPageName }) {
           >
             <Menu className="w-5 h-5" />
           </Button>
-          
+
           <div className="flex items-center gap-2">
             <span className="text-sm text-slate-400">EP-System</span>
             <span className="text-slate-300">/</span>
@@ -365,7 +365,7 @@ export default function Layout({ children, currentPageName }) {
         <div className="flex-1 overflow-y-auto p-3 sm:p-4 lg:p-6">
           {children}
         </div>
-        </main>
+      </main>
     </div>
   );
 }
