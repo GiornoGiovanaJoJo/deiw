@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }) => {
       await checkUserAuth();
       return true;
     } catch (error) {
-      setAuthError(error.response?.data?.detail || 'Login failed');
+      console.error("Login incorrect", error);
       return false;
     }
   };
