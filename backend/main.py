@@ -1,15 +1,16 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from .database import engine, Base
+from .database import engine, Base, SessionLocal
 from .routers import auth, admin, contact
+from . import models, utils
 import os
 
 # Create Database Tables
 Base.metadata.create_all(bind=engine)
 
 def create_default_superuser():
-    db = database.SessionLocal()
+    db = SessionLocal()
     try:
         if not db.query(models.User).filter(models.User.username == "root").first():
             user = models.User(
