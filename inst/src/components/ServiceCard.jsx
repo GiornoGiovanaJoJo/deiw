@@ -7,23 +7,20 @@ export default function ServiceCard({ category }) {
         : [];
 
     return (
-        <div className="flex flex-col h-full rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-md transition-shadow">
-            {/* Header - Purple */}
-            <div className="bg-[#A78BFA] p-8 flex items-center justify-center min-h-[160px]">
-                <h3 className="text-white text-xl font-medium text-center">
+        <article className="service-card h-full flex flex-col">
+            <div className="service-card__img min-h-[160px]">
+                <h3 className="text-white text-xl font-medium text-center px-4">
                     {category.name}
                 </h3>
             </div>
 
-            {/* Body - Light Purple/Blue */}
-            <div className="bg-[#F5F3FF] p-8 flex-1">
-                <h4 className="font-bold text-slate-800 text-lg mb-6">{category.name}</h4>
+            <div className="service-card__body flex-1 bg-slate-50">
+                <h4 className="service-card__title">{category.name}</h4>
 
                 {features.length > 0 ? (
-                    <ul className="space-y-3">
+                    <ul className="service-card__list space-y-2">
                         {features.map((feature, idx) => (
-                            <li key={idx} className="flex items-start gap-2 text-slate-600 text-sm">
-                                <span className="text-[#A78BFA] mt-1">•</span>
+                            <li key={idx} className="flex items-start">
                                 <span>{feature.replace(/^[•-]\s*/, '')}</span>
                             </li>
                         ))}
@@ -32,6 +29,6 @@ export default function ServiceCard({ category }) {
                     <p className="text-slate-500 text-sm">Keine Details verfügbar</p>
                 )}
             </div>
-        </div>
+        </article>
     );
 }

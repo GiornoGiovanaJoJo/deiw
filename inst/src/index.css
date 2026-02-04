@@ -37,6 +37,16 @@
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Empire Premium Brand Colors */
+    --empire-gold: 46 64% 52%;
+    /* #D4AF37 */
+    --empire-dark: 0 0% 10%;
+    /* #1A1A1A */
+    --empire-blue: 210 73% 15%;
+    /* #0A2540 */
+    --empire-purple: 262 83% 58%;
+    /* #7C3AED */
   }
 
   .dark {

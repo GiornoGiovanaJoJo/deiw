@@ -230,13 +230,13 @@ export default function Home() {
                             </div>
                         </div>
                         <div className="hero__visual">
-                            <div className="hero__visual-inner bg-slate-200 h-full w-full flex items-center justify-center text-slate-500 rounded-2xl overflow-hidden">
-                                <img
-                                    src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=1000&auto=format&fit=crop"
-                                    alt="Hero Building"
-                                    className="w-full h-full object-cover"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                            <div className="hero__visual-inner">
+                                <div className="hero__visual-placeholder">
+                                    <img
+                                        src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=1000&auto=format&fit=crop"
+                                        alt="Hero Building"
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -247,8 +247,8 @@ export default function Home() {
                     <div className="container">
                         <div className="features__wrap">
                             <div className="features__text">
-                                <h2 className="section__title animate-on-scroll">
-                                    <span className="text-[#695EF9]">Мы поддерживаем наших клиентов на каждом этапе:</span> от концепции до сдачи «под ключ»
+                                <h2 className="section__title animate-on-scroll section__title--split">
+                                    <span className="section__title-accent">Мы поддерживаем наших клиентов на каждом этапе:</span> <span className="section__title-base">от концепции до сдачи «под ключ»</span>
                                 </h2>
                                 <p className="section__subtitle animate-on-scroll">С нами вы выбираете надежность, комфорт и стиль.</p>
                                 <button onClick={() => scrollToSection('footer-form')} className="btn btn--primary animate-on-scroll">
@@ -257,17 +257,17 @@ export default function Home() {
                             </div>
                             <div className="features__grid">
                                 <article className="feature-card animate-on-scroll">
-                                    <div className="feature-card__icon"><ThumbsUp className="w-6 h-6" /></div>
+                                    <div className="feature-card__icon"><ThumbsUp /></div>
                                     <h3 className="feature-card__title">Безупречное Качество</h3>
                                     <p className="feature-card__text">Мы используем только лучшие материалы и передовые технологии.</p>
                                 </article>
                                 <article className="feature-card animate-on-scroll">
-                                    <div className="feature-card__icon"><Zap className="w-6 h-6" /></div>
+                                    <div className="feature-card__icon"><Zap /></div>
                                     <h3 className="feature-card__title">Инновационные Решения</h3>
                                     <p className="feature-card__text">Наша команда постоянно ищет новые подходы.</p>
                                 </article>
                                 <article className="feature-card animate-on-scroll">
-                                    <div className="feature-card__icon"><Heart className="w-6 h-6" /></div>
+                                    <div className="feature-card__icon"><Heart /></div>
                                     <h3 className="feature-card__title">Клиентоориентированный Подход</h3>
                                     <p className="feature-card__text">Мы внимательно слушаем ваши потребности.</p>
                                 </article>
@@ -279,10 +279,10 @@ export default function Home() {
                 {/* Services */}
                 <section className="section services" id="services">
                     <div className="container">
-                        <h2 className="section__title animate-on-scroll text-[#7C3AED] mb-8">Наши услуги</h2>
+                        <h2 className="section__title animate-on-scroll mb-8">Наши услуги</h2>
 
                         {loading ? (
-                            <div className="flex justify-center p-12"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#7C3AED]"></div></div>
+                            <div className="flex justify-center p-12"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-empire-purple"></div></div>
                         ) : (
                             <div className="relative">
                                 <div className="overflow-hidden p-2 -m-2">
@@ -304,14 +304,14 @@ export default function Home() {
                                 <div className="flex justify-end gap-2 mt-6">
                                     <button
                                         onClick={handlePrevService}
-                                        className="p-3 rounded-full border border-[#7C3AED] text-[#7C3AED] hover:bg-[#7C3AED] hover:text-white transition-colors"
+                                        className="services__arrow"
                                         disabled={currentService === 0}
                                     >
                                         <ArrowLeft className="w-5 h-5" />
                                     </button>
                                     <button
                                         onClick={handleNextService}
-                                        className="p-3 rounded-full border border-[#7C3AED] text-[#7C3AED] hover:bg-[#7C3AED] hover:text-white transition-colors"
+                                        className="services__arrow"
                                         disabled={currentService >= services.length - visibleServices}
                                     >
                                         <ArrowRight className="w-5 h-5" />
@@ -330,21 +330,21 @@ export default function Home() {
                 <section className="section projects" id="projects">
                     <div className="container">
                         <div className="flex items-center justify-between mb-8">
-                            <h2 className="section__title animate-on-scroll text-[#7C3AED]">Наши проекты</h2>
+                            <h2 className="section__title animate-on-scroll">Наши проекты</h2>
                             {/* Pagination Controls */}
                             {projects.length > 0 && (
                                 <div className="flex gap-2">
                                     <button
                                         onClick={handlePrevProjectPage}
                                         disabled={projectPage === 0}
-                                        className="p-2 rounded-lg border hover:bg-slate-50 disabled:opacity-50"
+                                        className="services__arrow w-10 h-10 disabled:opacity-50"
                                     >
                                         <ArrowLeft className="w-5 h-5" />
                                     </button>
                                     <button
                                         onClick={handleNextProjectPage}
                                         disabled={(projectPage + 1) * projectsPerPage >= projects.length}
-                                        className="p-2 rounded-lg border hover:bg-slate-50 disabled:opacity-50"
+                                        className="services__arrow w-10 h-10 disabled:opacity-50"
                                     >
                                         <ArrowRight className="w-5 h-5" />
                                     </button>
@@ -353,9 +353,9 @@ export default function Home() {
                         </div>
 
                         {loading ? (
-                            <div className="flex justify-center p-12"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#7C3AED]"></div></div>
+                            <div className="flex justify-center p-12"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-empire-purple"></div></div>
                         ) : (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div className="projects__grid">
                                 {visibleProjects.map((project, idx) => (
                                     <div key={project.id || idx} className="h-full animate-on-scroll">
                                         <ProjectCard project={project} />
