@@ -46,3 +46,8 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db:
 @router.get("/me", response_model=schemas.User)
 async def read_users_me(current_user: models.User = Depends(utils.get_current_active_user)):
     return current_user
+
+@router.get("/users", response_model=list[schemas.User])
+def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(database.get_db)):
+    users = db.query(models.User).offset(skip).limit(limit).all()
+    return users

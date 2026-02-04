@@ -68,6 +68,7 @@ import Support from './pages/Support';
 import SupportForm from './pages/SupportForm';
 import Terminal from './pages/Terminal';
 import Waren from './pages/Waren';
+import Home from './pages/Home';
 import __Layout from './Layout.jsx';
 
 
@@ -93,10 +94,11 @@ export const PAGES = {
     "SupportForm": SupportForm,
     "Terminal": Terminal,
     "Waren": Waren,
+    "Home": Home,
 }
 
 export const pagesConfig = {
-    mainPage: "Dashboard",
+    mainPage: "Home",
     Pages: PAGES,
     Layout: __Layout,
 };

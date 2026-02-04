@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Date, Text, DateTime
+ index.htmlfrom sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Date, Text, DateTime
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from .database import Base
@@ -12,6 +12,11 @@ class User(Base):
     hashed_password = Column(String)
     is_active = Column(Boolean, default=True)
     is_superuser = Column(Boolean, default=False)
+    
+    # Profile fields
+    vorname = Column(String, nullable=True)
+    nachname = Column(String, nullable=True)
+    position = Column(String, default="User")
 
     requests = relationship("ContactRequest", back_populates="user")
 

@@ -143,9 +143,7 @@ export default function Layout({ children, currentPageName }) {
   };
 
   // Pages without layout
-  if (currentPageName === "Terminal" || currentPageName === "BenutzerLogin") {
-    return <div className="min-h-screen bg-slate-50">{children}</div>;
-  }
+
 
   // Check authentication - redirect to login if not authenticated
   useEffect(() => {
@@ -172,13 +170,18 @@ export default function Layout({ children, currentPageName }) {
         }
       }
 
-      if (!isAuthenticated && currentPageName !== "BenutzerLogin") {
+      if (!isAuthenticated && currentPageName !== "BenutzerLogin" && currentPageName !== "Home") {
         navigate(createPageUrl("BenutzerLogin"));
       }
     };
 
     checkAuth();
   }, [currentPageName, navigate]);
+
+  // Pages without layout (Rendered after hooks to comply with Rules of Hooks)
+  if (currentPageName === "Terminal" || currentPageName === "BenutzerLogin" || currentPageName === "Home") {
+    return <div className="min-h-screen bg-slate-50">{children}</div>;
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 flex pb-16 sm:pb-0">

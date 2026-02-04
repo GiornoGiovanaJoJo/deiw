@@ -8,6 +8,9 @@ class UserBase(BaseModel):
     email: Optional[str] = None
     is_active: Optional[bool] = True
     is_superuser: Optional[bool] = False
+    vorname: Optional[str] = None
+    nachname: Optional[str] = None
+    position: Optional[str] = None
 
 class UserCreate(UserBase):
     password: str
