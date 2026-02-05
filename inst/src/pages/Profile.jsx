@@ -63,8 +63,8 @@ export default function Profile() {
     const handleUpdateProfile = async () => {
         try {
             const payload = {
-                first_name: profileForm.vorname,
-                last_name: profileForm.nachname,
+                vorname: profileForm.vorname,
+                nachname: profileForm.nachname,
                 email: profileForm.email
             };
             await base44.client.updateProfile(payload);
@@ -73,7 +73,11 @@ export default function Profile() {
             // Optional: Show success toast
         } catch (error) {
             console.error("Profile update failed", error);
-            // Optional: Show error
+            if (error.response && error.response.data) {
+                alert(`Ошибка обновления: ${JSON.stringify(error.response.data)}`);
+            } else {
+                alert("Произошла ошибка при обновлении профиля");
+            }
         }
     };
 
