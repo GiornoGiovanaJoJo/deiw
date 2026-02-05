@@ -62,7 +62,12 @@ export default function Profile() {
 
     const handleUpdateProfile = async () => {
         try {
-            await base44.client.updateProfile(profileForm);
+            const payload = {
+                first_name: profileForm.vorname,
+                last_name: profileForm.nachname,
+                email: profileForm.email
+            };
+            await base44.client.updateProfile(payload);
             await checkUserAuth(); // Refresh global user state
             setIsEditingProfile(false);
             // Optional: Show success toast
