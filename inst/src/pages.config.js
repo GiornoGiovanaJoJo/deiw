@@ -72,6 +72,7 @@ import Home from './pages/Home';
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
 import Profile from './pages/Profile.jsx';
+import SuperUserTest from './pages/SuperUserTest.jsx';
 import __Layout from './Layout.jsx';
 
 
@@ -101,6 +102,7 @@ export const PAGES = {
     "Login": Login,
     "Register": Register,
     "Profile": Profile,
+    "superusertest": SuperUserTest,
 }
 
 export const pagesConfig = {
