@@ -133,9 +133,9 @@ export default function Profile() {
 
 
     return (
-        <div className="min-h-screen bg-[#FAFAFA] text-slate-900 font-sans">
+        <div className="landing-page min-h-screen bg-[#FAFAFA] text-slate-900 font-sans">
             <Header />
-            <div className="container mx-auto px-4 py-8 lg:py-12 flex flex-col lg:flex-row gap-8 lg:gap-12">
+            <div className="container mx-auto px-4 !pt-24 !pb-8 lg:!pt-32 lg:!pb-12 flex flex-col lg:flex-row gap-8 lg:gap-12">
 
                 {/* Sidebar */}
                 <aside className="w-full lg:w-80 shrink-0 space-y-8">

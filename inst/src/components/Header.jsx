@@ -50,7 +50,7 @@ export default function Header() {
 
     return (
         <>
-            <header className={`header ${scrolled ? 'scrolled' : ''}`} style={{ position: 'sticky', top: 0, zIndex: 50 }}>
+            <header className={`header ${scrolled ? 'scrolled' : ''}`}>
                 <div className="header__inner">
                     <Link to="/" className="header__logo">
                         <span className="header__logo-abbr">EP</span>
