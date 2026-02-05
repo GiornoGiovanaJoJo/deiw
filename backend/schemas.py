@@ -7,7 +7,6 @@ class UserBase(BaseModel):
     username: str
     email: Optional[str] = None
     is_active: Optional[bool] = True
-    is_superuser: Optional[bool] = False
     vorname: Optional[str] = None
     nachname: Optional[str] = None
     position: Optional[str] = None
@@ -15,8 +14,16 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     password: str
 
+class UserUpdate(BaseModel):
+    email: Optional[str] = None
+    vorname: Optional[str] = None
+    nachname: Optional[str] = None
+    position: Optional[str] = None
+    password: Optional[str] = None
+
 class User(UserBase):
     id: int
+    is_superuser: bool = False
     
     class Config:
         from_attributes = True

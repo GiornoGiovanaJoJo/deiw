@@ -8,9 +8,7 @@ import {
   Download,
   BarChart3,
   CheckCircle2,
-  Clock,
   Euro,
-  FileArchive,
 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";

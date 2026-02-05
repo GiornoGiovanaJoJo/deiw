@@ -9,7 +9,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -17,9 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { X } from "lucide-react";
 import { toast } from "sonner";
-import CameraPhotoUpload from "@/components/CameraPhotoUpload";
 
 export default function ProjektNeuDialog({ open, onOpenChange, anfrageData }) {
   const [kategorien, setKategorien] = useState([]);

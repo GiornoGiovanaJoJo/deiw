@@ -30,7 +30,7 @@ def read_my_requests(
 
 @router.patch("/profile", response_model=schemas.User)
 def update_my_profile(
-    user_update: schemas.UserCreate, # Using UserCreate for now, arguably should make a UserUpdate schema
+    user_update: schemas.UserUpdate,
     db: Session = Depends(database.get_db),
     current_user: models.User = Depends(utils.get_current_active_user)
 ):

@@ -1,7 +1,6 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Euro, TrendingUp } from "lucide-react";
+import { Euro } from "lucide-react";
 
 export default function BudgetOverview({ projekte }) {
   const calculateBudgetStats = () => {

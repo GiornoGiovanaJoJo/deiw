@@ -1,6 +1,5 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Activity, CheckCircle2, FileText, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";

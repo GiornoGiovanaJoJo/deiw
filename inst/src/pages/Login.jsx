@@ -77,6 +77,7 @@ export default function Login() {
                                 <Input
                                     id="username"
                                     type="text"
+                                    autoComplete="username"
                                     placeholder="name@example.com"
                                     className="pl-10 h-11 bg-slate-50 border-slate-200 focus:border-accent-purple focus:ring-accent-purple"
                                     value={formData.username}
@@ -98,6 +99,7 @@ export default function Login() {
                                 <Input
                                     id="password"
                                     type="password"
+                                    autoComplete="current-password"
                                     placeholder="••••••••"
                                     className="pl-10 h-11 bg-slate-50 border-slate-200 focus:border-accent-purple focus:ring-accent-purple"
                                     value={formData.password}

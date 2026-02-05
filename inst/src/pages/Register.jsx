@@ -88,11 +88,11 @@ export default function Register() {
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <Label htmlFor="vorname">Имя</Label>
-                                <Input id="vorname" placeholder="Иван" className="h-11" onChange={handleChange} required />
+                                <Input id="vorname" placeholder="Иван" autoComplete="given-name" className="h-11" onChange={handleChange} required />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="nachname">Фамилия</Label>
-                                <Input id="nachname" placeholder="Иванов" className="h-11" onChange={handleChange} required />
+                                <Input id="nachname" placeholder="Иванов" autoComplete="family-name" className="h-11" onChange={handleChange} required />
                             </div>
                         </div>
 
@@ -100,7 +100,7 @@ export default function Register() {
                             <Label htmlFor="username">Имя пользователя</Label>
                             <div className="relative">
                                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                                <Input id="username" placeholder="ivan_user" className="pl-10 h-11" onChange={handleChange} required />
+                                <Input id="username" placeholder="ivan_user" autoComplete="username" className="pl-10 h-11" onChange={handleChange} required />
                             </div>
                         </div>
 
@@ -108,7 +108,7 @@ export default function Register() {
                             <Label htmlFor="email">Email</Label>
                             <div className="relative">
                                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                                <Input id="email" type="email" placeholder="ivan@example.com" className="pl-10 h-11" onChange={handleChange} required />
+                                <Input id="email" type="email" placeholder="ivan@example.com" autoComplete="email" className="pl-10 h-11" onChange={handleChange} required />
                             </div>
                         </div>
 
@@ -116,7 +116,7 @@ export default function Register() {
                             <Label htmlFor="password">Пароль</Label>
                             <div className="relative">
                                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                                <Input id="password" type="password" placeholder="••••••••" className="pl-10 h-11" onChange={handleChange} required />
+                                <Input id="password" type="password" placeholder="••••••••" autoComplete="new-password" className="pl-10 h-11" onChange={handleChange} required />
                             </div>
                         </div>
 
@@ -124,7 +124,7 @@ export default function Register() {
                             <Label htmlFor="confirmPassword">Повторите пароль</Label>
                             <div className="relative">
                                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                                <Input id="confirmPassword" type="password" placeholder="••••••••" className="pl-10 h-11" onChange={handleChange} required />
+                                <Input id="confirmPassword" type="password" placeholder="••••••••" autoComplete="new-password" className="pl-10 h-11" onChange={handleChange} required />
                             </div>
                         </div>
 

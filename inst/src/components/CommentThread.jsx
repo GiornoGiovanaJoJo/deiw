@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { MessageCircle, Reply, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
 import { toast } from "sonner";

@@ -65,6 +65,24 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const login = async (username, password) => {
+    try {
+      setIsLoadingAuth(true);
+      const data = await base44.auth.login(username, password);
+      if (data && data.access_token) {
+        localStorage.setItem('token', data.access_token);
+        // Re-fetch user details
+        await checkUserAuth();
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error("Login failed:", error);
+      setIsLoadingAuth(false);
+      return false;
+    }
+  };
+
   const logout = (shouldRedirect = true) => {
     setUser(null);
     setIsAuthenticated(false);
@@ -89,6 +107,7 @@ export const AuthProvider = ({ children }) => {
       isLoadingPublicSettings,
       authError,
       appPublicSettings,
+      login,
       logout,
       navigateToLogin,
       checkAppState

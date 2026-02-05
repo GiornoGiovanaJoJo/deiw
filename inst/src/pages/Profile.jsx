@@ -302,6 +302,7 @@ export default function Profile() {
                                             <Input
                                                 type="password"
                                                 placeholder="Подтвердите паролем"
+                                                autoComplete="current-password"
                                                 value={profileForm.password}
                                                 onChange={e => setProfileForm({ ...profileForm, password: e.target.value })}
                                                 className="flex-1 h-8 bg-white border-yellow-200 focus:border-yellow-400"

@@ -42,6 +42,17 @@ export const base44 = {
       const response = await api.get('/auth/me');
       return response.data;
     },
+    login: async (username, password) => {
+      const formData = new FormData();
+      formData.append('username', username);
+      formData.append('password', password);
+      const response = await api.post('/auth/login', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data;
+    },
     logout: () => {
       localStorage.removeItem('token');
       window.location.href = '/login';
@@ -59,6 +70,13 @@ export const base44 = {
     updateProfile: async (data) => {
       const response = await api.patch('/client/profile', data);
       return response.data;
+    }
+  },
+  appLogs: {
+    logUserInApp: async (pageName) => {
+      // Mock implementation to prevent crash and avoid 404s if endpoint doesn't exist yet
+      // console.log(`[AppLog] User visited: ${pageName}`);
+      return Promise.resolve();
     }
   },
   public: {
