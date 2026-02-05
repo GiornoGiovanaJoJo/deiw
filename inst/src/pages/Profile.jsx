@@ -30,7 +30,8 @@ export default function Profile() {
     const [profileForm, setProfileForm] = useState({
         vorname: '',
         nachname: '',
-        email: ''
+        email: '',
+        password: ''
     });
 
     useEffect(() => {
@@ -39,7 +40,8 @@ export default function Profile() {
             setProfileForm({
                 vorname: user.vorname || user.first_name || '',
                 nachname: user.nachname || user.last_name || '',
-                email: user.email || ''
+                email: user.email || '',
+                password: ''
             });
         }
     }, [user]);
@@ -61,16 +63,26 @@ export default function Profile() {
     };
 
     const handleUpdateProfile = async () => {
+        if (!profileForm.password) {
+            alert("Для сохранения изменений необходимо ввести текущий пароль");
+            return;
+        }
+
         try {
             const payload = {
+                username: user.username,
+                email: profileForm.email,
+                password: profileForm.password,
                 vorname: profileForm.vorname,
                 nachname: profileForm.nachname,
-                email: profileForm.email
+                is_active: user.is_active !== undefined ? user.is_active : true,
+                is_superuser: user.is_superuser !== undefined ? user.is_superuser : false
             };
+
             await base44.client.updateProfile(payload);
             await checkUserAuth(); // Refresh global user state
             setIsEditingProfile(false);
-            // Optional: Show success toast
+            setProfileForm(prev => ({ ...prev, password: '' }));
         } catch (error) {
             console.error("Profile update failed", error);
             if (error.response && error.response.data) {
@@ -283,6 +295,20 @@ export default function Profile() {
                                             <span className="text-slate-600 text-right flex-1">{user.email}</span>
                                         )}
                                     </div>
+
+                                    {isEditingProfile && (
+                                        <div className="flex justify-between items-center border-b border-yellow-200 bg-yellow-50/50 pb-2 pt-2 px-2 -mx-2 rounded">
+                                            <span className="font-medium text-slate-900 w-1/3">Текущий пароль</span>
+                                            <Input
+                                                type="password"
+                                                placeholder="Подтвердите паролем"
+                                                value={profileForm.password}
+                                                onChange={e => setProfileForm({ ...profileForm, password: e.target.value })}
+                                                className="flex-1 h-8 bg-white border-yellow-200 focus:border-yellow-400"
+                                                required
+                                            />
+                                        </div>
+                                    )}
                                     <div className="flex justify-between items-end border-b border-slate-100 pb-2">
                                         <span className="text-slate-400 text-sm">ID {user.id || "000000000"}</span>
                                     </div>
