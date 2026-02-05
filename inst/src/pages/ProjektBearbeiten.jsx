@@ -37,7 +37,6 @@ export default function ProjektBearbeiten() {
     name: "",
     beschreibung: "",
     kunde_id: "",
-    user_id: "", // Added default
     projektleiter_id: "",
     gruppenleiter_ids: [],
     worker_ids: [],
@@ -62,12 +61,12 @@ export default function ProjektBearbeiten() {
   const loadData = async () => {
     const params = new URLSearchParams(window.location.search);
     const id = params.get("id");
-
+    
     if (!id) {
       navigate(createPageUrl("Projekte"));
       return;
     }
-
+    
     setProjektId(id);
 
     try {
@@ -95,21 +94,20 @@ export default function ProjektBearbeiten() {
         base44.entities.Benutzer.filter({ position: "Worker" }),
         base44.entities.Subunternehmer.filter({ status: "Aktiv" })
       ]);
-
+      
       setAllBenutzer(allBenutzerData);
-
+      
       if (projekteData.length === 0) {
         navigate(createPageUrl("Projekte"));
         return;
       }
-
+      
       const p = projekteData[0];
       setForm({
         projekt_nummer: p.projekt_nummer || "",
         name: p.name || "",
         beschreibung: p.beschreibung || "",
         kunde_id: p.kunde_id || "",
-        user_id: p.user_id || "", // Added user_id
         projektleiter_id: p.projektleiter_id || "",
         gruppenleiter_ids: p.gruppenleiter_ids || [],
         worker_ids: p.worker_ids || [],
@@ -126,14 +124,14 @@ export default function ProjektBearbeiten() {
         foto: p.foto || "",
         fotos: p.fotos || []
       });
-
+      
       setKunden(kundenData);
       setKategorien(kategorienData.filter(k => !k.parent_id));
       setBenutzer(benutzerData);
       setGruppenleiter(gruppData);
       setWorkers(workerData);
       setSubunternehmer(subData);
-
+      
       // Load unterkategorien if kategorie is set
       if (p.kategorie) {
         const allKategorien = await base44.entities.Kategorie.list();
@@ -150,7 +148,7 @@ export default function ProjektBearbeiten() {
 
   const handleProjektleiterChange = (projektleiterId) => {
     setForm(prev => ({ ...prev, projektleiter_id: projektleiterId }));
-
+    
     if (projektleiterId) {
       // Auto-select Gruppenleiter under this Projektleiter
       const untergeordneteGruppenleiter = allBenutzer.filter(
@@ -179,10 +177,10 @@ export default function ProjektBearbeiten() {
 
   const handleGruppenleiterChange = (gruppenleiterId, checked) => {
     let newIds = [...(form.gruppenleiter_ids || [])];
-
+    
     if (checked) {
       newIds.push(gruppenleiterId);
-
+      
       // Auto-select Workers under this Gruppenleiter
       const untergeordneteWorkers = allBenutzer.filter(
         b => b.position === "Worker" && b.vorgesetzter_id === gruppenleiterId
@@ -200,7 +198,7 @@ export default function ProjektBearbeiten() {
   const handleFileUpload = async (e, isMain = true) => {
     const file = e.target.files[0];
     if (!file) return;
-
+    
     setUploading(true);
     try {
       const result = await base44.integrations.Core.UploadFile({ file });
@@ -225,7 +223,7 @@ export default function ProjektBearbeiten() {
 
   const handleKategorieChange = async (kategorieId) => {
     setForm({ ...form, kategorie: kategorieId, unterkategorie: "", zusatzfelder: {} });
-
+    
     if (kategorieId) {
       try {
         const allKategorien = await base44.entities.Kategorie.list();
@@ -241,7 +239,7 @@ export default function ProjektBearbeiten() {
 
   const getZusatzfelder = () => {
     if (!form.unterkategorie) return [];
-
+    
     const unterkat = unterkategorien.find(k => k.id === form.unterkategorie);
     return unterkat?.zusatzfelder || [];
   };
@@ -256,7 +254,7 @@ export default function ProjektBearbeiten() {
       const data = { ...form };
       if (data.budget) data.budget = parseFloat(data.budget);
       else delete data.budget;
-
+      
       await base44.entities.Projekt.update(projektId, data);
       toast.success("Projekt aktualisiert");
       navigate(createPageUrl(`ProjektDetail?id=${projektId}`));
@@ -333,7 +331,7 @@ export default function ProjektBearbeiten() {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Kunde (Firma)</Label>
+              <Label>Kunde</Label>
               <Select value={form.kunde_id} onValueChange={(v) => setForm({ ...form, kunde_id: v })}>
                 <SelectTrigger>
                   <SelectValue placeholder="Kunde wählen" />
@@ -346,22 +344,6 @@ export default function ProjektBearbeiten() {
                 </SelectContent>
               </Select>
             </div>
-
-            <div className="space-y-2">
-              <Label>Zugewiesener Benutzer (Login)</Label>
-              <Select value={form.user_id} onValueChange={(v) => setForm({ ...form, user_id: v })}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Benutzerkonto wählen" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value={null}>Kein Benutzer</SelectItem>
-                  {allBenutzer.map(b => (
-                    <SelectItem key={b.id} value={b.id}>{b.vorname} {b.nachname} ({b.username})</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
             <div className="space-y-2">
               <Label>Kategorie</Label>
               <Select value={form.kategorie} onValueChange={handleKategorieChange}>
@@ -402,8 +384,8 @@ export default function ProjektBearbeiten() {
                 <div key={feld.name} className="space-y-2">
                   <Label>{feld.label}</Label>
                   {feld.type === "select" ? (
-                    <Select
-                      value={form.zusatzfelder[feld.name] || ""}
+                    <Select 
+                      value={form.zusatzfelder[feld.name] || ""} 
                       onValueChange={(v) => setForm({ ...form, zusatzfelder: { ...form.zusatzfelder, [feld.name]: v } })}
                     >
                       <SelectTrigger>
@@ -430,8 +412,8 @@ export default function ProjektBearbeiten() {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Projektleiter</Label>
-              <Select
-                value={form.projektleiter_id}
+              <Select 
+                value={form.projektleiter_id} 
                 onValueChange={handleProjektleiterChange}
                 disabled={currentBenutzer?.position === "Worker" || currentBenutzer?.position === "Gruppenleiter"}
               >
@@ -505,7 +487,7 @@ export default function ProjektBearbeiten() {
               {getFilteredGruppenleiter().map(gl => {
                 const isCurrentUser = currentBenutzer?.id === gl.id && currentBenutzer?.position === "Gruppenleiter";
                 const isDisabled = currentBenutzer?.position === "Worker" || isCurrentUser;
-
+                
                 return (
                   <label key={gl.id} className={`flex items-center gap-2 p-2 hover:bg-slate-50 rounded ${isDisabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}>
                     <input
@@ -524,8 +506,8 @@ export default function ProjektBearbeiten() {
               })}
               {getFilteredGruppenleiter().length === 0 && (
                 <p className="text-sm text-slate-400">
-                  {form.projektleiter_id
-                    ? "Keine Gruppenleiter für diesen Projektleiter verfügbar"
+                  {form.projektleiter_id 
+                    ? "Keine Gruppenleiter für diesen Projektleiter verfügbar" 
                     : "Bitte wählen Sie zuerst einen Projektleiter aus"}
                 </p>
               )}
@@ -582,10 +564,11 @@ export default function ProjektBearbeiten() {
                       setForm({ ...form, subunternehmer_ids: [...ids, sub.id] });
                     }
                   }}
-                  className={`px-3 py-2 rounded-lg border cursor-pointer transition-all ${(form.subunternehmer_ids || []).includes(sub.id)
-                    ? "bg-purple-50 border-purple-500 text-purple-700"
-                    : "border-slate-200 hover:border-slate-300"
-                    }`}
+                  className={`px-3 py-2 rounded-lg border cursor-pointer transition-all ${
+                    (form.subunternehmer_ids || []).includes(sub.id)
+                      ? "bg-purple-50 border-purple-500 text-purple-700"
+                      : "border-slate-200 hover:border-slate-300"
+                  }`}
                 >
                   <p className="text-sm font-medium">{sub.firma}</p>
                   {sub.spezialisierung && (

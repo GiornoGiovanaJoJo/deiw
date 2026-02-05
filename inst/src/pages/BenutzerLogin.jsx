@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useAuth } from '@/lib/AuthContext';
+import React, { useState, useEffect } from "react";
+import { base44 } from "@/api/base44Client";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,7 +10,6 @@ import { LogIn, User, Lock } from "lucide-react";
 import { toast } from "sonner";
 
 export default function BenutzerLogin() {
-  const { login, isLoadingAuth } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({
     email: "",
@@ -18,30 +17,68 @@ export default function BenutzerLogin() {
   });
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  const checkAuth = async () => {
+    try {
+      const sessionData = localStorage.getItem("benutzer_session");
+      if (sessionData) {
+        const session = JSON.parse(sessionData);
+        if (Date.now() - session.timestamp < 24 * 60 * 60 * 1000) {
+          navigate(createPageUrl("Dashboard"));
+        }
+      }
+    } catch (error) {
+      // Not logged in
+    }
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
-
+    
     if (!form.email || !form.passwort) {
       toast.error("Bitte alle Felder ausfüllen");
       return;
     }
 
     setLoading(true);
-    // Use proper login from AuthContext
-    const user = await login(form.email, form.passwort);
-    setLoading(false);
+    try {
+      const benutzerList = await base44.entities.Benutzer.filter({ 
+        email: form.email,
+        status: "Aktiv"
+      });
 
-    if (user) {
-      toast.success(`Willkommen zurück!`);
-      // Conditional redirection for admin/dashboard access
-      const dashboardRoles = ["Admin", "Projektleiter", "Gruppenleiter", "Worker", "Büro", "Warehouse"];
-      if (user.is_superuser || (user.position && dashboardRoles.includes(user.position))) {
-        navigate(createPageUrl("Dashboard"));
-      } else {
-        navigate(createPageUrl("Profile"));
+      if (benutzerList.length === 0) {
+        toast.error("Benutzer nicht gefunden oder inaktiv");
+        setLoading(false);
+        return;
       }
-    } else {
-      toast.error("Falsche E-Mail oder Passwort");
+
+      const benutzer = benutzerList[0];
+      
+      if (benutzer.passwort !== form.passwort) {
+        toast.error("Falsches Passwort");
+        setLoading(false);
+        return;
+      }
+
+      // Store session
+      localStorage.setItem("benutzer_session", JSON.stringify({
+        id: benutzer.id,
+        email: form.email,
+        position: benutzer.position,
+        name: `${benutzer.vorname} ${benutzer.nachname}`,
+        timestamp: Date.now()
+      }));
+
+      toast.success(`Willkommen, ${benutzer.vorname}!`);
+      navigate(createPageUrl("Dashboard"));
+    } catch (error) {
+      toast.error("Fehler beim Login");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -65,12 +102,12 @@ export default function BenutzerLogin() {
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <Input
                   id="email"
-                  type="text"
-                  placeholder="name@example.com"
+                  type="email"
+                  placeholder="E-Mail eingeben"
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
                   className="pl-10"
-                  disabled={loading || isLoadingAuth}
+                  disabled={loading}
                 />
               </div>
             </div>
@@ -86,15 +123,15 @@ export default function BenutzerLogin() {
                   value={form.passwort}
                   onChange={(e) => setForm({ ...form, passwort: e.target.value })}
                   className="pl-10"
-                  disabled={loading || isLoadingAuth}
+                  disabled={loading}
                 />
               </div>
             </div>
 
-            <Button
-              type="submit"
+            <Button 
+              type="submit" 
               className="w-full bg-blue-600 hover:bg-blue-700 h-11"
-              disabled={loading || isLoadingAuth}
+              disabled={loading}
             >
               {loading ? (
                 <div className="flex items-center gap-2">

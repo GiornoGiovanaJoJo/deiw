@@ -4,13 +4,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { 
   FolderKanban, 
+  Users, 
+  Package, 
   ClipboardList,
   TrendingUp,
   Clock,
-  CheckCircle2
+  CheckCircle2,
+  AlertCircle
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip } from "recharts";
 import ProjectStatusSummary from "@/components/DashboardWidgets/ProjectStatusSummary";
 import UpcomingDeadlines from "@/components/DashboardWidgets/UpcomingDeadlines";
 import BudgetOverview from "@/components/DashboardWidgets/BudgetOverview";

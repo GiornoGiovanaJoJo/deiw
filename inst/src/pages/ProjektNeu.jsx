@@ -15,7 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ArrowLeft, Plus, Building2, X } from "lucide-react";
+import { ArrowLeft, Plus, Building2, Upload, X } from "lucide-react";
 import { toast } from "sonner";
 import CameraPhotoUpload from "@/components/CameraPhotoUpload";
 

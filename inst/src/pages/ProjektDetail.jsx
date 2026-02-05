@@ -22,6 +22,7 @@ import {
   User, 
   MapPin,
   Package,
+  Clock,
   Euro,
   FileText
 } from "lucide-react";
