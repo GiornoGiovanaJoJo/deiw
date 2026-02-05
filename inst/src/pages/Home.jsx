@@ -53,11 +53,29 @@ export default function Home() {
                     base44.public.getCategories(50),
                     base44.public.getProjects(50)
                 ]);
-                setServices(cats);
+                if (cats && cats.length > 0) {
+                    setServices(cats);
+                } else {
+                    setServices([
+                        { id: 1, title: 'Жилое строительство', description: 'Строительство современных жилых комплексов и частных домов под ключ.', icon: 'home' },
+                        { id: 2, title: 'Коммерческая недвижимость', description: 'Офисные здания, торговые центры и складские помещения.', icon: 'building' },
+                        { id: 3, title: 'Реконструкция', description: 'Восстановление и модернизация существующих зданий.', icon: 'hammer' },
+                        { id: 4, title: 'Проектирование', description: 'Разработка архитектурных и инженерных проектов любой сложности.', icon: 'pen-tool' },
+                        { id: 5, title: 'Ландшафтный дизайн', description: 'Благоустройство территорий и создание уникальных ландшафтов.', icon: 'tree' }
+                    ]);
+                }
                 // Filter logs or invalid projects if needed, for now use all
                 setProjects(projs);
             } catch (error) {
                 console.error("Failed to load public data:", error);
+                // Fallback mock data on error too
+                setServices([
+                    { id: 1, title: 'Жилое строительство', description: 'Строительство современных жилых комплексов и частных домов под ключ.', icon: 'home' },
+                    { id: 2, title: 'Коммерческая недвижимость', description: 'Офисные здания, торговые центры и складские помещения.', icon: 'building' },
+                    { id: 3, title: 'Реконструкция', description: 'Восстановление и модернизация существующих зданий.', icon: 'hammer' },
+                    { id: 4, title: 'Проектирование', description: 'Разработка архитектурных и инженерных проектов любой сложности.', icon: 'pen-tool' },
+                    { id: 5, title: 'Ландшафтный дизайн', description: 'Благоустройство территорий и создание уникальных ландшафтов.', icon: 'tree' }
+                ]);
             } finally {
                 setLoading(false);
             }
@@ -221,7 +239,7 @@ export default function Home() {
                     <div className="container">
                         <div className="hero__content">
                             <h1 className="hero__title">
-                                <span className="hero__brand">Empire Premium</span> — <span className="underline hero__title-small">строим ваше будущее!</span>
+                                <span className="hero__brand">Empire Premium</span> — <span className="hero__title-small">строим ваше будущее!</span>
                             </h1>
                             <p className="hero__subtitle">
                                 Empire Premium — это строительная компания премиум-класса с командой экспертов, воплощающих в жизнь даже самые смелые идеи.
