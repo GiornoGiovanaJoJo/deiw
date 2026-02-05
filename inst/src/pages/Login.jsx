@@ -19,10 +19,16 @@ export default function Login() {
         e.preventDefault();
         setError('');
         setLoading(true);
-        const success = await login(formData.username, formData.password);
+        const user = await login(formData.username, formData.password);
         setLoading(false);
-        if (success) {
-            navigate(createPageUrl("Profile"));
+        if (user) {
+            // Check for admin/dashboard access roles
+            const dashboardRoles = ["Admin", "Projektleiter", "Gruppenleiter", "Worker", "Büro", "Warehouse"];
+            if (user.is_superuser || (user.position && dashboardRoles.includes(user.position))) {
+                navigate(createPageUrl("Dashboard"));
+            } else {
+                navigate(createPageUrl("Profile"));
+            }
         } else {
             setError('Неверное имя пользователя или пароль');
         }

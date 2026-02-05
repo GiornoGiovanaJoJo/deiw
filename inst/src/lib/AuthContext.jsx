@@ -27,6 +27,7 @@ export const AuthProvider = ({ children }) => {
       setUser(response.data);
       setIsAuthenticated(true);
       setIsLoadingAuth(false);
+      return response.data;
     } catch (error) {
       if (error.response && error.response.status === 401) {
         // Expected behavior for non-logged-in users, no need to log error
@@ -36,6 +37,7 @@ export const AuthProvider = ({ children }) => {
       setIsLoadingAuth(false);
       setIsAuthenticated(false);
       localStorage.removeItem('token');
+      return null;
     }
   };
 
@@ -52,11 +54,10 @@ export const AuthProvider = ({ children }) => {
       const { access_token } = response.data;
 
       localStorage.setItem('token', access_token);
-      await checkUserAuth();
-      return true;
+      return await checkUserAuth();
     } catch (error) {
       console.error("Login incorrect", error);
-      return false;
+      return null;
     }
   };
 
