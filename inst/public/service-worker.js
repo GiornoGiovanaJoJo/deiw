@@ -8,5 +8,10 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
     // Simple pass-through fetch
-    event.respondWith(fetch(event.request));
+    event.respondWith(
+        fetch(event.request).catch(() => {
+            // Return nothing or a fallback if offline to prevent "Uncaught (in promise)"
+            return new Response(null, { status: 408, statusText: "Request Timeout" });
+        })
+    );
 });

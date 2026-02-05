@@ -28,7 +28,11 @@ export const AuthProvider = ({ children }) => {
       setIsAuthenticated(true);
       setIsLoadingAuth(false);
     } catch (error) {
-      console.error('User auth check failed:', error);
+      if (error.response && error.response.status === 401) {
+        // Expected behavior for non-logged-in users, no need to log error
+      } else {
+        console.error('User auth check failed:', error);
+      }
       setIsLoadingAuth(false);
       setIsAuthenticated(false);
       localStorage.removeItem('token');
