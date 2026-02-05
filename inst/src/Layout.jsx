@@ -179,7 +179,7 @@ export default function Layout({ children, currentPageName }) {
   }, [currentPageName, navigate]);
 
   // Pages without layout (Rendered after hooks to comply with Rules of Hooks)
-  if (currentPageName === "Terminal" || currentPageName === "BenutzerLogin" || currentPageName === "Home" || currentPageName === "Login" || currentPageName === "Register") {
+  if (currentPageName === "Terminal" || currentPageName === "BenutzerLogin" || currentPageName === "Home" || currentPageName === "Login" || currentPageName === "Register" || currentPageName === "Profile") {
     return <div className="min-h-screen bg-slate-50">{children}</div>;
   }
 

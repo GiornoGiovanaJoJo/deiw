@@ -18,6 +18,8 @@ import { createPageUrl } from "../utils";
 import { base44 } from "@/api/base44Client";
 import ServiceCard from "@/components/ServiceCard";
 import ProjectCard from "@/components/ProjectCard";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 const TikTokIcon = () => (
     <svg viewBox="0 0 18 22" width="20" height="20" fill="currentColor">
@@ -188,50 +190,7 @@ export default function Home() {
 
     return (
         <div className="landing-page font-sans text-slate-900 bg-white">
-            {/* Header */}
-            <header className={`header ${scrolled ? 'scrolled' : ''}`}>
-                <div className="header__inner">
-                    <Link to="/" className="header__logo">
-                        <span className="header__logo-abbr">EP</span>
-                        Empire <span>Premium</span>
-                    </Link>
-
-                    <nav className="nav">
-                        <button onClick={() => scrollToSection('about')} className="nav__link">О нас</button>
-                        <button onClick={() => scrollToSection('services')} className="nav__link">Услуги</button>
-                        <button onClick={() => scrollToSection('projects')} className="nav__link">Проекты</button>
-                        <button onClick={() => scrollToSection('contact')} className="nav__link">Карьера</button>
-                    </nav>
-
-                    <div className="header__cta">
-                        <Link to={createPageUrl("Login")} className="btn btn--gold">
-                            Войти
-                        </Link>
-                        <button onClick={() => scrollToSection('footer-form')} className="btn btn--outline-purple">
-                            Оставить заявку <ArrowRight className="w-4 h-4 ml-2" />
-                        </button>
-                    </div>
-
-                    <button className="hamburger lg:hidden" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-                        {mobileMenuOpen ? <X /> : <Menu />}
-                    </button>
-                </div>
-            </header>
-
-            {/* Mobile Menu */}
-            <div className={`mobile-menu ${mobileMenuOpen ? 'is-open' : ''}`}>
-                <nav className="flex flex-col gap-4">
-                    <button onClick={() => scrollToSection('about')} className="nav__link text-left">О нас</button>
-                    <button onClick={() => scrollToSection('services')} className="nav__link text-left">Услуги</button>
-                    <button onClick={() => scrollToSection('projects')} className="nav__link text-left">Проекты</button>
-                    <button onClick={() => scrollToSection('contact')} className="nav__link text-left">Карьера</button>
-                </nav>
-                <div className="mt-8 flex flex-col gap-4">
-                    <Link to={createPageUrl("Login")} className="btn btn--gold w-full">
-                        Войти
-                    </Link>
-                </div>
-            </div>
+            <Header />
 
             <main>
                 {/* Hero */}
@@ -416,92 +375,7 @@ export default function Home() {
                     </div>
                 </section>
 
-                {/* Footer */}
-                <footer className="footer">
-                    <section className="footer__contact">
-                        {/* Removed duplicate slogan here, it's now in CTA section effectively or implied */}
-                        <div className="container footer__contact-inner">
-                            <div className="hidden lg:block absolute left-0 top-10 text-white opacity-20 text-9xl font-bold -z-10">EMPIRE</div> {/* Decorative */}
-
-                            {/* Two column layout for footer top if needed, or just the form floating */}
-                            <div className="flex flex-col lg:flex-row items-end justify-between gap-12">
-                                <div className="text-white pt-20 pb-12 hidden lg:block">
-                                    <h2 className="text-4xl font-bold mb-4">Empire Premium — Ваш<br />партнёр по строительству</h2>
-                                </div>
-
-                                <div className="footer__form-box w-full lg:w-auto lg:min-w-[480px]" id="footer-form">
-                                    <h3 className="footer__form-title">Заполните форму, и мы свяжемся с вами в течение 15 минут</h3>
-                                    <div className="footer__form-tabs">
-                                        {['Заявка', 'Каталог', 'Отзыв'].map((tab) => (
-                                            <button
-                                                key={tab}
-                                                type="button"
-                                                onClick={() => setActiveTab(tab)}
-                                                className={`footer__form-tab ${activeTab === tab ? 'is-active' : ''}`}
-                                            >
-                                                {tab}
-                                            </button>
-                                        ))}
-                                    </div>
-                                    <form className="footer__form" onSubmit={handleFormSubmit}>
-                                        <input type="text" className="footer__input" name="name" placeholder="Имя" required />
-                                        <input type="tel" className="footer__input" name="phone" placeholder="Телефон" required />
-                                        <input type="email" className="footer__input" name="email" placeholder="Email" required />
-                                        <textarea className="footer__input" name="message" placeholder="Сообщение" rows="3"></textarea>
-                                        <button
-                                            type="submit"
-                                            className="footer__form-submit btn--primary w-full justify-center"
-                                            disabled={isSubmitting}
-                                        >
-                                            {isSubmitting ? 'Отправка...' : 'Оставить заявку'}
-                                        </button>
-                                        {formMessage.text && (
-                                            <p className={`mt-2 text-sm ${formMessage.type === 'error' ? 'text-red-600' : 'text-green-600'}`}>
-                                                {formMessage.text}
-                                            </p>
-                                        )}
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
-                    <div className="footer__bottom-wrap">
-                        <div className="container">
-                            <div className="footer__top">
-                                <div className="footer__brand">
-                                    <a href="#" className="footer__logo">Empire <span>Premium</span></a>
-                                    <p className="mb-4 text-slate-500">С 2024 года мы создаем исключительные строительные проекты.</p>
-                                    <div className="footer__social">
-                                        <a href="#" aria-label="Instagram" target="_blank" rel="noreferrer"><Instagram /></a>
-                                        <a href="#" aria-label="TikTok" target="_blank" rel="noreferrer"><TikTokIcon /></a>
-                                    </div>
-                                </div>
-
-                                <div className="footer__col">
-                                    <h4>О нас</h4>
-                                    <ul>
-                                        <li><button onClick={() => scrollToSection('contact')}>Карьера</button></li>
-                                        <li><button onClick={() => scrollToSection('about')}>Сотрудники</button></li>
-                                    </ul>
-                                </div>
-
-                                <div className="footer__col">
-                                    <h4>Связаться с нами</h4>
-                                    <ul className="text-sm space-y-2">
-                                        <li className="flex items-center gap-2"><Mail className="w-4 h-4" /> info@empire-premium-bau.de</li>
-                                        <li className="flex items-center gap-2"><Phone className="w-4 h-4" /> +49 17661951823</li>
-                                        <li className="flex items-center gap-2"><Clock className="w-4 h-4" /> Пн-Пт 8:00-18:00</li>
-                                    </ul>
-                                </div>
-                            </div>
-
-                            <div className="footer__bottom">
-                                <p className="footer__copy">© 2026 Empire Premium. Все права защищены.</p>
-                            </div>
-                        </div>
-                    </div>
-                </footer>
+                <Footer />
             </main>
         </div>
     );

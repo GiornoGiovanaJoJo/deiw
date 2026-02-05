@@ -6,6 +6,8 @@ import { LogOut, User, Search, Settings, FileText, HelpCircle } from "lucide-rea
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from "../utils";
 import { base44 } from '@/api/base44Client';
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import './Home.css';
 
 export default function Profile() {
@@ -35,8 +37,8 @@ export default function Profile() {
         if (user && !user.is_superuser) {
             loadClientData();
             setProfileForm({
-                vorname: user.vorname || '',
-                nachname: user.nachname || '',
+                vorname: user.vorname || user.first_name || '',
+                nachname: user.nachname || user.last_name || '',
                 email: user.email || ''
             });
         }
@@ -124,8 +126,10 @@ export default function Profile() {
         </button>
     );
 
+
     return (
         <div className="min-h-screen bg-[#FAFAFA] text-slate-900 font-sans">
+            <Header />
             <div className="container mx-auto px-4 py-8 lg:py-12 flex flex-col lg:flex-row gap-8 lg:gap-12">
 
                 {/* Sidebar */}
@@ -136,7 +140,7 @@ export default function Profile() {
                                 <User className="w-10 h-10" />
                             </div>
                         </div>
-                        <h2 className="text-xl font-bold text-slate-900">{user.vorname || "Имя"} {user.nachname || "Фамилия"}</h2>
+                        <h2 className="text-xl font-bold text-slate-900">{user.vorname || user.first_name || "Имя"} {user.nachname || user.last_name || "Фамилия"}</h2>
                         <p className="text-slate-400 text-sm mt-1">ID {user.id || "0000000000"}</p>
                     </div>
 
@@ -243,7 +247,7 @@ export default function Profile() {
                                                 className="flex-1 h-8"
                                             />
                                         ) : (
-                                            <span className="text-slate-600 text-right flex-1">{user.vorname}</span>
+                                            <span className="text-slate-600 text-right flex-1">{user.vorname || user.first_name}</span>
                                         )}
                                     </div>
                                     <div className="flex justify-between items-end border-b border-slate-100 pb-2">
@@ -255,7 +259,7 @@ export default function Profile() {
                                                 className="flex-1 h-8"
                                             />
                                         ) : (
-                                            <span className="text-slate-600 text-right flex-1">{user.nachname}</span>
+                                            <span className="text-slate-600 text-right flex-1">{user.nachname || user.last_name}</span>
                                         )}
                                     </div>
                                     <div className="flex justify-between items-end border-b border-slate-100 pb-2">
@@ -337,6 +341,7 @@ export default function Profile() {
                     )}
                 </main>
             </div>
+            <Footer />
         </div>
     );
 }
